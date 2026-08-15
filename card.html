@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Data Evidence Card</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the Card</a>
+
+<header class="masthead card-screen-only">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Data Evidence Card</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+
+  <section class="panel card-screen-only" id="crew-file">
+    <h2>Your crew's Card</h2>
+    <p class="note">
+      One Card per crew, kept in your crew's shared folder. Open it, fill in your
+      part, save it back. What you type is also kept on this laptop, so nothing
+      is lost if you have not saved yet.
+    </p>
+    <div class="actions">
+      <button class="btn" type="button" id="open-file">Open our crew's Card</button>
+      <button class="btn secondary" type="button" id="save-file" disabled>Save to our crew's Card</button>
+      <button class="btn secondary" type="button" id="new-file">Start our crew's Card</button>
+      <button class="btn secondary" type="button" id="save-copy" hidden>Save as a copy</button>
+    </div>
+    <div class="actions" style="margin-top:.6rem;">
+      <button class="btn secondary" type="button" id="download-card">Download it instead</button>
+      <label class="btn secondary" for="upload-card" style="cursor:pointer;">Open a downloaded one</label>
+      <input type="file" id="upload-card" accept=".h2ocard,application/json" hidden>
+      <button class="btn secondary" type="button" id="print-card">Print the Card</button>
+    </div>
+    <div class="msg" id="file-msg" hidden>
+      <span class="mark" id="file-mark"></span><span id="file-text"></span>
+    </div>
+    <p class="note" id="file-where"></p>
+    <p class="note">
+      For a copy to put on screen in your film, use <b>Print the Card</b> and
+      choose <b>Save as PDF</b> as the printer. Your two charts already save as
+      full-size pictures from the chart tools.
+    </p>
+  </section>
+
+  <section class="panel card-screen-only">
+    <h2>In the film</h2>
+    <p>
+      At least one of your charts and your 2040 claim have to appear in your
+      finished film, on screen or spoken. That is a film requirement, not a maths
+      one — but it is easier to plan for now than to fix in the edit.
+    </p>
+  </section>
+
+  <!-- One Card. A form on screen, the printed Card on paper. -->
+  <section class="card panel" id="card">
+    <div class="card-head">
+      <div>
+        <div class="s"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Year 8</div>
+        <div class="t">Data Evidence Card</div>
+      </div>
+      <div class="r">One page.<br>Two charts.<br>One honest claim.</div>
+    </div>
+
+    <div class="card-meta card-block">
+      <div>
+        <span class="lbl">Crew</span>
+        <input type="text" data-field="crew" maxlength="34">
+        <span class="ink one-line" data-mirror="crew"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">Members</span>
+        <input type="text" data-field="members" maxlength="61">
+        <span class="ink one-line" data-mirror="members"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">Date</span>
+        <input type="text" data-field="date" maxlength="16" placeholder="dd/mm/yyyy">
+        <span class="ink one-line" data-mirror="date"></span>
+        <span class="count"></span>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <span class="lbl">Our question</span>
+      <input type="text" data-field="question" maxlength="52">
+      <span class="ink one-line" data-mirror="question"></span>
+      <span class="count"></span>
+    </div>
+
+    <div class="card-block card-grid3">
+      <div>
+        <span class="lbl">Variable 1 (and units)</span>
+        <input type="text" data-field="var1" maxlength="39">
+        <span class="ink one-line" data-mirror="var1"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">Variable 2 (and units)</span>
+        <input type="text" data-field="var2" maxlength="36">
+        <span class="ink one-line" data-mirror="var2"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">How many measurements</span>
+        <input type="text" data-field="n" maxlength="20">
+        <span class="ink one-line" data-mirror="n"></span>
+        <span class="count"></span>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <span class="lbl">How we collected it</span>
+      <textarea data-field="method" maxlength="166"></textarea>
+      <span class="ink" data-mirror="method"></span>
+      <span class="count"></span>
+    </div>
+
+    <div class="card-block card-charts">
+      <div>
+        <span class="lbl">Chart 1 — one variable on its own</span>
+        <div class="slot" data-slot="chart1">
+          <img alt="" hidden>
+          <span class="empty">No chart yet</span>
+          <div class="slot-controls actions" style="justify-content:center;">
+            <button class="btn secondary" type="button" data-attach="chart1">Attach a chart</button>
+            <label class="btn secondary" style="cursor:pointer;">
+              Upload a picture
+              <input type="file" accept="image/png,image/jpeg" data-upload="chart1" hidden>
+            </label>
+          </div>
+        </div>
+        <span class="lbl" style="margin-top:2mm;">What it shows</span>
+        <textarea data-field="shape" maxlength="113"></textarea>
+        <span class="ink" data-mirror="shape"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">Chart 2 — the two variables together</span>
+        <div class="slot" data-slot="chart2">
+          <img alt="" hidden>
+          <span class="empty">No chart yet</span>
+          <div class="slot-controls actions" style="justify-content:center;">
+            <button class="btn secondary" type="button" data-attach="chart2">Attach a chart</button>
+            <label class="btn secondary" style="cursor:pointer;">
+              Upload a picture
+              <input type="file" accept="image/png,image/jpeg" data-upload="chart2" hidden>
+            </label>
+          </div>
+        </div>
+        <span class="lbl" style="margin-top:2mm;">The relationship</span>
+        <textarea data-field="relationship" maxlength="106"></textarea>
+        <span class="ink" data-mirror="relationship"></span>
+        <span class="count"></span>
+      </div>
+    </div>
+
+    <div class="card-block card-grid2">
+      <div class="eqbox">
+        <span class="lbl">Our line of best fit</span>
+        <input type="text" data-field="equation" maxlength="19" placeholder="y = ___x + ___">
+        <span class="ink one-line" data-mirror="equation"></span>
+        <span class="count"></span>
+        <span class="lbl" style="margin-top:1.5mm;">What the gradient means</span>
+        <textarea data-field="gradient" maxlength="87"></textarea>
+        <span class="ink" data-mirror="gradient"></span>
+        <span class="count"></span>
+      </div>
+      <div class="predbox">
+        <span class="lbl">Reading inside our data (interpolation)</span>
+        <textarea data-field="interpolation" maxlength="48"></textarea>
+        <span class="ink" data-mirror="interpolation"></span>
+        <span class="count"></span>
+        <span class="lbl" style="margin-top:2mm;">Reading past our data (extrapolation)</span>
+        <textarea data-field="extrapolation" maxlength="117"></textarea>
+        <span class="ink" data-mirror="extrapolation"></span>
+        <span class="count"></span>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <div class="claim-block">
+        <span class="lbl">Our claim for 2040</span>
+        <textarea data-field="claim" maxlength="189"></textarea>
+        <span class="ink" data-mirror="claim"></span>
+        <span class="count"></span>
+      </div>
+    </div>
+
+    <div class="card-block card-grid2">
+      <div>
+        <span class="lbl">Why we might be wrong</span>
+        <textarea data-field="wrong" maxlength="147"></textarea>
+        <span class="ink" data-mirror="wrong"></span>
+        <span class="count"></span>
+      </div>
+      <div>
+        <span class="lbl">Where our data came from</span>
+        <textarea data-field="source" maxlength="86"></textarea>
+        <span class="ink" data-mirror="source"></span>
+        <span class="count"></span>
+        <div class="card-ticks" id="ticks"></div>
+      </div>
+    </div>
+
+    <div class="card-foot">
+      <span><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Mathematics · Data Evidence Card</span>
+      <span id="foot-crew"></span>
+    </div>
+  </section>
+
+  <section class="panel card-screen-only">
+    <h2>Worked examples</h2>
+    <p class="note">
+      Two finished Cards to compare yours against. They open in a new tab.
+    </p>
+    <div class="actions">
+      <a class="btn secondary" href="docs/reference-data-evidence-card.html" target="_blank" rel="noopener">
+        Open the worked examples
+      </a>
+    </div>
+  </section>
+
+  <p class="foot card-screen-only">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 ·
+    Your work stays on this laptop until you save it to your crew's folder.
+  </p>
+</main>
+
+<script type="module">
+import {
+  getCard, setCard, getProfile, getBadges, getChartIndex, getChart,
+  rememberCardHandle, recallCardHandle, forgetCardHandle
+} from './js/store.js';
+
+const SOFT_LOCK_MINUTES = 20;
+const SLOTS = ['chart1', 'chart2'];
+
+const profile = getProfile();
+const state = {
+  fields: {},
+  charts: {},
+  /* Anything a newer version of the site wrote that this one does not know
+     about. Carried through untouched so an older laptop cannot silently delete
+     a field a newer one added. */
+  unknown: {},
+  handle: null
+};
+
+/* ---- helpers ------------------------------------------------------------- */
+
+function auDate(iso) {
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} at ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function say(message, kind = 'good') {
+  document.querySelector('#file-mark').textContent = kind === 'problem' ? '!' : '✓';
+  document.querySelector('#file-text').textContent = message;
+  const box = document.querySelector('#file-msg');
+  box.className = `msg ${kind === 'problem' ? 'problem' : 'good'}`;
+  box.hidden = false;
+}
+
+const inputs = [...document.querySelectorAll('[data-field]')];
+
+/* ---- painting ------------------------------------------------------------ */
+
+function paintField(input) {
+  const key = input.dataset.field;
+  const entry = state.fields[key];
+  const value = entry?.value ?? '';
+
+  if (input.value !== value) input.value = value;
+
+  const mirror = document.querySelector(`[data-mirror="${key}"]`);
+  /* textContent, never innerHTML: this is a student's own words going onto a
+     page she will print and hand in. */
+  if (mirror) mirror.textContent = value;
+
+  const count = input.parentElement.querySelector('.count');
+  if (count) {
+    const used = value.length;
+    const max = Number(input.getAttribute('maxlength'));
+    count.textContent = `${used}/${max}`;
+    count.classList.toggle('full', used >= max);
+  }
+
+  let by = input.parentElement.querySelector(`.by[data-by="${key}"]`);
+  if (entry?.byName) {
+    if (!by) {
+      by = document.createElement('span');
+      by.className = 'by';
+      by.dataset.by = key;
+      (count ?? input).after(by);
+    }
+    by.textContent = `last edited by ${entry.byName}`;
+  } else if (by) {
+    by.remove();
+  }
+}
+
+function paintSlot(name) {
+  const slot = document.querySelector(`[data-slot="${name}"]`);
+  const img = slot.querySelector('img');
+  const empty = slot.querySelector('.empty');
+  const chart = state.charts[name];
+
+  if (chart?.dataUrl) {
+    img.src = chart.dataUrl;
+    img.hidden = false;
+    img.alt = `${name === 'chart1' ? 'Chart 1' : 'Chart 2'}, attached by ${chart.byName ?? 'the crew'}`;
+    empty.hidden = true;
+  } else {
+    img.removeAttribute('src');
+    img.hidden = true;
+    empty.hidden = false;
+  }
+}
+
+function paintTicks() {
+  const badges = getBadges();
+  const host = document.querySelector('#ticks');
+  host.textContent = '';
+
+  for (const [key, label] of [
+    ['reader', 'Reader'], ['collector', 'Collector'],
+    ['plotter', 'Plotter'], ['predictor', 'Predictor']
+  ]) {
+    const wrap = document.createElement('span');
+    wrap.className = 'b';
+    const box = document.createElement('span');
+    box.className = badges[key] ? 'tickbox done' : 'tickbox';
+    wrap.append(box, document.createTextNode(label));
+    host.append(wrap);
+  }
+}
+
+function paintAll() {
+  for (const input of inputs) paintField(input);
+  for (const name of SLOTS) paintSlot(name);
+  paintTicks();
+  document.querySelector('#foot-crew').textContent = state.fields.crew?.value ?? '';
+}
+
+/* ---- editing ------------------------------------------------------------- */
+
+let saveTimer = null;
+
+function touch(key, value) {
+  state.fields[key] = {
+    value,
+    by: profile?.studentId ?? null,
+    byName: profile?.display ?? null,
+    at: new Date().toISOString()
+  };
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => setCard({ fields: state.fields, charts: state.charts }), 300);
+}
+
+for (const input of inputs) {
+  input.addEventListener('input', () => {
+    touch(input.dataset.field, input.value);
+    paintField(input);
+    if (input.dataset.field === 'crew') {
+      document.querySelector('#foot-crew').textContent = input.value;
+    }
+  });
+}
+
+/* ---- charts -------------------------------------------------------------- */
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function attachChart(name, dataUrl) {
+  state.charts[name] = {
+    dataUrl,
+    by: profile?.studentId ?? null,
+    byName: profile?.display ?? null,
+    at: new Date().toISOString()
+  };
+  setCard({ fields: state.fields, charts: state.charts });
+  paintSlot(name);
+}
+
+for (const button of document.querySelectorAll('[data-attach]')) {
+  button.addEventListener('click', async () => {
+    const name = button.dataset.attach;
+    const wanted = name === 'chart1' ? 'univariate' : 'bivariate';
+    const index = getChartIndex()
+      .filter((c) => String(c.kind ?? '').startsWith(wanted))
+      .sort((a, b) => String(b.created).localeCompare(String(a.created)));
+
+    if (!index.length) {
+      return say(
+        `Nothing to attach yet. Make a ${wanted === 'univariate' ? 'one variable' : 'two variable'} chart `
+        + 'in the chart tool and press Attach to our Card there.',
+        'problem'
+      );
+    }
+
+    const record = await getChart(index[0].id);
+    if (!record?.blob) return say('That chart could not be found on this laptop.', 'problem');
+    attachChart(name, await blobToDataUrl(record.blob));
+    say(`${name === 'chart1' ? 'Chart 1' : 'Chart 2'} attached.`);
+  });
+}
+
+for (const input of document.querySelectorAll('[data-upload]')) {
+  input.addEventListener('change', async (event) => {
+    const [file] = event.target.files;
+    if (!file) return;
+    attachChart(input.dataset.upload, await blobToDataUrl(file));
+    event.target.value = '';
+    say('Picture attached.');
+  });
+}
+
+/* ---- the .h2ocard file --------------------------------------------------- */
+
+function toFile() {
+  return {
+    ...state.unknown,
+    format: 'h2ocard',
+    schema: 1,
+    crew: state.fields.crew?.value ?? '',
+    savedBy: profile?.studentId ?? null,
+    savedByName: profile?.display ?? null,
+    savedAt: new Date().toISOString(),
+    fields: state.fields,
+    charts: state.charts
+  };
+}
+
+function fromFile(data) {
+  if (data?.format !== 'h2ocard') throw new Error('That is not a Card file. Look for one ending in .h2ocard');
+  if (Number(data.schema) > 1) throw new Error('That Card was made by a newer version of the site. Ask your teacher.');
+
+  const { fields, charts, format, schema, crew, savedBy, savedByName, savedAt, ...rest } = data;
+  state.fields = fields ?? {};
+  state.charts = charts ?? {};
+  state.unknown = rest;
+  setCard({ fields: state.fields, charts: state.charts });
+  paintAll();
+
+  /* maxlength stops her typing or pasting past a limit, but a file can carry
+     anything. Never truncated - losing a crew mate's words to protect a page
+     break would be the wrong trade - just said out loud. */
+  const over = inputs.filter((input) => {
+    const value = state.fields[input.dataset.field]?.value ?? '';
+    return value.length > Number(input.getAttribute('maxlength'));
+  });
+  if (over.length) {
+    say(
+      `${over.length} answer${over.length === 1 ? ' is' : 's are'} longer than the Card allows, `
+      + 'so it may print onto two pages. Shorten them to fix it.',
+      'problem'
+    );
+  }
+
+  return { data, warned: over.length > 0 };
+}
+
+/* Soft, never hard. Two girls editing at once is a conversation to have, not a
+   thing to prevent, and merging silently would lose someone's work. */
+/* Returns whether it warned, so a routine "opened it" message cannot paint over
+   the one thing on the page that needed reading. */
+function checkSoftLock(data) {
+  if (!data.savedAt || !data.savedBy) return false;
+  if (data.savedBy === profile?.studentId) return false;
+
+  const minutes = (Date.now() - new Date(data.savedAt).getTime()) / 60000;
+  if (minutes > SOFT_LOCK_MINUTES || minutes < 0) return false;
+
+  document.querySelector('#save-copy').hidden = false;
+  say(
+    `${data.savedByName || 'Someone in your crew'} saved this ${Math.max(1, Math.round(minutes))} minutes ago. `
+    + 'Check with her before you save over it, or save a copy instead.',
+    'problem'
+  );
+  return true;
+}
+
+function showWhere(name) {
+  document.querySelector('#file-where').textContent =
+    name ? `Working on ${name}.` : '';
+}
+
+const canPick = 'showOpenFilePicker' in window;
+
+async function useHandle(handle, { announce = true } = {}) {
+  state.handle = handle;
+  await rememberCardHandle(handle);
+  document.querySelector('#save-file').disabled = false;
+  showWhere(handle.name);
+  if (announce) say(`Opened ${handle.name}.`);
+}
+
+document.querySelector('#open-file').addEventListener('click', async () => {
+  if (!canPick) return say('This browser cannot open your crew folder. Use Download it instead.', 'problem');
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Data Evidence Card', accept: { 'application/json': ['.h2ocard'] } }]
+    });
+    const data = JSON.parse(await (await handle.getFile()).text());
+    const { warned } = fromFile(data);
+    await useHandle(handle, { announce: false });
+    showWhere(handle.name);
+    const locked = checkSoftLock(data);
+    if (!warned && !locked) say(`Opened ${handle.name}.`);
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    say(err.message, 'problem');
+  }
+});
+
+document.querySelector('#new-file').addEventListener('click', async () => {
+  if (!canPick) return say('This browser cannot write to your crew folder. Use Download it instead.', 'problem');
+  const crew = (state.fields.crew?.value ?? 'crew').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: `${crew || 'crew'}.h2ocard`,
+      types: [{ description: 'Data Evidence Card', accept: { 'application/json': ['.h2ocard'] } }]
+    });
+    await useHandle(handle, { announce: false });
+    await writeTo(handle);
+    say(`Started ${handle.name}. Save to it whenever you add something.`);
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    say(err.message, 'problem');
+  }
+});
+
+async function writeTo(handle) {
+  const writable = await handle.createWritable();
+  await writable.write(JSON.stringify(toFile(), null, 2));
+  await writable.close();
+}
+
+document.querySelector('#save-file').addEventListener('click', async () => {
+  if (!state.handle) return say('Open or start your crew\'s Card first.', 'problem');
+  try {
+    /* Re-read before writing so a field someone else added while this tab was
+       open is not wiped by our copy. Ours wins on conflict, but only per field. */
+    const current = JSON.parse(await (await state.handle.getFile()).text());
+    if (current?.fields) {
+      for (const [key, entry] of Object.entries(current.fields)) {
+        const mine = state.fields[key];
+        if (!mine || (entry.at && mine.at && entry.at > mine.at && entry.by !== profile?.studentId)) {
+          state.fields[key] = entry;
+        }
+      }
+      for (const [key, entry] of Object.entries(current.charts ?? {})) {
+        const mine = state.charts[key];
+        if (!mine || (entry.at && mine.at && entry.at > mine.at)) state.charts[key] = entry;
+      }
+      paintAll();
+    }
+    await writeTo(state.handle);
+    document.querySelector('#save-copy').hidden = true;
+    say(`Saved to ${state.handle.name} at ${auDate(new Date().toISOString()).split(' at ')[1]}.`);
+  } catch (err) {
+    say(`${err.message} Try Download it instead so you do not lose anything.`, 'problem');
+  }
+});
+
+document.querySelector('#save-copy').addEventListener('click', async () => {
+  const crew = (state.fields.crew?.value ?? 'crew').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+  const who = (profile?.display ?? 'copy').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: `${crew}-${who}.h2ocard`,
+      types: [{ description: 'Data Evidence Card', accept: { 'application/json': ['.h2ocard'] } }]
+    });
+    await writeTo(handle);
+    await useHandle(handle, { announce: false });
+    document.querySelector('#save-copy').hidden = true;
+    say(`Saved a copy as ${handle.name}. Tell your crew it exists.`);
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    say(err.message, 'problem');
+  }
+});
+
+/* The fallback, built first so it costs nothing if the picker misbehaves. */
+document.querySelector('#download-card').addEventListener('click', () => {
+  const crew = (state.fields.crew?.value ?? 'crew').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
+  const blob = new Blob([JSON.stringify(toFile(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${crew || 'crew'}.h2ocard`;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  say('Downloaded. Put it in your crew folder.');
+});
+
+document.querySelector('#upload-card').addEventListener('change', async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    const { warned } = fromFile(data);
+    const locked = checkSoftLock(data);
+    /* Only when there was nothing more important to say. */
+    if (!warned && !locked) {
+      say(`Opened ${file.name}. Remember this copy is not linked to your crew folder.`);
+    }
+  } catch (err) {
+    say(err.message, 'problem');
+  }
+  event.target.value = '';
+});
+
+/* ---- print and picture --------------------------------------------------- */
+
+document.querySelector('#print-card').addEventListener('click', () => window.print());
+
+/* ---- start --------------------------------------------------------------- */
+
+const stored = getCard();
+state.fields = stored.fields ?? {};
+state.charts = stored.charts ?? {};
+
+/* Seed from her profile so the crew line is not blank on a fresh Card. */
+if (!state.fields.crew?.value && profile?.crew) {
+  state.fields.crew = { value: profile.crew, by: profile.studentId, byName: profile.display, at: new Date().toISOString() };
+}
+if (!state.fields.date?.value) {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  state.fields.date = {
+    value: `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`,
+    by: profile?.studentId ?? null, byName: profile?.display ?? null, at: now.toISOString()
+  };
+}
+
+paintAll();
+
+if (!canPick) {
+  say('This browser cannot open your crew folder directly. Use Download it instead, and put the file in the folder yourself.', 'problem');
+}
+
+recallCardHandle().then(async (handle) => {
+  if (!handle) return;
+  try {
+    const permission = await handle.queryPermission?.({ mode: 'readwrite' });
+    state.handle = handle;
+    document.querySelector('#save-file').disabled = false;
+    showWhere(handle.name);
+    if (permission !== 'granted') {
+      say(`${handle.name} is still your crew's Card. Press Save to it and Edge will ask permission once.`);
+    }
+  } catch {
+    await forgetCardHandle();
+  }
+});
+</script>
+</body>
+</html>

@@ -494,6 +494,16 @@ tools there is no Lesson 4, and without the Card there is no deliverable.
   at 2× so it survives being filmed or dropped into an editing timeline, and decide
   whether they want the Card as a PNG as well as a print.
 
+  **The whole-Card PNG is not buildable the cheap way** (found 16/08/2026). Drawing the
+  Card's own DOM into a canvas needs `foreignObject`, and Chrome taints the canvas for
+  *any* SVG containing one — verified with a foreignObject holding nothing but the word
+  "hello". No amount of inlining fonts or images changes it, and a library is out. The
+  two options left are to redraw the Card as native SVG or straight onto a 2D canvas,
+  which means a second layout to keep in step with the print CSS forever. Until someone
+  asks for it, `card.html` points crews at Print → Save as PDF, which gives a true A4
+  copy at whatever resolution the film needs. The 1920×1080 chart exports are unaffected
+  and already work.
+
 ---
 
 ## 12. Known weak points

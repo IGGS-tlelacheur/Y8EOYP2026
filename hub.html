@@ -163,9 +163,9 @@ function renderBadges() {
   }
 }
 
-/* card.html arrives in stage 5. The Card is never gated, so this link is never
-   conditional on progress - only on the page existing. */
-const CARD_BUILT = false;
+/* The Card is never gated, so this link is never conditional on progress -
+   only on the page existing. */
+const CARD_BUILT = true;
 if (!CARD_BUILT) {
   const link = document.querySelector('#card-link');
   const placeholder = document.createElement('button');

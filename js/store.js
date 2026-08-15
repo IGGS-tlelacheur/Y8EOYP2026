@@ -25,6 +25,10 @@ export const BADGES = ['reader', 'collector', 'plotter', 'predictor'];
 
 const DB_NAME = 'h2o-charts';
 const DB_STORE = 'charts';
+/* A FileSystemFileHandle survives a structured clone, so the crew's card file
+   is one click away next lesson instead of a fresh trip through the picker. */
+const HANDLE_STORE = 'handles';
+const DB_VERSION = 2;
 
 /* ---- localStorage -------------------------------------------------------- */
 
@@ -150,6 +154,19 @@ export function awardBadge(name) {
   return badges[name];
 }
 
+/* ---- the Card ------------------------------------------------------------ */
+
+/* Her own working copy, autosaved on every keystroke. The crew's shared file is
+   a separate thing and lives on disk; this is what survives her closing the lid
+   before anyone has saved to it. */
+export function getCard() {
+  return readJson(KEYS.card, { schema: SCHEMA, fields: {}, charts: {} });
+}
+
+export function setCard({ fields, charts }) {
+  return writeJson(KEYS.card, { fields, charts });
+}
+
 /* ---- the crew's own collected data --------------------------------------- */
 
 /* Written by tools/table.html at stage 4 and read by both chart tools, so a
@@ -174,10 +191,14 @@ function request(req) {
 
 function openDb() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
-      if (!req.result.objectStoreNames.contains(DB_STORE)) {
-        req.result.createObjectStore(DB_STORE, { keyPath: 'id' });
+      const db = req.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        db.createObjectStore(DB_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(HANDLE_STORE)) {
+        db.createObjectStore(HANDLE_STORE);
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -185,11 +206,11 @@ function openDb() {
   });
 }
 
-async function withStore(mode, fn) {
+async function withStore(mode, fn, storeName = DB_STORE) {
   const db = await openDb();
   try {
-    const tx = db.transaction(DB_STORE, mode);
-    const result = await fn(tx.objectStore(DB_STORE));
+    const tx = db.transaction(storeName, mode);
+    const result = await fn(tx.objectStore(storeName));
     await new Promise((resolve, reject) => {
       tx.oncomplete = resolve;
       tx.onerror = () => reject(tx.error);
@@ -226,6 +247,20 @@ export function getAllCharts() {
 export async function deleteChart(id) {
   await withStore('readwrite', (store) => request(store.delete(id)));
   writeJson(KEYS.charts, { index: getChartIndex().filter((c) => c.id !== id) });
+}
+
+/* ---- the crew's card file handle ----------------------------------------- */
+
+export function rememberCardHandle(handle) {
+  return withStore('readwrite', (store) => request(store.put(handle, 'card')), HANDLE_STORE);
+}
+
+export function recallCardHandle() {
+  return withStore('readonly', (store) => request(store.get('card')), HANDLE_STORE);
+}
+
+export function forgetCardHandle() {
+  return withStore('readwrite', (store) => request(store.delete('card')), HANDLE_STORE);
 }
 
 /* ---- export and import --------------------------------------------------- */
@@ -336,4 +371,7 @@ export async function clearEverything() {
     }
   }
   await withStore('readwrite', (store) => request(store.clear()));
+  /* The pointer to the crew's file goes too. Leaving it would hand the next
+     girl on this laptop a one-click route into another crew's card. */
+  await withStore('readwrite', (store) => request(store.clear()), HANDLE_STORE);
 }

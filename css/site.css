@@ -641,6 +641,247 @@ input[type='range'] {
   .sheet-grid tr { break-inside: avoid; }
 }
 
+/* ---- the Data Evidence Card ---------------------------------------------- */
+/* Two appearances, one file. On screen it is a form; printed it is the Card the
+   girls already met on paper. Every field therefore exists twice: an input she
+   types into, and a mirror span that carries the value into the print view in
+   handwriting. Only one of the pair is ever visible.
+
+   These are the reference Card's own colours, taken from
+   docs/reference-data-evidence-card.html. They are NOT the site palette and are
+   not --card-teal either: the Card runs a deeper teal and a brighter one than
+   CLAUDE.md's table records. The printed page has to match the paper the girls
+   are holding, so the Card wins here. */
+
+.card {
+  --c-ink: #06232B;
+  --c-deep: #0E4A54;
+  --c-teal: #1B8A82;
+  --c-silt: #DCE6E3;
+  --c-paper: #FBFBF9;
+  --c-signal: #F2B705;
+  --c-rule: #B7C8C4;
+  --c-pen: #1D3F8F;
+}
+
+.card .lbl { color: var(--c-teal); }
+
+.card-block {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.card-block:last-child { border-bottom: none; }
+
+.card-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.card-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+/* Members needs the room; the date needs almost none. */
+.card-meta { display: grid; grid-template-columns: 2fr 3fr 1.2fr; gap: 1.25rem; }
+
+@media (max-width: 52rem) {
+  .card-grid2, .card-grid3, .card-meta { grid-template-columns: 1fr; }
+}
+
+.card textarea, .card input[type='text'] { background: #fff; }
+.card textarea { min-height: 4.5rem; font-family: var(--font-body); font-size: 1rem; }
+
+/* The mirror. Hidden on screen, it is the whole Card in print. */
+.ink { display: none; font-family: var(--font-hand); color: var(--c-pen); }
+
+.count {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--sage);
+  margin-top: 0.2rem;
+}
+
+.count.full { color: var(--gold-dark); font-weight: 700; }
+
+.slot {
+  border: 1.5px dashed var(--c-rule);
+  background: #fff;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.slot img { max-width: 100%; height: auto; display: block; margin: 0 auto 0.6rem; }
+.slot .empty { color: var(--sage); font-size: 0.9rem; padding: 1.5rem 0; display: block; }
+
+.card-ticks { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.5rem; }
+
+.card-ticks .b {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-deep);
+}
+
+.tickbox {
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 1.5px solid var(--c-deep);
+  display: inline-block;
+  position: relative;
+  flex: none;
+}
+
+.tickbox.done::after {
+  content: '✓';
+  position: absolute;
+  left: 0.05rem;
+  top: -0.35rem;
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  color: var(--c-pen);
+}
+
+.by {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--sage);
+  margin-top: 0.15rem;
+}
+
+.claim-block { background: var(--c-ink); color: var(--c-paper); padding: 1rem 1.25rem; }
+.claim-block .lbl { color: var(--c-signal); }
+.claim-block .ink { color: #BFD8FF; }
+.claim-block textarea { color: var(--c-ink); }
+
+@media print {
+  @page { size: A4; margin: 0; }
+
+  .card-screen-only { display: none !important; }
+
+  .card {
+    display: block;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 10mm 12mm 9mm;
+    margin: 0;
+    background: var(--c-paper);
+    color: var(--c-ink);
+    font-family: 'TeX Gyre Heros Cn', 'Carlito', var(--font-body);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    position: relative;
+  }
+
+  /* The form disappears and its mirror takes over. Authorship goes too: it is
+     the crew's working record and it lives in the .h2ocard file, where staff can
+     read it. Printed under all seventeen fields it was both clutter and about
+     40mm of the one page the Card is allowed. */
+  .card textarea,
+  .card input,
+  .card .count,
+  .card .by,
+  .card .slot-controls { display: none !important; }
+
+  /* The reference Card's own sizes: 12.5pt/1.42 for anything that wraps,
+     13.5pt for a single line. Matching them is both more faithful and worth
+     about 8mm of the one page. */
+  .card .ink { display: block; font-size: 12.5pt; line-height: 1.42; }
+  .card .ink.one-line { display: inline-block; font-size: 13.5pt; line-height: 1.35; }
+
+  .card .lbl {
+    font-size: 6.6pt;
+    letter-spacing: 0.13em;
+    margin-bottom: 0.6mm;
+  }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2.5px solid var(--c-ink);
+    padding-bottom: 2.5mm;
+  }
+
+  .card-head .t {
+    font-family: 'TeX Gyre Adventor', 'Poppins', var(--font-body);
+    font-weight: 700;
+    font-size: 19pt;
+    letter-spacing: -0.02em;
+    color: var(--c-deep);
+    line-height: 1;
+  }
+
+  .card-head .s {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 7pt;
+    font-weight: 700;
+    color: var(--c-teal);
+    margin-bottom: 1.5mm;
+  }
+
+  .card-head .r {
+    text-align: right;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: #7E9793;
+    line-height: 1.5;
+  }
+
+  .card-meta {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1.2fr;
+    gap: 5mm;
+    border-bottom: 1px solid var(--c-rule);
+    padding: 2.5mm 0 2mm;
+  }
+
+  .card-block { padding: 2.4mm 0 1.7mm; border-bottom: 1px solid var(--c-rule); }
+  .card-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .card-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5mm; }
+
+  .card-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; align-items: start; }
+
+  .slot { border: none; padding: 0; text-align: left; background: none; }
+
+  /* Capped rather than free: a chart exported at 660x440 comes in at 60mm tall
+     in a 90mm column, and two of those plus their commentary took a third of
+     the page. contain letterboxes instead of squashing. */
+  .slot img { width: 100%; height: 44mm; object-fit: contain; object-position: left top; margin: 1mm 0; }
+
+  /* :not([hidden]) matters. A bare `display:block` here beats the hidden
+     attribute's own rule, so the "no chart yet" box printed underneath every
+     attached chart and quietly cost the page 26mm. */
+  .slot .empty:not([hidden]) { display: block; height: 26mm; border: 1px dashed var(--c-rule); }
+  .slot .empty[hidden] { display: none; }
+
+  .eqbox { border: 1.5px solid var(--c-deep); padding: 2.5mm 3.5mm; }
+  .predbox { background: var(--c-silt); padding: 3mm 4mm; }
+  .claim-block { padding: 3.5mm 4.5mm; }
+
+  .card-ticks { gap: 3.5mm; margin-top: 2.5mm; }
+  .card-ticks .b { font-size: 7pt; white-space: nowrap; }
+  .tickbox { width: 4.2mm; height: 4.2mm; border-width: 1.4px; }
+  .tickbox.done::after { font-size: 13pt; top: -1.4mm; left: 0.2mm; }
+
+  .by { font-size: 5.6pt; }
+
+  .card-foot {
+    position: absolute;
+    bottom: 6mm;
+    left: 12mm;
+    right: 12mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 6.8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: #7E9793;
+    border-top: 1px solid var(--c-rule);
+    padding-top: 1.6mm;
+  }
+}
+
 /* ---- footer -------------------------------------------------------------- */
 
 .foot {
