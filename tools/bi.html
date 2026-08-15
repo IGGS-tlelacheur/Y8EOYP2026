@@ -147,6 +147,11 @@
             Nobody measured out here, so this is a guess based on the line
             carrying on. It might not.
           </p>
+          <p class="note" id="predict-reach"></p>
+          <p class="note" id="predict-stretch" hidden>
+            You are guessing further than your data is wide. On the chart the
+            line fades out here, because there is less and less behind it.
+          </p>
         </div>
       </section>
 
@@ -407,6 +412,29 @@ function showPrediction() {
 
   document.querySelector('#predict-warning').hidden = !beyond;
   document.querySelector('#predict-why').hidden = !beyond;
+
+  if (beyond) {
+    /* How far past her own evidence, said in her units and her numbers. She can
+       check this arithmetic herself, which a confidence interval would not let
+       her do. */
+    const past = state.predictX > range.xMax
+      ? state.predictX - range.xMax
+      : range.xMin - state.predictX;
+    const edge = state.predictX > range.xMax ? range.xMax : range.xMin;
+    const unit = state.xUnit ? ` ${state.xUnit}` : '';
+
+    document.querySelector('#predict-reach').textContent =
+      `You measured up to ${roundSensibly(edge)}${unit}. This is ${roundSensibly(past)}${unit} past that.`;
+
+    /* Past the width of her own data the guess is doing more work than the
+       evidence is, and the label says so. */
+    const span = range.xMax - range.xMin;
+    const stretched = span > 0 && past > span;
+    document.querySelector('#predict-warning').querySelector('.beyond').textContent =
+      stretched ? 'A long way beyond our data' : 'Beyond our data';
+    document.querySelector('#predict-stretch').hidden = !stretched;
+  }
+
   readout.hidden = false;
 }
 

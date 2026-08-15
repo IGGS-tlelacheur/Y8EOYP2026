@@ -214,6 +214,9 @@ export function renderChart(spec) {
     }, title));
   }
 
+  /* Collected while the bands are built, painted after the lines. */
+  const fades = [];
+
   /* ---- extrapolation band, drawn under everything else ---- */
   if (dataRange && fit) {
     const hatchId = `beyond-${uid}`;
@@ -241,21 +244,30 @@ export function renderChart(spec) {
       }));
     }
 
-    const rightBand = xNice.max - dataRange.xMax;
-    if (rightBand > 0) {
-      /* Anchored to the right edge of the plot rather than to the start of the
-         band. The band is often only a tick or two wide, and left-anchoring ran
-         the caption off the edge of the export, where it read "beyond our da".
-         Full label size, not a fraction of it: this is the one caption that has
-         to survive being filmed off a screen, and the slide floor is 28px. */
-      svg.append(svgEl('text', {
-        x: plotRight - pad * 0.4,
-        y: plotTop + fonts.label * 1.4,
-        'text-anchor': 'end',
-        'font-size': fonts.label,
-        'font-style': 'italic',
-        fill: SAGE
-      }, 'beyond our data'));
+    /* A wash that thickens with distance from the last real measurement, so the
+       line fades out as the evidence for it does. It says "trust this less the
+       further you go" without claiming a number, which is the honest thing to
+       show a Year 8 - a real prediction interval needs residual spread, and
+       residuals are out by the pitch rule. Drawn over the lines and under the
+       points, the marker and the caption. */
+    for (const [edge, from, to] of [
+      ['left', xNice.min, dataRange.xMin],
+      ['right', dataRange.xMax, xNice.max]
+    ]) {
+      if (to <= from) continue;
+      const fadeId = `fade-${edge}-${uid}`;
+      const gradient = svgEl('linearGradient', {
+        id: fadeId, x1: '0', y1: '0', x2: '1', y2: '0'
+      });
+      /* Clear where the data stops, heaviest at the far edge of the axis. */
+      const stops = edge === 'right'
+        ? [['0%', 0], ['100%', 0.72]]
+        : [['0%', 0.72], ['100%', 0]];
+      for (const [offset, opacity] of stops) {
+        gradient.append(svgEl('stop', { offset, 'stop-color': PAPER, 'stop-opacity': opacity }));
+      }
+      defs.append(gradient);
+      fades.push({ from, to, fadeId });
     }
   }
 
@@ -368,6 +380,35 @@ export function renderChart(spec) {
         'stroke-linecap': 'round'
       }));
     }
+  }
+
+  /* ---- the uncertainty wash, over the lines ---- */
+  for (const { from, to, fadeId } of fades) {
+    svg.append(svgEl('rect', {
+      x: x.to(from),
+      y: plotTop,
+      width: x.to(to) - x.to(from),
+      height: plotBottom - plotTop,
+      fill: `url(#${fadeId})`
+    }));
+  }
+
+  /* Caption goes on after the wash, or the thing naming the region would be the
+     one thing the region faded out. */
+  if (dataRange && fit && xNice.max > dataRange.xMax) {
+    /* Anchored to the right edge of the plot rather than to the start of the
+       band. The band is often only a tick or two wide, and left-anchoring ran
+       the caption off the edge of the export, where it read "beyond our da".
+       Full label size, not a fraction of it: this is the one caption that has
+       to survive being filmed off a screen, and the slide floor is 28px. */
+    svg.append(svgEl('text', {
+      x: plotRight - pad * 0.4,
+      y: plotTop + fonts.label * 1.4,
+      'text-anchor': 'end',
+      'font-size': fonts.label,
+      'font-style': 'italic',
+      fill: SAGE
+    }, 'beyond our data'));
   }
 
   /* ---- points ---- */
