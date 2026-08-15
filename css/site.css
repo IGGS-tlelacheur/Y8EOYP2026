@@ -705,8 +705,12 @@ input[type='range'] {
   text-align: center;
 }
 
-.slot img { max-width: 100%; height: auto; display: block; margin: 0 auto 0.6rem; }
-.slot .empty { color: var(--sage); font-size: 0.9rem; padding: 1.5rem 0; display: block; }
+/* :not([hidden]) on both, for the same reason each time: a bare `display` here
+   outranks the browser's own [hidden] rule, so a slot with no chart in it
+   rendered an empty image box anyway - which on screen collapsed to nothing and
+   in print was a blank 114mm hole that pushed "No chart yet" off the sheet. */
+.slot img:not([hidden]) { max-width: 100%; height: auto; display: block; margin: 0 auto 0.6rem; }
+.slot .empty:not([hidden]) { color: var(--sage); font-size: 0.9rem; padding: 1.5rem 0; display: block; }
 
 .card-ticks { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.5rem; }
 
@@ -940,14 +944,14 @@ input[type='range'] {
      tools export at any aspect still prints true. */
   .slot {
     width: 168mm;
-    height: 114mm;
+    height: 112mm;
     margin: 2mm auto 0;
     border: none;
     padding: 0;
     background: none;
   }
 
-  .slot img { width: 100%; height: 100%; object-fit: contain; object-position: center; margin: 0; }
+  .slot img:not([hidden]) { width: 100%; height: 100%; object-fit: contain; object-position: center; margin: 0; }
 
   /* :not([hidden]) matters. A bare `display:block` here beats the hidden
      attribute's own rule, so the "no chart yet" box printed underneath every

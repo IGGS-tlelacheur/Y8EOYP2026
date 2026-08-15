@@ -144,6 +144,22 @@ frame.addEventListener('load', async () => {
     rows.push({ key, current, fits: lo, limit: Math.floor(lo * MARGIN), spills });
   }
 
+  /* Every block, not only the ones holding a field. The chart blocks and the
+     masthead hold no field at all, so nothing above checked them, and both
+     were quietly clipping a millimetre. */
+  function blockOverflowMm(block) {
+    const style = win.getComputedStyle(block);
+    const floor = block.getBoundingClientRect().bottom
+      - parseFloat(style.paddingBottom)
+      - parseFloat(style.borderBottomWidth);
+    let deepest = -Infinity;
+    for (const el of block.querySelectorAll('*')) {
+      const rect = el.getBoundingClientRect();
+      if (rect.height > 0) deepest = Math.max(deepest, rect.bottom);
+    }
+    return deepest === -Infinity ? 0 : (deepest - floor) / MM;
+  }
+
   /* The plan itself: no block may overlap the next, and none may run into the
      foot. Measured rather than read off the stylesheet, so a padding or a
      border that pushes a box past its height is caught too. */
@@ -156,7 +172,8 @@ frame.addEventListener('load', async () => {
         return {
           name: [...el.classList].find((c) => c.startsWith('b-')) ?? el.className,
           top: (r.top - top) / MM,
-          bottom: (r.bottom - top) / MM
+          bottom: (r.bottom - top) / MM,
+          spill: blockOverflowMm(el)
         };
       })
       .sort((a, b) => a.top - b.top);
@@ -170,6 +187,10 @@ frame.addEventListener('load', async () => {
     }
     const last = blocks[blocks.length - 1];
     if (last.bottom > (foot.top - top) / MM) collisions.push(`${last.name} runs into the foot`);
+
+    for (const block of blocks) {
+      if (block.spill > 0.5) collisions.push(`${block.name} clips by ${block.spill.toFixed(1)}mm`);
+    }
 
     return {
       n: i + 1,

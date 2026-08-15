@@ -398,7 +398,12 @@ print rules on, and binary searches the longest ordinary prose that fits each bo
 hold two fields each, so those are measured against a neighbour writing to the limit.
 
 Room on two sheets roughly doubled every field: the claim went 189 → 240 characters,
-"the shape of it" 113 → 320, "how we collected it" 166 → 211.
+"what it shows" 113 → 320, "how we collected it" 166 → 211.
+
+`docs/reference-data-evidence-card.html` — the three worked examples and the blank
+template — was re-laid onto the same plan, and holds the same `.b-*` table. It has to:
+it is what a crew holds her own Card against, so if the two drift apart the examples
+are teaching a layout that no longer exists.
 
 **`@page` cannot be scoped** (found the same day, and the reason the one-page version
 never fitted on real paper). It applies to the whole document however it is nested, so
