@@ -122,15 +122,31 @@ export function renderChart(spec) {
   const xs = points.map((p) => p[0]);
   const ys = points.map((p) => p[1]);
 
+  /* The default limits are the data's own, not the data plus zero. Folding zero
+     in here would make the "start at zero" toggle inert for positive data and
+     take the axis-scaling drill in Lesson 4 with it. Zero is pulled in by
+     niceScale, and only when asked. */
+  const hasPoints = points.length > 0;
+  const startAtZero = axis.startAtZero ?? false;
+
+  /* The prediction is folded into the domain so the axis stretches to reach it.
+     Ask for 2040 and the chart has to show you how far past your evidence that
+     is; leaving the marker off the edge would hide exactly the thing Lesson 5
+     is about. */
+  const predicting = prediction && Number.isFinite(prediction.x) && Number.isFinite(prediction.y);
+  const xsAll = predicting ? [...xs, prediction.x] : xs;
+  const ysAll = predicting ? [...ys, prediction.y] : ys;
+  const spread = xsAll.length > 0;
+
   const xNice = niceScale(
-    axis.xMin ?? Math.min(...xs, 0),
-    axis.xMax ?? Math.max(...xs, 1),
-    { startAtZero: axis.startAtZero ?? false }
+    axis.xMin ?? (spread ? Math.min(...xsAll) : 0),
+    axis.xMax ?? (spread ? Math.max(...xsAll) : 1),
+    { startAtZero }
   );
   const yNice = niceScale(
-    axis.yMin ?? Math.min(...ys, 0),
-    axis.yMax ?? Math.max(...ys, 1),
-    { startAtZero: axis.startAtZero ?? false }
+    axis.yMin ?? (spread ? Math.min(...ysAll) : 0),
+    axis.yMax ?? (spread ? Math.max(...ysAll) : 1),
+    { startAtZero }
   );
 
   /* Margins are driven by type size so the slide render does not clip its own
@@ -209,12 +225,15 @@ export function renderChart(spec) {
 
     const rightBand = xNice.max - dataRange.xMax;
     if (rightBand > 0) {
-      /* Full label size, not a fraction of it: this is the one caption that has
-         to survive being filmed off a screen, and the slide export floor is
-         28px. Shrinking it by 8% put it under. */
+      /* Anchored to the right edge of the plot rather than to the start of the
+         band. The band is often only a tick or two wide, and left-anchoring ran
+         the caption off the edge of the export, where it read "beyond our da".
+         Full label size, not a fraction of it: this is the one caption that has
+         to survive being filmed off a screen, and the slide floor is 28px. */
       svg.append(svgEl('text', {
-        x: x.to(dataRange.xMax) + pad * 0.4,
+        x: plotRight - pad * 0.4,
         y: plotTop + fonts.label * 1.4,
+        'text-anchor': 'end',
         'font-size': fonts.label,
         'font-style': 'italic',
         fill: SAGE

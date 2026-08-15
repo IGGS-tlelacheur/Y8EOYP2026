@@ -25,21 +25,33 @@
     through the points and use it to predict.
   </p>
 
-  <section class="panel no-print">
+  <section class="panel no-print" id="data-panel">
     <h2>1 · Your data</h2>
-    <div class="field">
-      <label for="paste">Two columns of numbers</label>
-      <span class="help">
-        One pair per line, separated by a comma, a tab or a space. The first
-        number goes across, the second goes up.
+
+    <div id="data-open">
+      <div class="field">
+        <label for="paste">Two columns of numbers</label>
+        <span class="help">
+          One pair per line, separated by a comma, a tab or a space. The first
+          number goes across, the second goes up.
+        </span>
+        <textarea id="paste" spellcheck="false"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" id="use-paste">Use these numbers</button>
+        <button class="btn secondary" type="button" id="use-table">Use my collection table</button>
+        <button class="btn secondary" type="button" id="use-example">Use the example from the Card</button>
+      </div>
+    </div>
+
+    <div class="done-summary" id="data-done" hidden>
+      <span class="what">
+        <b id="data-count"></b>
+        <span id="data-note"></span>
       </span>
-      <textarea id="paste" spellcheck="false"></textarea>
+      <button class="btn secondary" type="button" id="change-data">Change the numbers</button>
     </div>
-    <div class="actions">
-      <button class="btn" type="button" id="use-paste">Use these numbers</button>
-      <button class="btn secondary" type="button" id="use-table">Use my collection table</button>
-      <button class="btn secondary" type="button" id="use-example">Use the example from the Card</button>
-    </div>
+
     <div class="msg" id="data-msg" hidden>
       <span class="mark" id="data-mark"></span>
       <span id="data-text"></span>
@@ -47,7 +59,7 @@
   </section>
 
   <div class="tool">
-    <div>
+    <div class="chart-col">
       <div class="chart-wrap" id="chart-wrap"></div>
 
       <div class="actions no-print" style="margin-top:1rem;">
@@ -67,21 +79,25 @@
     <div class="side no-print">
       <section class="panel">
         <h2>2 · Label your axes</h2>
-        <div class="field">
-          <label for="x-label">Across the bottom is…</label>
-          <input type="text" id="x-label" maxlength="40" placeholder="Shower length">
+        <div class="row">
+          <div class="field">
+            <label for="x-label">Across the bottom is…</label>
+            <input type="text" id="x-label" maxlength="40" placeholder="Shower length">
+          </div>
+          <div class="field">
+            <label for="x-unit">measured in</label>
+            <input type="text" id="x-unit" maxlength="20" placeholder="minutes">
+          </div>
         </div>
-        <div class="field">
-          <label for="x-unit">measured in</label>
-          <input type="text" id="x-unit" maxlength="20" placeholder="minutes">
-        </div>
-        <div class="field">
-          <label for="y-label">Up the side is…</label>
-          <input type="text" id="y-label" maxlength="40" placeholder="Water used">
-        </div>
-        <div class="field">
-          <label for="y-unit">measured in</label>
-          <input type="text" id="y-unit" maxlength="20" placeholder="litres">
+        <div class="row">
+          <div class="field">
+            <label for="y-label">Up the side is…</label>
+            <input type="text" id="y-label" maxlength="40" placeholder="Water used">
+          </div>
+          <div class="field">
+            <label for="y-unit">measured in</label>
+            <input type="text" id="y-unit" maxlength="20" placeholder="litres">
+          </div>
         </div>
         <div class="field">
           <label for="title">Title (optional)</label>
@@ -194,6 +210,23 @@ function say(message, kind) {
   box.hidden = false;
 }
 
+/* Step 1 is done once and then in the way, so it folds to a single line and
+   gives its height back to the steps that follow. */
+function foldData(count, note) {
+  document.querySelector('#data-open').hidden = true;
+  document.querySelector('#data-done').hidden = false;
+  document.querySelector('#data-count').textContent =
+    `${count} pair${count === 1 ? '' : 's'} of numbers`;
+  document.querySelector('#data-note').textContent = note ?? '';
+  document.querySelector('#data-msg').hidden = true;
+}
+
+document.querySelector('#change-data').addEventListener('click', () => {
+  document.querySelector('#data-open').hidden = false;
+  document.querySelector('#data-done').hidden = true;
+  document.querySelector('#paste').focus();
+});
+
 function setPoints(rows, note) {
   state.points = rows;
   state.fit = null;
@@ -203,7 +236,8 @@ function setPoints(rows, note) {
   document.querySelector('#drag-help').hidden = true;
   document.querySelector('#predict-panel').hidden = true;
   document.querySelector('#predict-readout').hidden = true;
-  if (note) say(note, 'good');
+  document.querySelector('#predict-x').value = '';
+  foldData(rows.length, note);
   render();
 }
 
@@ -213,8 +247,8 @@ document.querySelector('#use-paste').addEventListener('click', () => {
     return say('Put at least two pairs of numbers in the box, one pair per line.', 'problem');
   }
   const note = skipped.length
-    ? `Using ${rows.length} pairs. Line${skipped.length === 1 ? '' : 's'} ${skipped.join(', ')} had no pair of numbers on ${skipped.length === 1 ? 'it' : 'them'}, so ${skipped.length === 1 ? 'it was' : 'they were'} left out.`
-    : `Using ${rows.length} pairs.`;
+    ? `Line${skipped.length === 1 ? '' : 's'} ${skipped.join(', ')} had no pair of numbers on ${skipped.length === 1 ? 'it' : 'them'}, so ${skipped.length === 1 ? 'it was' : 'they were'} left out.`
+    : 'from what you typed';
   setPoints(rows, note);
 });
 
@@ -235,7 +269,7 @@ document.querySelector('#use-table').addEventListener('click', () => {
   document.querySelector('#y-label').value = second?.name ?? '';
   document.querySelector('#y-unit').value = second?.unit ?? '';
   readLabels();
-  setPoints(rows, `Using ${rows.length} rows from your collection table.`);
+  setPoints(rows, 'from your collection table');
 });
 
 document.querySelector('#use-example').addEventListener('click', () => {
@@ -245,7 +279,7 @@ document.querySelector('#use-example').addEventListener('click', () => {
   document.querySelector('#y-label').value = 'Water used';
   document.querySelector('#y-unit').value = 'litres';
   readLabels();
-  setPoints(EXAMPLE.map((p) => [...p]), 'Using the 18 showers from the worked example.');
+  setPoints(EXAMPLE.map((p) => [...p]), 'from the worked example on the Card');
 });
 
 /* ---- labels -------------------------------------------------------------- */
@@ -454,12 +488,27 @@ wrap.addEventListener('pointerdown', (event) => {
   event.preventDefault();
 });
 
+/* Handles stay inside the axes. Dragged off the edge a handle stops being
+   drawn, and a girl cannot grab back something she cannot see. */
+function clampToAxes(point) {
+  if (!chart) return point;
+  return {
+    x: Math.min(Math.max(point.x, chart.xNice.min), chart.xNice.max),
+    y: Math.min(Math.max(point.y, chart.yNice.min), chart.yNice.max)
+  };
+}
+
+function moveHandle(key, point) {
+  const at = clampToAxes(point);
+  if (key === 'a') { state.fit.x1 = at.x; state.fit.y1 = at.y; }
+  else { state.fit.x2 = at.x; state.fit.y2 = at.y; }
+}
+
 window.addEventListener('pointermove', (event) => {
   if (!dragging || !chart) return;
   const at = pointerToData(chart.svg, event, chart.x, chart.y);
   if (!at) return;
-  if (dragging === 'a') { state.fit.x1 = at.x; state.fit.y1 = at.y; }
-  else { state.fit.x2 = at.x; state.fit.y2 = at.y; }
+  moveHandle(dragging, at);
   render();
 });
 
@@ -483,14 +532,17 @@ wrap.addEventListener('keydown', (event) => {
   const xStep = (chart.xNice.max - chart.xNice.min) / 100;
   const yStep = (chart.yNice.max - chart.yNice.min) / 100;
 
-  if (handle.dataset.handle === 'a') {
-    state.fit.x1 += move[0] * xStep * steps;
-    state.fit.y1 += move[1] * yStep * steps;
-  } else {
-    state.fit.x2 += move[0] * xStep * steps;
-    state.fit.y2 += move[1] * yStep * steps;
-  }
-  focusedHandle = handle.dataset.handle;
+  const key = handle.dataset.handle;
+  const from = key === 'a'
+    ? { x: state.fit.x1, y: state.fit.y1 }
+    : { x: state.fit.x2, y: state.fit.y2 };
+
+  moveHandle(key, {
+    x: from.x + move[0] * xStep * steps,
+    y: from.y + move[1] * yStep * steps
+  });
+
+  focusedHandle = key;
   render();
 });
 

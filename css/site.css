@@ -327,13 +327,24 @@ a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
 
 .tool {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 21rem;
+  grid-template-columns: minmax(0, 1fr) 25rem;
   gap: 1.5rem;
   align-items: start;
 }
 
+/* The chart rides down the page with her. Every control in the right-hand
+   column - naming the axes, tilting the line, reading a prediction - only makes
+   sense while she can see what it did, and on a 768px laptop the lower steps
+   would otherwise sit a full screen below the chart. */
+.chart-col {
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+}
+
 @media (max-width: 62rem) {
   .tool { grid-template-columns: 1fr; }
+  .chart-col { position: static; }
 }
 
 .tool .side { display: grid; gap: 1.25rem; }
@@ -345,12 +356,15 @@ a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
 }
 
 /* height:auto with the viewBox is what stops the chart distorting when the
-   window is resized. touch-action:none is what stops a drag scrolling the page
-   out from under a finger. */
+   window is resized. max-height keeps it inside a short laptop screen while it
+   is stuck to the top - the viewBox letterboxes rather than squashing.
+   touch-action:none is what stops a drag scrolling the page out from under a
+   finger. */
 .chart-wrap svg {
   display: block;
   width: 100%;
   height: auto;
+  max-height: 58vh;
   touch-action: none;
 }
 
@@ -392,8 +406,21 @@ a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
   padding: 0.15em 0.5em;
 }
 
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
 .row .field { margin-bottom: 0; }
+
+/* Step 1 folds away once it is done. It is a big textarea used once, and
+   leaving it open pushes every later step below the fold. */
+.done-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.done-summary .what { flex: 1; min-width: 12rem; }
+.done-summary .what b { display: block; }
+.done-summary .what span { color: var(--sage); font-size: 0.9rem; }
 
 .switch {
   display: flex;
