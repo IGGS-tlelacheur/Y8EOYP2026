@@ -6,7 +6,7 @@
 <title>H₂O — Towards 2040 · Data Evidence Card</title>
 <link rel="stylesheet" href="css/site.css">
 </head>
-<body>
+<body class="card-doc">
 <a class="skip" href="#main">Skip to the Card</a>
 
 <header class="masthead card-screen-only">
@@ -44,6 +44,10 @@
     </div>
     <p class="note" id="file-where"></p>
     <p class="note">
+      The Card prints on two sheets: page 1 is your data, page 2 is your claim.
+      Your crew name is on both, so a sheet on its own can still find its way back.
+    </p>
+    <p class="note">
       For a copy to put on screen in your film, use <b>Print the Card</b> and
       choose <b>Save as PDF</b> as the printer. Your two charts already save as
       full-size pictures from the chart tools.
@@ -59,74 +63,91 @@
     </p>
   </section>
 
-  <!-- One Card. A form on screen, the printed Card on paper. -->
+  <!-- One Card. A form on screen, two printed sheets on paper.
+
+       Page 1 is the data: what we asked, what we measured, how, and one
+       variable on its own. Page 2 is the claim: the two variables together,
+       the line, the prediction, and what would make it wrong.
+
+       Every block below carries a b- class. That is its place on the sheet:
+       a fixed top and a fixed height, set in css/site.css. Nothing here is in
+       flow when it prints, so adding a block means finding it room in that
+       table first. -->
   <section class="card panel" id="card">
-    <div class="card-head">
-      <div>
-        <div class="s"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Year 8</div>
-        <div class="t">Data Evidence Card</div>
-      </div>
-      <div class="r">One page.<br>Two charts.<br>One honest claim.</div>
-    </div>
 
-    <div class="card-meta card-block">
-      <div>
-        <span class="lbl">Crew</span>
-        <input type="text" data-field="crew" maxlength="34">
-        <span class="ink one-line" data-mirror="crew"></span>
-        <span class="count"></span>
+    <div class="card-page">
+      <div class="card-head b-head">
+        <div>
+          <div class="s"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Year 8</div>
+          <div class="t">Data Evidence Card</div>
+        </div>
+        <div class="r">Two pages.<br>Two charts.<br>One honest claim.</div>
       </div>
-      <div>
-        <span class="lbl">Members</span>
-        <input type="text" data-field="members" maxlength="61">
-        <span class="ink one-line" data-mirror="members"></span>
-        <span class="count"></span>
-      </div>
-      <div>
-        <span class="lbl">Date</span>
-        <input type="text" data-field="date" maxlength="16" placeholder="dd/mm/yyyy">
-        <span class="ink one-line" data-mirror="date"></span>
-        <span class="count"></span>
-      </div>
-    </div>
 
-    <div class="card-block">
-      <span class="lbl">Our question</span>
-      <input type="text" data-field="question" maxlength="52">
-      <span class="ink one-line" data-mirror="question"></span>
-      <span class="count"></span>
-    </div>
+      <div class="card-meta card-block b-meta">
+        <div>
+          <span class="lbl">Crew</span>
+          <input type="text" data-field="crew" maxlength="56">
+          <span class="ink one-line" data-mirror="crew"></span>
+          <span class="count"></span>
+        </div>
+        <div>
+          <span class="lbl">Members</span>
+          <input type="text" data-field="members" maxlength="85">
+          <span class="ink one-line" data-mirror="members"></span>
+          <span class="count"></span>
+        </div>
+        <div>
+          <span class="lbl">Date</span>
+          <input type="text" data-field="date" maxlength="15" placeholder="dd/mm/yyyy">
+          <span class="ink one-line" data-mirror="date"></span>
+          <span class="count"></span>
+        </div>
+      </div>
 
-    <div class="card-block card-grid3">
-      <div>
-        <span class="lbl">Variable 1 (and units)</span>
-        <input type="text" data-field="var1" maxlength="39">
-        <span class="ink one-line" data-mirror="var1"></span>
+      <div class="card-block b-question">
+        <span class="lbl">Our question</span>
+        <input type="text" data-field="question" maxlength="97">
+        <span class="ink one-line" data-mirror="question"></span>
         <span class="count"></span>
       </div>
-      <div>
-        <span class="lbl">Variable 2 (and units)</span>
-        <input type="text" data-field="var2" maxlength="36">
-        <span class="ink one-line" data-mirror="var2"></span>
+
+      <div class="card-block card-grid3 b-vars">
+        <div>
+          <span class="lbl">Variable 1 (and units)</span>
+          <input type="text" data-field="var1" maxlength="61">
+          <span class="ink one-line" data-mirror="var1"></span>
+          <span class="count"></span>
+        </div>
+        <div>
+          <span class="lbl">Variable 2 (and units)</span>
+          <input type="text" data-field="var2" maxlength="61">
+          <span class="ink one-line" data-mirror="var2"></span>
+          <span class="count"></span>
+        </div>
+        <div>
+          <span class="lbl">How many measurements</span>
+          <input type="text" data-field="n" maxlength="30">
+          <span class="ink one-line" data-mirror="n"></span>
+          <span class="count"></span>
+        </div>
+      </div>
+
+      <div class="card-block b-method">
+        <span class="lbl">How we collected it</span>
+        <textarea data-field="method" maxlength="211"></textarea>
+        <span class="ink" data-mirror="method"></span>
         <span class="count"></span>
       </div>
-      <div>
-        <span class="lbl">How many measurements</span>
-        <input type="text" data-field="n" maxlength="20">
-        <span class="ink one-line" data-mirror="n"></span>
+
+      <div class="card-block b-source">
+        <span class="lbl">Where our data came from</span>
+        <textarea data-field="source" maxlength="211"></textarea>
+        <span class="ink" data-mirror="source"></span>
         <span class="count"></span>
       </div>
-    </div>
 
-    <div class="card-block">
-      <span class="lbl">How we collected it</span>
-      <textarea data-field="method" maxlength="166"></textarea>
-      <span class="ink" data-mirror="method"></span>
-      <span class="count"></span>
-    </div>
-
-    <div class="card-block card-charts">
-      <div>
+      <div class="card-block b-chart1">
         <span class="lbl">Chart 1 — one variable on its own</span>
         <div class="slot" data-slot="chart1">
           <img alt="" hidden>
@@ -139,12 +160,31 @@
             </label>
           </div>
         </div>
-        <span class="lbl" style="margin-top:2mm;">What it shows</span>
-        <textarea data-field="shape" maxlength="113"></textarea>
+      </div>
+
+      <div class="card-block b-shape">
+        <span class="lbl">The shape of it</span>
+        <textarea data-field="shape" maxlength="320"></textarea>
         <span class="ink" data-mirror="shape"></span>
         <span class="count"></span>
       </div>
-      <div>
+
+      <div class="card-foot">
+        <span><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Mathematics</span>
+        <span class="foot-crew"></span>
+        <span>Page 1 of 2 · our data</span>
+      </div>
+    </div>
+
+    <div class="card-page">
+      <div class="card-head card-head-cont b-head2">
+        <div class="s">
+          <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Data Evidence Card
+        </div>
+        <div class="r">Page 2 of 2 · our claim</div>
+      </div>
+
+      <div class="card-block b-chart2">
         <span class="lbl">Chart 2 — the two variables together</span>
         <div class="slot" data-slot="chart2">
           <img alt="" hidden>
@@ -157,65 +197,67 @@
             </label>
           </div>
         </div>
-        <span class="lbl" style="margin-top:2mm;">The relationship</span>
-        <textarea data-field="relationship" maxlength="106"></textarea>
+      </div>
+
+      <div class="card-block b-relationship">
+        <span class="lbl">The relationship</span>
+        <textarea data-field="relationship" maxlength="211"></textarea>
         <span class="ink" data-mirror="relationship"></span>
         <span class="count"></span>
       </div>
+
+      <div class="card-block card-grid2 b-fit">
+        <div class="eqbox">
+          <span class="lbl">Our line of best fit</span>
+          <input type="text" data-field="equation" maxlength="24" placeholder="y = ___x + ___">
+          <span class="ink one-line" data-mirror="equation"></span>
+          <span class="count"></span>
+          <span class="lbl" style="margin-top:1.5mm;">What the gradient means</span>
+          <textarea data-field="gradient" maxlength="134"></textarea>
+          <span class="ink" data-mirror="gradient"></span>
+          <span class="count"></span>
+        </div>
+        <div class="predbox">
+          <span class="lbl">Reading inside our data (interpolation)</span>
+          <textarea data-field="interpolation" maxlength="75"></textarea>
+          <span class="ink" data-mirror="interpolation"></span>
+          <span class="count"></span>
+          <span class="lbl" style="margin-top:2mm;">Reading past our data (extrapolation)</span>
+          <textarea data-field="extrapolation" maxlength="130"></textarea>
+          <span class="ink" data-mirror="extrapolation"></span>
+          <span class="count"></span>
+        </div>
+      </div>
+
+      <div class="card-block b-claim">
+        <div class="claim-block">
+          <span class="lbl">Our claim for 2040</span>
+          <textarea data-field="claim" maxlength="240"></textarea>
+          <span class="ink" data-mirror="claim"></span>
+          <span class="count"></span>
+        </div>
+      </div>
+
+      <div class="card-block card-grid2 b-end">
+        <div>
+          <span class="lbl">Why we might be wrong</span>
+          <textarea data-field="wrong" maxlength="130"></textarea>
+          <span class="ink" data-mirror="wrong"></span>
+          <span class="count"></span>
+        </div>
+        <div>
+          <span class="lbl">Badges earned</span>
+          <div class="card-ticks" id="ticks"></div>
+        </div>
+      </div>
+
+      <div class="card-foot">
+        <span><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Mathematics</span>
+        <span class="foot-crew"></span>
+        <span>Page 2 of 2 · our claim</span>
+      </div>
     </div>
 
-    <div class="card-block card-grid2">
-      <div class="eqbox">
-        <span class="lbl">Our line of best fit</span>
-        <input type="text" data-field="equation" maxlength="19" placeholder="y = ___x + ___">
-        <span class="ink one-line" data-mirror="equation"></span>
-        <span class="count"></span>
-        <span class="lbl" style="margin-top:1.5mm;">What the gradient means</span>
-        <textarea data-field="gradient" maxlength="87"></textarea>
-        <span class="ink" data-mirror="gradient"></span>
-        <span class="count"></span>
-      </div>
-      <div class="predbox">
-        <span class="lbl">Reading inside our data (interpolation)</span>
-        <textarea data-field="interpolation" maxlength="48"></textarea>
-        <span class="ink" data-mirror="interpolation"></span>
-        <span class="count"></span>
-        <span class="lbl" style="margin-top:2mm;">Reading past our data (extrapolation)</span>
-        <textarea data-field="extrapolation" maxlength="117"></textarea>
-        <span class="ink" data-mirror="extrapolation"></span>
-        <span class="count"></span>
-      </div>
-    </div>
-
-    <div class="card-block">
-      <div class="claim-block">
-        <span class="lbl">Our claim for 2040</span>
-        <textarea data-field="claim" maxlength="189"></textarea>
-        <span class="ink" data-mirror="claim"></span>
-        <span class="count"></span>
-      </div>
-    </div>
-
-    <div class="card-block card-grid2">
-      <div>
-        <span class="lbl">Why we might be wrong</span>
-        <textarea data-field="wrong" maxlength="147"></textarea>
-        <span class="ink" data-mirror="wrong"></span>
-        <span class="count"></span>
-      </div>
-      <div>
-        <span class="lbl">Where our data came from</span>
-        <textarea data-field="source" maxlength="86"></textarea>
-        <span class="ink" data-mirror="source"></span>
-        <span class="count"></span>
-        <div class="card-ticks" id="ticks"></div>
-      </div>
-    </div>
-
-    <div class="card-foot">
-      <span><span class="h2o">H<sub>2</sub>O</span> — Towards 2040 · Mathematics · Data Evidence Card</span>
-      <span id="foot-crew"></span>
-    </div>
   </section>
 
   <section class="panel card-screen-only">
@@ -346,11 +388,17 @@ function paintTicks() {
   }
 }
 
+/* Both printed sheets carry the crew name in the foot, so a page that gets
+   separated from its partner can still be handed back to the right crew. */
+function paintCrewFoot(value) {
+  for (const el of document.querySelectorAll('.foot-crew')) el.textContent = value;
+}
+
 function paintAll() {
   for (const input of inputs) paintField(input);
   for (const name of SLOTS) paintSlot(name);
   paintTicks();
-  document.querySelector('#foot-crew').textContent = state.fields.crew?.value ?? '';
+  paintCrewFoot(state.fields.crew?.value ?? '');
 }
 
 /* ---- editing ------------------------------------------------------------- */
@@ -372,9 +420,7 @@ for (const input of inputs) {
   input.addEventListener('input', () => {
     touch(input.dataset.field, input.value);
     paintField(input);
-    if (input.dataset.field === 'crew') {
-      document.querySelector('#foot-crew').textContent = input.value;
-    }
+    if (input.dataset.field === 'crew') paintCrewFoot(input.value);
   });
 }
 
@@ -462,15 +508,22 @@ function fromFile(data) {
 
   /* maxlength stops her typing or pasting past a limit, but a file can carry
      anything. Never truncated - losing a crew mate's words to protect a page
-     break would be the wrong trade - just said out loud. */
+     break would be the wrong trade - just said out loud. Every box on the
+     printed Card is a fixed size now, so what does not fit is what does not
+     print, and she needs to be told which answer it is. */
   const over = inputs.filter((input) => {
     const value = state.fields[input.dataset.field]?.value ?? '';
     return value.length > Number(input.getAttribute('maxlength'));
   });
   if (over.length) {
+    /* The label immediately before the field, not the first one in the block:
+       two of the blocks hold two fields each. */
+    const names = over
+      .map((input) => input.previousElementSibling?.textContent?.trim() || input.dataset.field)
+      .join(', ');
     say(
-      `${over.length} answer${over.length === 1 ? ' is' : 's are'} longer than the Card allows, `
-      + 'so it may print onto two pages. Shorten them to fix it.',
+      `Too long to fit on the printed Card: ${names}. `
+      + 'Shorten it on screen and the end of it will print again.',
       'problem'
     );
   }

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Measure the Card — author tool</title>
+<style>
+  body { font: 14px/1.5 'Segoe UI', system-ui, sans-serif; margin: 2rem; max-width: 60rem; }
+  h1 { font-size: 1.3rem; }
+  p { max-width: 34rem; }
+  table { border-collapse: collapse; margin: 1rem 0; font-variant-numeric: tabular-nums; }
+  th, td { border: 1px solid #B7C8C4; padding: 0.3rem 0.6rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  .over { background: #FDE7E7; font-weight: 700; }
+  .slack { background: #FFF6D9; }
+  pre { background: #F4F6F5; padding: 1rem; overflow-x: auto; }
+  iframe { width: 240mm; height: 700px; border: 1px solid #B7C8C4; }
+</style>
+</head>
+<body>
+
+<h1>Measure the Card</h1>
+
+<p>
+  Author-time only. Never linked from the site and never loaded by a student.
+  Serve the repo over HTTP and open this page.
+</p>
+
+<p>
+  The printed Card places every block at a fixed top with a fixed height, so a
+  field that overruns its box is clipped rather than grown. The character limits
+  in <code>card.html</code> are what stop that happening, and this is where they
+  come from: it loads the real Card, forces the print rules on, and binary
+  searches the longest string of ordinary prose that still fits each box.
+</p>
+
+<p>
+  <b>Take the “limit” column, not the “fits” column.</b> Fits is the measured
+  ceiling with this filler text; limit is that with 8% taken off, because a
+  crew writing about litres per shower will not use the same letters.
+</p>
+
+<div id="out">Measuring…</div>
+
+<iframe id="frame" src="../card.html" title="the Card"></iframe>
+
+<script type="module">
+const MARGIN = 0.92;
+const MM = 96 / 25.4;
+
+/* Ordinary Year 8 prose. Character width is what is being measured, so the
+   filler has to look like what a crew actually writes - not lorem ipsum, and
+   not a worst case of nothing but capital Ms, which would cost every field a
+   third of its length to guard against a sentence no one will type. */
+const PROSE = 'we measured how much water each girl used in her shower with a '
+  + 'bucket and a stopwatch and then wrote down the time in minutes and the '
+  + 'litres she used so that we could compare them fairly across the week ';
+
+function filler(n) {
+  let out = '';
+  while (out.length < n) out += PROSE;
+  return out.slice(0, n);
+}
+
+const frame = document.querySelector('#frame');
+
+frame.addEventListener('load', async () => {
+  const doc = frame.contentDocument;
+  const win = frame.contentWindow;
+
+  /* The print rules are the layout under test. Rewriting the media text is the
+     only way to see them without a printer, and it is the real cascade rather
+     than a copy of it. */
+  for (const sheet of doc.styleSheets) {
+    for (const rule of sheet.cssRules) {
+      if (rule.type === CSSRule.MEDIA_RULE && rule.media.mediaText.includes('print')) {
+        rule.media.mediaText = 'screen';
+      }
+    }
+  }
+
+  await doc.fonts.ready;
+
+  /* The block is the box with the fixed height, and the block is what clips.
+     The filled boxes inside one - the equation box, the prediction box - are
+     `height: 100%` of a grid area that grows with its content, so they never
+     report an overflow of their own.
+
+     Test the deepest thing in the block, not the field being measured. Where
+     two fields are stacked, lengthening the upper one does not move its own
+     bottom past the floor: it shoves the lower one through it. */
+  function overflows(mirror) {
+    const block = mirror.closest('.card-block');
+    const style = win.getComputedStyle(block);
+    const floor = block.getBoundingClientRect().bottom
+      - parseFloat(style.paddingBottom)
+      - parseFloat(style.borderBottomWidth);
+
+    let deepest = -Infinity;
+    for (const el of block.querySelectorAll('*')) {
+      const rect = el.getBoundingClientRect();
+      if (rect.height > 0) deepest = Math.max(deepest, rect.bottom);
+    }
+    return deepest > floor + 0.5;
+  }
+
+  const rows = [];
+
+  for (const input of doc.querySelectorAll('[data-field]')) {
+    const key = input.dataset.field;
+    const mirror = doc.querySelector(`[data-mirror="${key}"]`);
+    const current = Number(input.getAttribute('maxlength'));
+
+    /* Two of the boxes hold two fields stacked, so a field's room depends on
+       what its neighbour wrote. Measure it against a neighbour writing to the
+       limit - the worst case a crew can actually reach. That makes the pair
+       mutually dependent, which is why the tool reports SPILLS on a limit that
+       no longer fits: run it again after changing one and the other settles. */
+    const box = mirror.closest('.eqbox, .predbox');
+    const neighbours = box
+      ? [...box.querySelectorAll('[data-mirror]')].filter((m) => m !== mirror)
+      : [];
+    for (const other of neighbours) {
+      const field = doc.querySelector(`[data-field="${other.dataset.mirror}"]`);
+      other.textContent = filler(Number(field.getAttribute('maxlength')));
+    }
+
+    /* Binary search the longest filler that still fits. The ceiling is past
+       what the deepest box on either sheet can hold, so it always brackets;
+       a field reported as exactly the ceiling means it did not. */
+    let lo = 0;
+    let hi = 1200;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      mirror.textContent = filler(mid);
+      if (overflows(mirror)) hi = mid - 1;
+      else lo = mid;
+    }
+
+    mirror.textContent = filler(current);
+    const spills = overflows(mirror);
+    mirror.textContent = '';
+    for (const other of neighbours) other.textContent = '';
+
+    rows.push({ key, current, fits: lo, limit: Math.floor(lo * MARGIN), spills });
+  }
+
+  /* The plan itself: no block may overlap the next, and none may run into the
+     foot. Measured rather than read off the stylesheet, so a padding or a
+     border that pushes a box past its height is caught too. */
+  const pages = [...doc.querySelectorAll('.card-page')].map((page, i) => {
+    const top = page.getBoundingClientRect().top;
+    const blocks = [...page.children]
+      .filter((el) => !el.classList.contains('card-foot'))
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          name: [...el.classList].find((c) => c.startsWith('b-')) ?? el.className,
+          top: (r.top - top) / MM,
+          bottom: (r.bottom - top) / MM
+        };
+      })
+      .sort((a, b) => a.top - b.top);
+
+    const foot = page.querySelector('.card-foot').getBoundingClientRect();
+    const collisions = [];
+    for (let j = 1; j < blocks.length; j += 1) {
+      if (blocks[j].top < blocks[j - 1].bottom - 0.01) {
+        collisions.push(`${blocks[j - 1].name} overlaps ${blocks[j].name}`);
+      }
+    }
+    const last = blocks[blocks.length - 1];
+    if (last.bottom > (foot.top - top) / MM) collisions.push(`${last.name} runs into the foot`);
+
+    return {
+      n: i + 1,
+      height: page.getBoundingClientRect().height / MM,
+      blocks,
+      footTop: (foot.top - top) / MM,
+      collisions
+    };
+  });
+
+  const out = document.querySelector('#out');
+  out.textContent = '';
+
+  const table = document.createElement('table');
+  table.innerHTML = '<tr><th>field</th><th>maxlength now</th><th>fits</th>'
+    + '<th>limit (8% off)</th><th>slack</th></tr>';
+  for (const row of rows) {
+    const tr = document.createElement('tr');
+    for (const cell of [row.key, row.current, row.fits, row.limit, row.limit - row.current]) {
+      const td = document.createElement('td');
+      td.textContent = cell;
+      tr.append(td);
+    }
+    if (row.spills) tr.className = 'over';
+    else if (row.limit - row.current > 30) tr.className = 'slack';
+    table.append(tr);
+  }
+  out.append(table);
+
+  const report = document.createElement('pre');
+  const lines = [];
+  for (const page of pages) {
+    lines.push(`page ${page.n}: ${page.height.toFixed(1)}mm, foot at ${page.footTop.toFixed(1)}mm`);
+    for (const b of page.blocks) {
+      lines.push(`  ${b.name.padEnd(16)} ${b.top.toFixed(1).padStart(6)} - ${b.bottom.toFixed(1).padStart(6)}mm`);
+    }
+    lines.push(page.collisions.length ? `  PROBLEM: ${page.collisions.join('; ')}` : '  no overlaps');
+  }
+  const spilling = rows.filter((r) => r.spills).map((r) => r.key);
+  lines.push('');
+  lines.push(spilling.length
+    ? `maxlength too long for the box: ${spilling.join(', ')}`
+    : 'every current maxlength fits its box');
+  report.textContent = lines.join('\n');
+  out.append(report);
+
+  const suggestion = document.createElement('pre');
+  suggestion.textContent = rows.map((r) => `${r.key}: maxlength="${r.limit}"`).join('\n');
+  out.append(suggestion);
+
+  window.RESULTS = { rows, pages };
+});
+</script>
+</body>
+</html>

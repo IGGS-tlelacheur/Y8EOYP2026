@@ -359,7 +359,7 @@ Available from every room, never required, framed as *side quests* rather than
 ---
 
 ## 8. Data Evidence Card webform
-Direct port of `data-evidence-card.html`, same fields, same one-page layout:
+Direct port of `data-evidence-card.html`, same fields:
 
 Crew · Members · Date · Our question · Variable 1 (and units) · Variable 2 (and units) ·
 How many measurements · How we collected it · Chart 1 · The shape of it · Chart 2 ·
@@ -371,10 +371,40 @@ Behaviour:
 - Autosaves to `h2o.v1.card` on every keystroke, debounced.
 - Chart slots accept an attachment from either tool, or a re-upload of a PNG.
 - Badge ticks are read-only, driven by `h2o.v1.badges`.
-- Character limits per field, with a live count, so it stays on one page.
-- Print CSS reproduces the existing card exactly. Screen view is a form; print view is
+- Character limits per field, with a live count, so nothing a crew writes is lost when
+  it prints. Derived by measurement — see below.
+- Print CSS reproduces the existing card. Screen view is a form; print view is
   the card. Same file, two appearances.
 - The three worked examples stay available as a reference panel.
+
+### Two sheets, not one (settled 16/08/2026)
+
+The paper Card is one page. The web Card is **two**, and each carries one chart at 80%
+of the page width — page 1 the data, page 2 the claim. Reasons, in order:
+
+1. **A chart 90mm wide is not a chart anyone can read**, and two of them side by side
+   with their commentary took a third of the sheet. The film needs these on screen.
+2. **The layout is a plan, not a stack.** Every block is placed at a fixed top with a
+   fixed height (`css/site.css`, the `.b-*` table). A short answer leaves its space
+   where it is instead of pulling the page up, and one long answer cannot shunt the
+   block below it onto a third sheet.
+3. Character limits stop being a way to defend a page break and become what they should
+   have been: a guarantee that what she typed is what prints.
+
+The trade is that a box which overruns is clipped rather than grown. So the limits are
+measured, not estimated: `scripts/measure-card.html` loads the real Card, forces the
+print rules on, and binary searches the longest ordinary prose that fits each box, with
+8% taken off. **Changing a height in the plan means re-running it.** Two of the boxes
+hold two fields each, so those are measured against a neighbour writing to the limit.
+
+Room on two sheets roughly doubled every field: the claim went 189 → 240 characters,
+"the shape of it" 113 → 320, "how we collected it" 166 → 211.
+
+**`@page` cannot be scoped** (found the same day, and the reason the one-page version
+never fitted on real paper). It applies to the whole document however it is nested, so
+the site now has exactly one `@page` rule — `margin: 0`, which the Card needs — and
+every other printable page carries its own 14mm as padding. A second `@page` anywhere
+in `site.css` silently wins everywhere.
 
 ### Required in the film — not marked by maths
 

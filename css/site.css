@@ -752,24 +752,109 @@ input[type='range'] {
 .claim-block .ink { color: #BFD8FF; }
 .claim-block textarea { color: var(--c-ink); }
 
-@media print {
-  @page { size: A4; margin: 0; }
+/* On screen the two printed sheets are two halves of one form, divided so a
+   crew can see which answers land on which sheet before they print. */
+.card-page + .card-page { margin-top: 2rem; }
 
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  border-bottom: 2px solid var(--c-deep);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-head .t { font-family: var(--font-hand); font-size: 1.6rem; color: var(--c-deep); line-height: 1.1; }
+
+.card-head .s,
+.card-head .r {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sage);
+}
+
+.card-head .r { text-align: right; }
+
+/* Print furniture. It says which sheet is which, which on screen is already
+   obvious from the divider above. */
+.card-foot { display: none; }
+
+@media print {
   .card-screen-only { display: none !important; }
 
   .card {
     display: block;
     width: 210mm;
-    min-height: 297mm;
-    padding: 10mm 12mm 9mm;
     margin: 0;
-    background: var(--c-paper);
+    padding: 0;
+    border: none;
+    background: none;
     color: var(--c-ink);
     font-family: 'TeX Gyre Heros Cn', 'Carlito', var(--font-body);
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    position: relative;
   }
+
+  /* Two sheets. Page 1 is the data, page 2 is the claim.
+
+     Each is exactly A4 and each is a plan rather than a stack: every block
+     inside it is placed at a fixed top with a fixed height, so the room a
+     short answer does not use stays where it is instead of collecting at the
+     foot of the page, and one long answer cannot shunt the block below it onto
+     a third sheet. The cost is that a box which overflows is clipped, not
+     grown - which is what the character limits are for. They were measured
+     against these heights by scripts/measure-card.html, so changing a height
+     means re-running it. */
+  .card-page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
+    background: var(--c-paper);
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+  }
+
+  /* The screen rule that separates the two sheets in the form. On paper the
+     break separates them, and 2rem of margin here would push everything on
+     sheet 2 down by 8mm. */
+  .card-page + .card-page { margin-top: 0; }
+
+  /* Without this the trailing break asks for a third, blank, sheet. */
+  .card-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .card-page > * {
+    position: absolute;
+    left: 12mm;
+    right: 12mm;
+    overflow: hidden;
+  }
+
+  /* The plan. Read top and height downwards and the sums check themselves:
+     each top is the one above plus its height, plus a 2mm gutter. Nothing may
+     end below 281mm, where the foot rule starts. */
+  .b-head         { top: 10mm;  height: 17mm; }
+  .b-meta         { top: 29mm;  height: 18mm; }
+  .b-question     { top: 49mm;  height: 14mm; }
+  .b-vars         { top: 65mm;  height: 18mm; }
+  .b-method       { top: 85mm;  height: 22mm; }
+  .b-source       { top: 109mm; height: 18mm; }
+  .b-chart1       { top: 130mm; height: 118mm; }
+  .b-shape        { top: 251mm; height: 29mm; }
+
+  .b-head2        { top: 10mm;  height: 11mm; }
+  .b-chart2       { top: 24mm;  height: 118mm; }
+  .b-relationship { top: 145mm; height: 20mm; }
+  .b-fit          { top: 168mm; height: 52mm; }
+  .b-claim        { top: 223mm; height: 28mm; }
+  .b-end          { top: 254mm; height: 26mm; }
 
   /* The form disappears and its mirror takes over. Authorship goes too: it is
      the crew's working record and it lives in the .h2ocard file, where staff can
@@ -828,36 +913,64 @@ input[type='range'] {
     line-height: 1.5;
   }
 
-  .card-meta {
-    display: grid;
-    grid-template-columns: 2fr 3fr 1.2fr;
-    gap: 5mm;
-    border-bottom: 1px solid var(--c-rule);
-    padding: 2.5mm 0 2mm;
-  }
+  /* Page 2 carries a strip rather than a masthead: enough to identify a sheet
+     that has come adrift from page 1, not enough to spend the room twice. */
+  .card-head-cont { border-bottom-width: 1.2px; padding-bottom: 2mm; }
+  .card-head-cont .s { margin-bottom: 0; }
 
-  .card-block { padding: 2.4mm 0 1.7mm; border-bottom: 1px solid var(--c-rule); }
+  .card-meta { display: grid; grid-template-columns: 2fr 3fr 1.2fr; gap: 5mm; }
+
+  /* No padding anywhere: the gutters are in the plan above, not in the boxes,
+     which is the whole point of placing them. The rule sits on the floor of
+     each box, so the ruling of the sheet is even however much anyone wrote. */
+  .card-block { padding: 0; border-bottom: 1px solid var(--c-rule); }
+  /* No height here. A grid row with no height of its own stretches to fill a
+     container that has one, which is what makes the two boxes below equal - and
+     `height: 100%` on this selector silently overrode the plan above, because
+     it is the same specificity and comes later in the file. */
   .card-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
   .card-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5mm; }
 
-  .card-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; align-items: start; }
+  /* A rule under a chart, under a filled box, or immediately above the foot is
+     noise rather than structure. */
+  .b-chart1, .b-chart2, .b-shape, .b-fit, .b-claim, .b-end { border-bottom: none; }
 
-  .slot { border: none; padding: 0; text-align: left; background: none; }
+  /* 168mm is 80% of the sheet, centred, with the caption block below it doing
+     the talking. contain letterboxes rather than squashing, so a chart the
+     tools export at any aspect still prints true. */
+  .slot {
+    width: 168mm;
+    height: 114mm;
+    margin: 2mm auto 0;
+    border: none;
+    padding: 0;
+    background: none;
+  }
 
-  /* Capped rather than free: a chart exported at 660x440 comes in at 60mm tall
-     in a 90mm column, and two of those plus their commentary took a third of
-     the page. contain letterboxes instead of squashing. */
-  .slot img { width: 100%; height: 44mm; object-fit: contain; object-position: left top; margin: 1mm 0; }
+  .slot img { width: 100%; height: 100%; object-fit: contain; object-position: center; margin: 0; }
 
   /* :not([hidden]) matters. A bare `display:block` here beats the hidden
      attribute's own rule, so the "no chart yet" box printed underneath every
-     attached chart and quietly cost the page 26mm. */
-  .slot .empty:not([hidden]) { display: block; height: 26mm; border: 1px dashed var(--c-rule); }
+     attached chart. The Card prints at any stage of completion, so an empty
+     slot prints as the space the chart will fill, not as nothing. */
+  .slot .empty:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border: 1px dashed var(--c-rule);
+    color: #7E9793;
+    font-size: 9pt;
+    padding: 0;
+  }
+
   .slot .empty[hidden] { display: none; }
 
-  .eqbox { border: 1.5px solid var(--c-deep); padding: 2.5mm 3.5mm; }
-  .predbox { background: var(--c-silt); padding: 3mm 4mm; }
-  .claim-block { padding: 3.5mm 4.5mm; }
+  /* height:100% so the two boxes are the same depth as each other and as the
+     space allowed them, whatever is written inside. */
+  .eqbox { border: 1.5px solid var(--c-deep); padding: 2.5mm 3.5mm; height: 100%; }
+  .predbox { background: var(--c-silt); padding: 3mm 4mm; height: 100%; }
+  .claim-block { padding: 3.5mm 4.5mm; height: 100%; }
 
   .card-ticks { gap: 3.5mm; margin-top: 2.5mm; }
   .card-ticks .b { font-size: 7pt; white-space: nowrap; }
@@ -895,9 +1008,19 @@ input[type='range'] {
 /* ---- print --------------------------------------------------------------- */
 
 @media print {
-  @page { size: A4; margin: 14mm; }
+  /* One @page rule for the whole site, because @page cannot be scoped to a
+     document or an element - a second one anywhere in this file silently wins
+     everywhere. The Card needs a zero-margin sheet, so zero is the rule and
+     every other printable page carries its own margin as padding below.
+     (Found 16/08/2026: the Card had its own `@page { margin: 0 }` and this
+     rule quietly overrode it, laying 210mm of Card onto 182mm of paper.) */
+  @page { size: A4; margin: 0; }
 
   html, body { background: #fff; }
+
+  main { max-width: none; padding: 14mm; }
+  .record-sheet { padding: 14mm; }
+  body.card-doc main { padding: 0; }
 
   .masthead {
     background: none;
@@ -909,7 +1032,8 @@ input[type='range'] {
 
   .no-print, .actions, .skip { display: none !important; }
 
-  .panel, .room, .badge { border-color: #999; break-inside: avoid; }
+  /* Not the Card: it is two full sheets and must break between them. */
+  .panel:not(.card), .room, .badge { border-color: #999; break-inside: avoid; }
 
   a[href]::after { content: ''; }
 }
