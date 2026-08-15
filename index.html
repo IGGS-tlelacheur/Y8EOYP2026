@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Sign in</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the form</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Year 8 · Mathematics</div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="msg problem" id="insecure" hidden>
+    <span class="mark">!</span>
+    <span>
+      This page is open from a file rather than from the web address. Close it and
+      open the site from the link your teacher gave you, or nothing you do here
+      will be saved.
+    </span>
+  </div>
+
+  <section class="panel" id="welcome-back" hidden>
+    <h2>You are already signed in</h2>
+    <p>Signed in as <b id="known-name"></b>, <span id="known-crew"></span>.</p>
+    <div class="actions">
+      <a class="btn" href="hub.html">Carry on</a>
+      <button class="btn secondary" type="button" id="sign-out">Sign in as someone else</button>
+    </div>
+  </section>
+
+  <section class="panel" id="sign-in">
+    <h1>Sign in</h1>
+    <p>
+      Your work is saved on this laptop only. Nothing you type here is sent anywhere.
+    </p>
+
+    <div class="msg problem" id="error" hidden>
+      <span class="mark">!</span>
+      <span id="error-text"></span>
+    </div>
+
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="identity">School email or student ID</label>
+        <span class="help">Either works. Capitals do not matter.</span>
+        <input type="text" id="identity" name="identity" autocomplete="username"
+               autocapitalize="none" spellcheck="false" required>
+      </div>
+
+      <div class="field">
+        <label for="display">The name you want on your certificates</label>
+        <span class="help">First name is enough.</span>
+        <input type="text" id="display" name="display" autocomplete="given-name"
+               maxlength="40" required>
+      </div>
+
+      <div class="field">
+        <label for="crew">Your crew</label>
+        <span class="help">Pick the crew you are filming with. You can change it later.</span>
+        <select id="crew" name="crew" required>
+          <option value="">Choose your crew</option>
+        </select>
+        <p class="note" style="margin-top:.5rem;">
+          <span class="todo">TODO(content)</span>
+          Placeholder crew list. Replace with the real crews and count.
+        </p>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit" id="go">Sign in</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Coming back after a wipe?</h2>
+    <p>
+      If this laptop has been cleared, open the <b>.h2o</b> file you exported last
+      lesson and everything comes back.
+    </p>
+
+    <div class="msg good" id="import-ok" hidden>
+      <span class="mark">✓</span>
+      <span id="import-text"></span>
+    </div>
+
+    <div class="field">
+      <label for="restore">Your .h2o file</label>
+      <input type="file" id="restore" accept=".h2o,application/json">
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 ·
+    Your work stays on this laptop.
+  </p>
+</main>
+
+<script type="module">
+import { deriveStudentId, loadRoll, isOnRoll } from './js/vault.js';
+import { assignVariant } from './js/variants.js';
+import { getProfile, setProfile, importBundle, clearEverything, storageWorks } from './js/store.js';
+
+const form = document.querySelector('#form');
+const errorBox = document.querySelector('#error');
+const errorText = document.querySelector('#error-text');
+const go = document.querySelector('#go');
+
+/* SubtleCrypto and the File System Access API both need a secure context.
+   Opened from a USB stick, every unlock code in the programme breaks. */
+if (!window.isSecureContext) {
+  document.querySelector('#insecure').hidden = false;
+  go.disabled = true;
+}
+
+if (!storageWorks()) {
+  show('This browser is not letting the site save anything. Tell your teacher before you carry on.');
+}
+
+/* TODO(content): real crew names and how many. */
+const crewSelect = document.querySelector('#crew');
+for (let i = 1; i <= 12; i += 1) {
+  const option = document.createElement('option');
+  option.value = `Crew ${String(i).padStart(2, '0')}`;
+  option.textContent = option.value;
+  crewSelect.append(option);
+}
+
+const profile = getProfile();
+if (profile) {
+  document.querySelector('#welcome-back').hidden = false;
+  document.querySelector('#known-name').textContent = profile.display;
+  document.querySelector('#known-crew').textContent = profile.crew;
+}
+
+document.querySelector('#sign-out')?.addEventListener('click', async () => {
+  await clearEverything();
+  window.location.reload();
+});
+
+function show(message) {
+  errorText.textContent = message;
+  errorBox.hidden = false;
+}
+
+function hide() {
+  errorBox.hidden = true;
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  hide();
+
+  const identity = document.querySelector('#identity').value;
+  const display = document.querySelector('#display').value.trim();
+  const crew = crewSelect.value;
+
+  if (!display) return show('Add the name you want on your certificates.');
+  if (!crew) return show('Choose your crew from the list.');
+
+  go.disabled = true;
+  try {
+    const studentId = await deriveStudentId(identity);
+    if (!studentId) {
+      return show('Type your school email or your student ID, then sign in again.');
+    }
+
+    const roll = await loadRoll('data/roll.json');
+    if (!isOnRoll(studentId, roll)) {
+      return show(
+        'That is not on the Year 8 list. Check the spelling and try again. ' +
+        'If it still will not go through, ask your teacher to look you up.'
+      );
+    }
+
+    setProfile({ studentId, display, crew, variant: assignVariant(studentId) });
+    window.location.href = 'hub.html';
+  } catch {
+    show('The list of names did not load. Refresh the page and try again.');
+  } finally {
+    go.disabled = false;
+  }
+});
+
+document.querySelector('#restore').addEventListener('change', async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  hide();
+  try {
+    const { charts } = await importBundle(file);
+    const box = document.querySelector('#import-ok');
+    document.querySelector('#import-text').textContent =
+      `Restored, including ${charts} chart${charts === 1 ? '' : 's'}. Carry on to your hub.`;
+    box.hidden = false;
+    setTimeout(() => { window.location.href = 'hub.html'; }, 1200);
+  } catch (err) {
+    show(err.message);
+  }
+});
+</script>
+</body>
+</html>

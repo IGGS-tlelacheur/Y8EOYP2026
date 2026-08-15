@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "checkpoints": {
+    "l2.cp1": {
+      "type": "numeric",
+      "round": 1,
+      "variants": [
+        "8a199b120cf400d69c300e1dd6eacdc8b0002353e3044bbab21e0125b32c9fd6",
+        "2912aa729c973b7d68a2deda6cb5595fdb1e0368cffffaf6a8c135cdea63c83d",
+        "a97b042d7bd59d92a46e8ab17f7dff7326067c74b938e6f6daabf1768932330d",
+        "f491e65f8d4b8dbec7621fcedaf1b7a4b21bf6cfe8070f407548a6334dc55ccd",
+        "77065cda8fe1551871ba934cfef4df0f9e8a5f7fb63909b25bf0ccebbe807e18",
+        "8c92bebd740430af1b95f3b0deb80df3b03cc6f9d8417b1dffb75d5c37c707b5"
+      ]
+    },
+    "l2.cp2": {
+      "type": "choice",
+      "variants": [
+        "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+        "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+        "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+        "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+      ]
+    }
+  },
+  "rooms": {
+    "l3": {
+      "bypass": "2f9ba107149905cd6d639b6f3bc87fa48fde17adda8be613fbbb2961bdc16cd3"
+    }
+  }
+}

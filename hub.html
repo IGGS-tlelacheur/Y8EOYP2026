@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Your hub</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to your rooms</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Year 8 · Mathematics</div>
+  </div>
+  <div class="who">
+    <div id="who-name"></div>
+    <div id="who-crew" class="sub"></div>
+  </div>
+</header>
+
+<main id="main">
+  <h1>Your rooms</h1>
+
+  <ul class="rooms" id="rooms"></ul>
+
+  <section class="panel" style="margin-top:2rem;">
+    <h2>Your badges</h2>
+    <ul class="rack" id="rack"></ul>
+  </section>
+
+  <section class="panel no-print">
+    <h2>Before you close the laptop</h2>
+    <p>
+      Everything you have done is saved on this laptop and nowhere else. If it gets
+      wiped, the only way back is the file you export here. Do it at the end of
+      every lesson.
+    </p>
+    <div class="msg good" id="saved" hidden>
+      <span class="mark">✓</span>
+      <span id="saved-text"></span>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="export">Export my work</button>
+      <a class="btn secondary" href="card.html" id="card-link">Open our Data Evidence Card</a>
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 ·
+    <span id="variant-note"></span>
+  </p>
+</main>
+
+<script type="module">
+import { getProfile, getProgress, getBadges, exportToFile } from './js/store.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+document.querySelector('#who-name').textContent = profile.display;
+document.querySelector('#who-crew').textContent = profile.crew;
+document.querySelector('#variant-note').textContent = `Data set ${profile.variant + 1} of 6`;
+
+/* `built` flips as each room lands. Until then the hub says so rather than
+   offering a link that 404s - a dead link and a locked room look identical to a
+   student working alone, and only one of them is her fault. */
+const ROOMS = [
+  { id: 'l1', n: '1', name: 'Getting started', blurb: 'What bivariate data is', badge: null, built: false },
+  { id: 'l2', n: '2', name: 'Reading charts', blurb: 'Earn your Reader badge', badge: 'reader', built: false },
+  { id: 'l3', n: '3', name: 'Collecting data', blurb: 'Earn your Collector badge', badge: 'collector', built: false },
+  { id: 'l4', n: '4', name: 'Plotting it', blurb: 'Earn your Plotter badge', badge: 'plotter', built: false },
+  { id: 'l5', n: '5', name: 'Predicting 2040', blurb: 'Earn your Predictor badge', badge: 'predictor', built: false },
+  { id: 'l6', n: '6', name: 'The whole story', blurb: 'Finish and print your Card', badge: null, built: false }
+];
+
+const BADGE_NAMES = {
+  reader: 'Reader',
+  collector: 'Collector',
+  plotter: 'Plotter',
+  predictor: 'Predictor'
+};
+
+/* Shape as well as colour, so the rack still reads in greyscale and to a
+   colourblind student. */
+const BADGE_GLYPHS = {
+  reader: '◆',
+  collector: '▲',
+  plotter: '●',
+  predictor: '★'
+};
+
+function auDate(iso) {
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+function renderRooms() {
+  const progress = getProgress();
+  const list = document.querySelector('#rooms');
+  list.textContent = '';
+
+  for (const room of ROOMS) {
+    const state = progress.rooms?.[room.id];
+    const finished = Boolean(state?.badge) || state?.done;
+
+    const el = document.createElement(room.built ? 'a' : 'div');
+    el.className = 'room';
+    if (room.built) el.href = `${room.id}.html`;
+    else el.classList.add('shut');
+    if (finished) el.classList.add('done');
+
+    const n = document.createElement('span');
+    n.className = 'n';
+    n.textContent = room.n;
+
+    const body = document.createElement('div');
+    body.className = 'body';
+    const title = document.createElement('b');
+    title.textContent = room.name;
+    const blurb = document.createElement('span');
+    blurb.textContent = room.blurb;
+    body.append(title, blurb);
+
+    const status = document.createElement('span');
+    status.className = 'state';
+    if (!room.built) status.textContent = 'Not open yet';
+    else if (finished) status.textContent = 'Finished';
+    else status.textContent = 'Open';
+
+    el.append(n, body, status);
+    list.append(el);
+  }
+}
+
+function renderBadges() {
+  const badges = getBadges();
+  const rack = document.querySelector('#rack');
+  rack.textContent = '';
+
+  for (const [key, earnedAt] of Object.entries(badges)) {
+    const li = document.createElement('li');
+    li.className = earnedAt ? 'badge earned' : 'badge';
+
+    const glyph = document.createElement('span');
+    glyph.className = 'glyph';
+    glyph.textContent = BADGE_GLYPHS[key];
+    glyph.setAttribute('aria-hidden', 'true');
+
+    const name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = BADGE_NAMES[key];
+
+    const state = document.createElement('span');
+    state.className = 'state';
+    state.textContent = earnedAt ? `Earned ${auDate(earnedAt)}` : 'Not yet';
+
+    li.append(glyph, name, state);
+    rack.append(li);
+  }
+}
+
+/* card.html arrives in stage 5. The Card is never gated, so this link is never
+   conditional on progress - only on the page existing. */
+const CARD_BUILT = false;
+if (!CARD_BUILT) {
+  const link = document.querySelector('#card-link');
+  const placeholder = document.createElement('button');
+  placeholder.className = 'btn secondary';
+  placeholder.type = 'button';
+  placeholder.disabled = true;
+  placeholder.textContent = 'Data Evidence Card — not open yet';
+  link.replaceWith(placeholder);
+}
+
+document.querySelector('#export').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    const bytes = await exportToFile();
+    document.querySelector('#saved-text').textContent =
+      `Exported ${Math.max(1, Math.round(bytes / 1024))} KB. Keep that file somewhere you will find it.`;
+    document.querySelector('#saved').hidden = false;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+renderRooms();
+renderBadges();
+</script>
+</body>
+</html>

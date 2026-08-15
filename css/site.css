@@ -1,0 +1,344 @@
+/* H2O - Towards 2040 - Maths strand
+   One stylesheet for the whole site. Print rules live at the foot of this file.
+   Palette and type match the Data Evidence Card: students meet the Card first. */
+
+/* Patrick Hand, subset to Latin-1 plus the punctuation the site actually uses,
+   extracted from the reference Card so no request ever leaves the laptop.
+   WOFF rather than WOFF2 only because the conversion tool was unavailable at
+   author time; swap the file and this one line when it is. */
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('../assets/fonts/patrick-hand.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ink: #06232B;
+  --teal: #3E6570;
+  --teal-mid: #4A6A70;
+  --sage: #7E9793;
+  --sage-pale: #DCE6E3;
+  --line: #B7C8C4;
+  --paper: #FBFBF9;
+  --gold: #F2B705;
+  --gold-dark: #B98A05;
+  /* The Card's handwriting blue. Display text only, never a UI state. */
+  --pen: #1D3F8F;
+
+  /* TODO(asset): body face is the Windows fleet's system humanist sans until a
+     licensed woff2 lands in assets/fonts. No request is made either way. */
+  --font-body: 'Segoe UI', 'Carlito', 'TeX Gyre Heros Cn', system-ui, sans-serif;
+  --font-hand: 'Patrick Hand', 'Segoe Print', cursive;
+
+  --tap: 44px;
+  --gap: 1.25rem;
+  --measure: 34rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background: var(--sage-pale); }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ---- type ---------------------------------------------------------------- */
+
+h1, h2, h3 {
+  font-family: var(--font-hand);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--teal);
+  margin: 0 0 0.5em;
+}
+
+h1 { font-size: 2.5rem; color: var(--ink); }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.3rem; }
+
+p { margin: 0 0 1em; max-width: var(--measure); }
+
+a { color: var(--teal); text-underline-offset: 0.2em; }
+a:hover { color: var(--ink); }
+
+/* Patrick Hand has no subscript two, so the programme name is composed rather
+   than typed. Any H2O in a heading uses this. */
+.h2o sub {
+  font-size: 0.62em;
+  vertical-align: -0.18em;
+  margin: 0 -0.02em;
+}
+
+.lbl {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.35em;
+}
+
+.hand { font-family: var(--font-hand); color: var(--pen); font-size: 1.2em; }
+
+.note { color: var(--sage); font-size: 0.9rem; max-width: var(--measure); }
+
+.todo {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  border: 1.5px solid var(--gold);
+  padding: 0.15em 0.5em;
+}
+
+/* ---- shell --------------------------------------------------------------- */
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.75rem 1rem;
+  z-index: 10;
+}
+.skip:focus { left: 0; }
+
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--teal);
+  color: var(--paper);
+  border-bottom: 3px solid var(--ink);
+}
+
+.masthead .crest { height: 46px; width: auto; display: block; }
+.masthead .title { font-family: var(--font-hand); font-size: 1.6rem; line-height: 1; }
+.masthead .sub {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage-pale);
+}
+.masthead .who { margin-left: auto; text-align: right; font-size: 0.85rem; }
+
+main {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 1.5rem;
+  margin: 0 0 var(--gap);
+}
+
+.panel > :last-child { margin-bottom: 0; }
+
+/* ---- forms --------------------------------------------------------------- */
+
+.field { margin: 0 0 1.25rem; max-width: var(--measure); }
+
+.field label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+
+.field .help { display: block; color: var(--sage); font-size: 0.85rem; margin-bottom: 0.4rem; }
+
+input[type='text'], input[type='email'], select {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 0;
+}
+
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0.65rem 1.4rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--teal);
+  border: 1.5px solid var(--teal);
+  border-radius: 0;
+  cursor: pointer;
+  /* Touch is the primary input on this fleet. */
+  touch-action: manipulation;
+}
+
+.btn:hover { background: var(--ink); border-color: var(--ink); }
+
+.btn.secondary { color: var(--teal); background: transparent; }
+.btn.secondary:hover { color: var(--paper); background: var(--teal-mid); border-color: var(--teal-mid); }
+
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn[disabled]:hover { background: var(--teal); border-color: var(--teal); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+/* ---- messages ------------------------------------------------------------ */
+/* Error copy says what to do next. Colour is never the only signal - each
+   message carries a word and a mark as well. */
+
+.msg {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.8rem 1rem;
+  margin: 0 0 1rem;
+  border-left: 5px solid var(--sage);
+  background: var(--sage-pale);
+  max-width: var(--measure);
+}
+
+.msg .mark { font-weight: 700; }
+.msg[hidden] { display: none; }
+.msg.problem { border-left-color: var(--gold-dark); background: #FCF3D6; }
+.msg.good { border-left-color: var(--teal); }
+
+/* ---- badge rack ---------------------------------------------------------- */
+
+.rack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.9rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.badge {
+  text-align: center;
+  padding: 1rem 0.6rem;
+  border: 2px solid var(--line);
+  background: #fff;
+}
+
+.badge .glyph {
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+  color: var(--line);
+}
+
+.badge .name {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  color: var(--sage);
+}
+
+.badge .state { display: block; font-size: 0.75rem; color: var(--sage); }
+
+.badge.earned { border-color: var(--gold); background: #FEFAEC; }
+.badge.earned .glyph { color: var(--gold-dark); }
+.badge.earned .name { color: var(--ink); }
+.badge.earned .state { color: var(--gold-dark); font-weight: 700; }
+
+/* ---- room list ----------------------------------------------------------- */
+
+.rooms { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+
+.room {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: var(--tap);
+  padding: 1rem 1.25rem;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.room:hover { border-color: var(--teal); background: var(--sage-pale); }
+
+.room .n {
+  font-family: var(--font-hand);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--teal);
+  min-width: 2.2rem;
+}
+
+.room .body { flex: 1; }
+.room .body b { display: block; font-size: 1.05rem; }
+.room .body span { color: var(--sage); font-size: 0.9rem; }
+
+.room .state {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  white-space: nowrap;
+}
+
+.room.shut { background: var(--sage-pale); border-style: dashed; }
+.room.shut .n { color: var(--sage); }
+.room.done .state { color: var(--gold-dark); }
+
+/* ---- footer -------------------------------------------------------------- */
+
+.foot {
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  color: var(--sage);
+  font-size: 0.8rem;
+}
+
+/* ---- print --------------------------------------------------------------- */
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+
+  html, body { background: #fff; }
+
+  .masthead {
+    background: none;
+    color: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .no-print, .actions, .skip { display: none !important; }
+
+  .panel, .room, .badge { border-color: #999; break-inside: avoid; }
+
+  a[href]::after { content: ''; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
