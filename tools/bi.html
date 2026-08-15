@@ -419,23 +419,29 @@ document.querySelector('#least-squares').addEventListener('change', (event) => {
 
 function showLeastSquares() {
   const readout = document.querySelector('#ls-readout');
-  if (!state.showLeastSquares || state.points.length < 2) { readout.hidden = true; return; }
-  const ls = leastSquares(state.points);
+  const ls = computerLine();
   if (!ls) { readout.hidden = true; return; }
+
   const mine = fitLine();
   const text = `The computer's line is y = ${roundSensibly(ls.m)}x ${ls.c < 0 ? '−' : '+'} ${Math.abs(roundSensibly(ls.c))}.`;
   readout.textContent = mine
-    ? `${text} Yours has a gradient of ${roundSensibly(mine.m)}.`
-    : text;
+    ? `${text} Yours has a gradient of ${roundSensibly(mine.m)}, so you are out by ${roundSensibly(Math.abs(mine.m - ls.m))}.`
+    : `${text} Place your own line to compare.`;
   readout.hidden = false;
 }
 
 /* ---- render -------------------------------------------------------------- */
 
+function computerLine() {
+  if (!state.showLeastSquares || state.points.length < 2) return null;
+  return leastSquares(state.points);
+}
+
 function spec() {
   const range = dataRange();
   const line = fitLine();
   return {
+    compare: computerLine(),
     width: 660,
     height: 440,
     points: state.points,

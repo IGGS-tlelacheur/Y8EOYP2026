@@ -18,6 +18,10 @@ const CHART_FONT = "'Segoe UI', Carlito, Arial, sans-serif";
 
 const INK = '#06232B';
 const PEN = '#1D3F8F';
+/* Amber against the fit line's blue. Blue and amber stay apart under the two
+   common forms of colour blindness, and the dash pattern and key carry it for
+   everyone else. */
+const COMPUTER = '#B98A05';
 const RULE = '#B7C8C4';
 const GRID = '#D8E2DF';
 const SAGE = '#4A6A70';
@@ -112,6 +116,7 @@ export function renderChart(spec) {
     title = '',
     axis = {},
     fit = null,
+    compare = null,
     dataRange = null,
     prediction = null,
     fonts = SCREEN_FONTS,
@@ -183,6 +188,21 @@ export function renderChart(spec) {
   const described = title || axisTitle(yLabel, yUnit) || 'Chart';
   svg.append(svgEl('title', {}, `${described}. ${points.length} points.`));
 
+  /* Ids have to be unique per chart: two charts on one page share a document,
+     and a duplicate id would silently point both at the first one. */
+  const uid = Math.random().toString(36).slice(2, 8);
+  const defs = svgEl('defs');
+  svg.append(defs);
+
+  /* Any straight line across the full x range can leave the plot vertically.
+     Clipping is the only thing that reliably keeps a steep fit inside its axes. */
+  const clipId = `plot-${uid}`;
+  const clip = svgEl('clipPath', { id: clipId });
+  clip.append(svgEl('rect', {
+    x: plotLeft, y: plotTop, width: plotRight - plotLeft, height: plotBottom - plotTop
+  }));
+  defs.append(clip);
+
   if (title) {
     svg.append(svgEl('text', {
       x: width / 2,
@@ -196,7 +216,7 @@ export function renderChart(spec) {
 
   /* ---- extrapolation band, drawn under everything else ---- */
   if (dataRange && fit) {
-    const hatchId = `beyond-${Math.random().toString(36).slice(2, 8)}`;
+    const hatchId = `beyond-${uid}`;
     const pattern = svgEl('pattern', {
       id: hatchId,
       width: 8,
@@ -206,9 +226,7 @@ export function renderChart(spec) {
     });
     pattern.append(svgEl('rect', { width: 8, height: 8, fill: '#F0F0EE' }));
     pattern.append(svgEl('line', { x1: 0, y1: 0, x2: 0, y2: 8, stroke: '#C9C9C4', 'stroke-width': 2.5 }));
-    const defs = svgEl('defs');
     defs.append(pattern);
-    svg.append(defs);
 
     /* Hatched as well as tinted: the region must read in greyscale and to a
        colourblind student, and it carries a word too. */
@@ -302,7 +320,26 @@ export function renderChart(spec) {
     }, yTitle));
   }
 
-  /* ---- fit line ---- */
+  /* ---- lines, all inside one clipped group ---- */
+  const lines = svgEl('g', { 'clip-path': `url(#${clipId})` });
+  svg.append(lines);
+
+  /* The computer's line, when she asks for it. Drawn under her own so hers
+     stays the subject. Distinguished three ways - colour, a dotted pattern and
+     a named key - because a colourblind girl has to be able to tell which is
+     which, and this is the one view whose entire point is the comparison. */
+  if (compare && Number.isFinite(compare.m) && Number.isFinite(compare.c)) {
+    const at = (xv) => compare.m * xv + compare.c;
+    lines.append(svgEl('line', {
+      x1: x.to(xNice.min), y1: y.to(at(xNice.min)),
+      x2: x.to(xNice.max), y2: y.to(at(xNice.max)),
+      stroke: COMPUTER,
+      'stroke-width': Math.max(2, fonts.label / 6.5),
+      'stroke-dasharray': `${(fonts.label * 0.16).toFixed(2)} ${(fonts.label * 0.5).toFixed(2)}`,
+      'stroke-linecap': 'round'
+    }));
+  }
+
   if (fit) {
     const clampToPlot = (px) => Math.max(plotLeft, Math.min(plotRight, px));
     const gradient = (fit.y2 - fit.y1) / ((fit.x2 - fit.x1) || 1e-9);
@@ -320,7 +357,7 @@ export function renderChart(spec) {
 
     for (const [from, to, dashed] of segments) {
       if (to <= from) continue;
-      svg.append(svgEl('line', {
+      lines.append(svgEl('line', {
         x1: clampToPlot(x.to(from)),
         y1: y.to(at(from)),
         x2: clampToPlot(x.to(to)),
@@ -360,6 +397,47 @@ export function renderChart(spec) {
         cx: px, cy: py, r: dotRadius + 1, fill: 'none', stroke: PEN, 'stroke-width': 3
       }));
     }
+  }
+
+  /* ---- key, only when there are two lines to tell apart ---- */
+  if (compare && fit) {
+    const rowH = fonts.label * 1.55;
+    const swatch = fonts.label * 2.4;
+    const keyW = swatch + fonts.label * 9.4;
+    const keyX = plotLeft + fonts.label * 0.6;
+    const keyY = plotTop + fonts.label * 0.6;
+
+    const key = svgEl('g', {});
+    /* Backed in paper so it stays readable where it lands over the points. */
+    key.append(svgEl('rect', {
+      x: keyX, y: keyY, width: keyW, height: rowH * 2 + fonts.label * 0.5,
+      fill: PAPER, opacity: 0.88, stroke: RULE, 'stroke-width': 1
+    }));
+
+    const rows = [
+      [PEN, null, 'your line'],
+      [COMPUTER, `${(fonts.label * 0.16).toFixed(2)} ${(fonts.label * 0.5).toFixed(2)}`, "the computer's line"]
+    ];
+
+    rows.forEach(([colour, dash, label], index) => {
+      const cy = keyY + fonts.label * 0.25 + rowH * (index + 0.5);
+      key.append(svgEl('line', {
+        x1: keyX + fonts.label * 0.5, y1: cy,
+        x2: keyX + fonts.label * 0.5 + swatch, y2: cy,
+        stroke: colour,
+        'stroke-width': Math.max(2.2, fonts.label / 5),
+        'stroke-dasharray': dash,
+        'stroke-linecap': 'round'
+      }));
+      key.append(svgEl('text', {
+        x: keyX + fonts.label * 1.2 + swatch,
+        y: cy + fonts.label * 0.35,
+        'font-size': fonts.label,
+        fill: INK
+      }, label));
+    });
+
+    svg.append(key);
   }
 
   /* ---- drag handles, screen only ---- */
