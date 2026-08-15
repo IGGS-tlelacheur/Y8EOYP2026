@@ -183,10 +183,15 @@ import {
 import { getProfile, getTableData, putChart } from '../js/store.js';
 
 /* The Card's worked example A, so the numbers here are ones the girls have
-   already met on paper rather than something new to decode. */
+   already met on paper rather than something new to decode.
+   TODO(content): reconstructed from the plotted points in
+   docs/reference-data-evidence-card.html, because the Card ships as a picture
+   and not as numbers. Tuned so the column satisfies what the Card says about
+   itself - shortest 2, longest 11, most between 4 and 9, middle value 6.5.
+   Replace with the real 18 measurements if they still exist. */
 const EXAMPLE = [
   [2, 21], [3, 33], [3, 28], [4, 47], [4, 40], [5, 55], [5, 63], [6, 60],
-  [6, 68], [6, 55], [7, 76], [7, 69], [8, 82], [8, 74], [9, 91], [9, 81],
+  [6, 68], [7, 72], [7, 76], [7, 69], [8, 82], [8, 74], [9, 91], [9, 81],
   [10, 103], [11, 118]
 ];
 

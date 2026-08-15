@@ -563,3 +563,26 @@ insurance against repeating that, and it happens before the bulk of the content 
 - Keep collected data non-identifying. Household water bills are household data, and a
   parent may reasonably ask. Suburb-level and unnamed is enough.
 - Confirm who marks the finished Cards, and how many crews there are in total.
+
+### 13.7 Uncertainty on a prediction — the crew is the error bar
+
+Proposed 15/08/2026, for stage 5. Not built.
+
+`tools/bi.html` marks the region beyond the data, fades the fit line out across
+it, and says how far past the last measurement a prediction reaches. All of that
+is qualitative, deliberately: a real prediction interval is built from residual
+spread, and residuals are out under 6.2.
+
+The quantitative version that does not need any of that machinery is **the
+crew's own disagreement**. Six girls place six lines by eye on the same data. At
+2040 they read six different numbers. That range is a real, visible, honestly
+derived uncertainty, produced by them rather than handed down by a formula — and
+"why we might be wrong" stops being a sentence and becomes a measurement.
+
+It costs nothing new to collect: the Card is already a crew-owned file holding
+per-field authorship, so each member's 2040 figure is already going in. What is
+needed is a line on the Card showing the spread, and wording in the L5 room.
+
+Rejected alternative: the gap between her line and the least-squares line. The
+two are usually close, so it would understate the uncertainty badly and quietly
+teach that extrapolation is safer than it is.

@@ -434,6 +434,68 @@ a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
 .switch span { font-size: 0.92rem; }
 .switch b { display: block; }
 
+/* ---- chart picker -------------------------------------------------------- */
+
+.chart-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.pick {
+  display: block;
+  text-align: left;
+  min-height: var(--tap);
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.pick b { display: block; font-size: 0.98rem; }
+.pick span { font-size: 0.8rem; color: var(--sage); }
+
+.pick:hover:not([disabled]) { border-color: var(--brand); background: var(--brand-tint); }
+
+/* Selected state carries a filled border and bold weight, not colour alone. */
+.pick.on {
+  border-color: var(--brand);
+  border-width: 3px;
+  background: var(--brand-tint);
+}
+.pick.on b { color: var(--brand); }
+
+.pick[disabled] { opacity: 0.5; cursor: not-allowed; background: var(--sage-pale); }
+
+/* ---- five-number summary ------------------------------------------------- */
+
+.five { list-style: none; margin: 0 0 0.75rem; padding: 0; }
+
+.five li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.five li:last-child { border-bottom: none; }
+.five li span { font-size: 0.92rem; }
+.five li b { font-family: var(--font-hand); font-size: 1.35rem; color: var(--pen); white-space: nowrap; }
+
+input[type='range'] {
+  width: 100%;
+  min-height: var(--tap);
+  accent-color: var(--brand);
+  touch-action: manipulation;
+}
+
 /* ---- footer -------------------------------------------------------------- */
 
 .foot {

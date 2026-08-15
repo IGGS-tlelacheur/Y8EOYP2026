@@ -95,6 +95,14 @@ export function tickLabel(value, step) {
   return value.toFixed(decimals);
 }
 
+/* For a value quoted on its own rather than as one of a row of ticks: a median
+   of 6.5 has to keep its half, and a smallest of 2 must not read "2.0". */
+export function plainNumber(value) {
+  if (!Number.isFinite(value)) return '';
+  if (Number.isInteger(value)) return String(value);
+  return String(Number(value.toFixed(2)));
+}
+
 /* ---- the chart ----------------------------------------------------------- */
 
 function axisTitle(label, unit) {
@@ -102,6 +110,82 @@ function axisTitle(label, unit) {
   const units = String(unit ?? '').trim();
   if (!text) return '';
   return units ? `${text} (${units})` : text;
+}
+
+/* Grid, ticks, axis lines and axis titles. Shared by every chart in the
+   programme so the girls meet one set of axes rather than five. Ticks arrive
+   already positioned, because a category axis and a number axis place them by
+   quite different rules but should look identical once drawn. */
+function drawAxes(svg, {
+  area, fonts, height, xTicks = [], yTicks = [], xTitle, yTitle,
+  grid = 'both', showY = true
+}) {
+  const { plotLeft, plotRight, plotTop, plotBottom } = area;
+  const pad = fonts.label;
+
+  for (const tick of yTicks) {
+    if (grid === 'both' || grid === 'y') {
+      svg.append(svgEl('line', {
+        x1: plotLeft, y1: tick.px, x2: plotRight, y2: tick.px,
+        stroke: GRID, 'stroke-width': 1
+      }));
+    }
+    svg.append(svgEl('text', {
+      x: plotLeft - pad * 0.6, y: tick.px + fonts.label * 0.35,
+      'text-anchor': 'end', 'font-size': fonts.label, fill: SAGE
+    }, tick.label));
+  }
+
+  for (const tick of xTicks) {
+    if (grid === 'both' || grid === 'x') {
+      svg.append(svgEl('line', {
+        x1: tick.px, y1: plotTop, x2: tick.px, y2: plotBottom,
+        stroke: GRID, 'stroke-width': 1
+      }));
+    }
+    svg.append(svgEl('text', {
+      x: tick.px, y: plotBottom + fonts.label * 1.5,
+      'text-anchor': 'middle', 'font-size': fonts.label, fill: SAGE
+    }, tick.label));
+  }
+
+  svg.append(svgEl('line', {
+    x1: plotLeft, y1: plotBottom, x2: plotRight, y2: plotBottom,
+    stroke: INK, 'stroke-width': Math.max(1.5, fonts.label / 8)
+  }));
+
+  /* A dot plot and a box plot are number lines. Drawing a vertical axis they
+     have no scale for would invite her to read one off it. */
+  if (showY) {
+    svg.append(svgEl('line', {
+      x1: plotLeft, y1: plotTop, x2: plotLeft, y2: plotBottom,
+      stroke: INK, 'stroke-width': Math.max(1.5, fonts.label / 8)
+    }));
+  }
+
+  if (xTitle) {
+    svg.append(svgEl('text', {
+      x: (plotLeft + plotRight) / 2,
+      y: height - fonts.title * 0.8,
+      'text-anchor': 'middle',
+      'font-size': fonts.title,
+      'font-weight': '700',
+      fill: INK
+    }, xTitle));
+  }
+
+  if (yTitle) {
+    const cy = (plotTop + plotBottom) / 2;
+    const cx = fonts.title * 1.1;
+    svg.append(svgEl('text', {
+      x: cx, y: cy,
+      'text-anchor': 'middle',
+      'font-size': fonts.title,
+      'font-weight': '700',
+      fill: INK,
+      transform: `rotate(-90 ${cx} ${cy})`
+    }, yTitle));
+  }
 }
 
 export function renderChart(spec) {
@@ -271,66 +355,15 @@ export function renderChart(spec) {
     }
   }
 
-  /* ---- grid and ticks ---- */
-  for (const tick of yNice.ticks) {
-    const py = y.to(tick);
-    svg.append(svgEl('line', {
-      x1: plotLeft, y1: py, x2: plotRight, y2: py,
-      stroke: GRID, 'stroke-width': 1
-    }));
-    svg.append(svgEl('text', {
-      x: plotLeft - pad * 0.6, y: py + fonts.label * 0.35,
-      'text-anchor': 'end', 'font-size': fonts.label, fill: SAGE
-    }, tickLabel(tick, yNice.step)));
-  }
-
-  for (const tick of xNice.ticks) {
-    const px = x.to(tick);
-    svg.append(svgEl('line', {
-      x1: px, y1: plotTop, x2: px, y2: plotBottom,
-      stroke: GRID, 'stroke-width': 1
-    }));
-    svg.append(svgEl('text', {
-      x: px, y: plotBottom + fonts.label * 1.5,
-      'text-anchor': 'middle', 'font-size': fonts.label, fill: SAGE
-    }, tickLabel(tick, xNice.step)));
-  }
-
-  /* ---- axes ---- */
-  svg.append(svgEl('line', {
-    x1: plotLeft, y1: plotBottom, x2: plotRight, y2: plotBottom,
-    stroke: INK, 'stroke-width': Math.max(1.5, fonts.label / 8)
-  }));
-  svg.append(svgEl('line', {
-    x1: plotLeft, y1: plotTop, x2: plotLeft, y2: plotBottom,
-    stroke: INK, 'stroke-width': Math.max(1.5, fonts.label / 8)
-  }));
-
-  const xTitle = axisTitle(xLabel, xUnit);
-  if (xTitle) {
-    svg.append(svgEl('text', {
-      x: (plotLeft + plotRight) / 2,
-      y: height - fonts.title * 0.8,
-      'text-anchor': 'middle',
-      'font-size': fonts.title,
-      'font-weight': '700',
-      fill: INK
-    }, xTitle));
-  }
-
-  const yTitle = axisTitle(yLabel, yUnit);
-  if (yTitle) {
-    const cy = (plotTop + plotBottom) / 2;
-    const cx = fonts.title * 1.1;
-    svg.append(svgEl('text', {
-      x: cx, y: cy,
-      'text-anchor': 'middle',
-      'font-size': fonts.title,
-      'font-weight': '700',
-      fill: INK,
-      transform: `rotate(-90 ${cx} ${cy})`
-    }, yTitle));
-  }
+  drawAxes(svg, {
+    area: { plotLeft, plotRight, plotTop, plotBottom },
+    fonts,
+    height,
+    xTicks: xNice.ticks.map((t) => ({ px: x.to(t), label: tickLabel(t, xNice.step) })),
+    yTicks: yNice.ticks.map((t) => ({ px: y.to(t), label: tickLabel(t, yNice.step) })),
+    xTitle: axisTitle(xLabel, xUnit),
+    yTitle: axisTitle(yLabel, yUnit)
+  });
 
   /* ---- lines, all inside one clipped group ---- */
   const lines = svgEl('g', { 'clip-path': `url(#${clipId})` });
@@ -515,6 +548,358 @@ export function renderChart(spec) {
   return { svg, x, y, xNice, yNice, area: { plotLeft, plotRight, plotTop, plotBottom } };
 }
 
+/* ---- one variable -------------------------------------------------------- */
+
+/* Categories are drawn in the order she typed them. Sorting by size would make
+   a tidier chart out of data she no longer recognises. */
+export function tally(values) {
+  const counts = new Map();
+  for (const value of values) {
+    const key = String(value);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return [...counts].map(([label, count]) => ({ label, count }));
+}
+
+function medianOf(sorted) {
+  const n = sorted.length;
+  const mid = Math.floor(n / 2);
+  return n % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+/* The method they are taught and can check by hand: split at the median, and
+   with an odd count the median itself belongs to neither half. Any of the other
+   defensible quartile conventions would disagree with her exercise book. */
+export function fiveNumberSummary(values) {
+  const sorted = [...values].filter(Number.isFinite).sort((a, b) => a - b);
+  const n = sorted.length;
+  if (n === 0) return null;
+
+  const half = Math.floor(n / 2);
+  const lower = sorted.slice(0, half);
+  const upper = sorted.slice(n % 2 === 0 ? half : half + 1);
+
+  const q1 = lower.length ? medianOf(lower) : sorted[0];
+  const q3 = upper.length ? medianOf(upper) : sorted[n - 1];
+
+  return { min: sorted[0], q1, median: medianOf(sorted), q3, max: sorted[n - 1], iqr: q3 - q1, n };
+}
+
+export function suggestBinWidth(values) {
+  const numbers = values.filter(Number.isFinite);
+  if (numbers.length < 2) return 1;
+  const range = Math.max(...numbers) - Math.min(...numbers);
+  if (range === 0) return 1;
+  return niceNum(range / 8, true) || 1;
+}
+
+export function binValues(values, width) {
+  const numbers = values.filter(Number.isFinite);
+  if (!numbers.length || !(width > 0)) return [];
+
+  const min = Math.min(...numbers);
+  const max = Math.max(...numbers);
+  const start = Math.floor(min / width) * width;
+  const count = Math.max(1, Math.ceil((max - start) / width + 1e-9));
+
+  const bins = [];
+  for (let i = 0; i < count; i += 1) {
+    const from = start + i * width;
+    bins.push({ from, to: from + width, count: 0 });
+  }
+
+  for (const value of numbers) {
+    /* Bins are [from, to), so the largest value sits exactly on the last upper
+       edge and has to be pushed back into the bin below it. */
+    let index = Math.floor((value - start) / width + 1e-9);
+    if (index >= count) index = count - 1;
+    if (index < 0) index = 0;
+    bins[index].count += 1;
+  }
+
+  return bins;
+}
+
+/* Enough hues to cover the eight categories a pie is allowed, chosen to stay
+   apart in greyscale as well. The slice labels carry the meaning regardless. */
+const SLICE_COLOURS = [
+  '#003DA5', '#B98A05', '#4A6A70', '#A8B8B4',
+  '#1D3F8F', '#06232B', '#7E9793', '#DCE6E3'
+];
+
+function renderPie({ svg, width, height, fonts, slices, title, margin }) {
+  const total = slices.reduce((sum, s) => sum + s.count, 0) || 1;
+  const legendW = Math.min(width * 0.42, fonts.label * 16);
+  const cx = (width - legendW) / 2 + fonts.label;
+  const cy = margin.top + (height - margin.top - fonts.label * 2) / 2;
+  const r = Math.min((width - legendW) / 2 - fonts.label, (height - margin.top - fonts.label * 3) / 2);
+
+  let angle = -Math.PI / 2;
+  slices.forEach((slice, index) => {
+    const sweep = (slice.count / total) * Math.PI * 2;
+    const colour = SLICE_COLOURS[index % SLICE_COLOURS.length];
+
+    if (slices.length === 1) {
+      svg.append(svgEl('circle', { cx, cy, r, fill: colour }));
+    } else {
+      const x1 = cx + r * Math.cos(angle);
+      const y1 = cy + r * Math.sin(angle);
+      const x2 = cx + r * Math.cos(angle + sweep);
+      const y2 = cy + r * Math.sin(angle + sweep);
+      svg.append(svgEl('path', {
+        d: `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${sweep > Math.PI ? 1 : 0} 1 ${x2} ${y2} Z`,
+        fill: colour,
+        stroke: PAPER,
+        'stroke-width': 2
+      }));
+    }
+    angle += sweep;
+  });
+
+  /* A key rather than labels on the slices: a thin slice has nowhere to put its
+     name, and the name is the only thing telling two colours apart. */
+  const legendX = width - legendW + fonts.label;
+  const rowH = fonts.label * 1.8;
+  const legendTop = cy - (slices.length * rowH) / 2;
+
+  slices.forEach((slice, index) => {
+    const rowY = legendTop + index * rowH;
+    svg.append(svgEl('rect', {
+      x: legendX, y: rowY, width: fonts.label, height: fonts.label,
+      fill: SLICE_COLOURS[index % SLICE_COLOURS.length]
+    }));
+    const percent = Math.round((slice.count / total) * 100);
+    svg.append(svgEl('text', {
+      x: legendX + fonts.label * 1.6,
+      y: rowY + fonts.label * 0.9,
+      'font-size': fonts.label,
+      fill: INK
+    }, `${slice.label} — ${slice.count} (${percent}%)`));
+  });
+}
+
+export function renderUni(spec) {
+  const {
+    kind = 'dot',
+    width = 660,
+    height = 440,
+    values = [],
+    label = '',
+    unit = '',
+    countLabel = 'How many',
+    title = '',
+    binWidth = null,
+    fonts = SCREEN_FONTS,
+    background = PAPER,
+    axis = {}
+  } = spec;
+
+  const pad = fonts.label;
+  const margin = {
+    top: title ? fonts.title * 2.4 : pad * 1.6,
+    right: pad * 2.2,
+    bottom: fonts.title * 3.4,
+    left: fonts.title * 3.9
+  };
+
+  const plotLeft = margin.left;
+  const plotRight = width - margin.right;
+  const plotTop = margin.top;
+  const plotBottom = height - margin.bottom;
+
+  const svg = svgEl('svg', {
+    xmlns: SVG_NS,
+    viewBox: `0 0 ${width} ${height}`,
+    width,
+    height,
+    'font-family': CHART_FONT,
+    role: 'img'
+  });
+  svg.append(svgEl('rect', { x: 0, y: 0, width, height, fill: background }));
+  svg.append(svgEl('title', {}, `${title || label || 'Chart'}. ${values.length} values.`));
+
+  if (title) {
+    svg.append(svgEl('text', {
+      x: width / 2, y: margin.top * 0.55,
+      'text-anchor': 'middle', 'font-size': fonts.title * 1.25,
+      'font-weight': '700', fill: INK
+    }, title));
+  }
+
+  const area = { plotLeft, plotRight, plotTop, plotBottom };
+  const valueTitle = axisTitle(label, unit);
+  const numbers = values.map(Number).filter(Number.isFinite);
+  let summary = null;
+
+  if (kind === 'pie') {
+    renderPie({ svg, width, height, fonts, slices: tally(values), title, margin });
+    return { svg, area, summary: null };
+  }
+
+  if (kind === 'column') {
+    const cats = tally(values);
+    const maxCount = Math.max(1, ...cats.map((c) => c.count));
+    const yNice = niceScale(0, maxCount, { startAtZero: true, targetTicks: 5 });
+    const y = makeScale(yNice.min, yNice.max, plotBottom, plotTop);
+    const band = (plotRight - plotLeft) / Math.max(1, cats.length);
+
+    drawAxes(svg, {
+      area, fonts, height,
+      xTicks: cats.map((c, i) => ({ px: plotLeft + band * (i + 0.5), label: c.label })),
+      yTicks: yNice.ticks.map((t) => ({ px: y.to(t), label: tickLabel(t, yNice.step) })),
+      xTitle: valueTitle, yTitle: countLabel, grid: 'y'
+    });
+
+    cats.forEach((c, i) => {
+      const barW = band * 0.68;
+      svg.append(svgEl('rect', {
+        x: plotLeft + band * (i + 0.5) - barW / 2,
+        y: y.to(c.count),
+        width: barW,
+        height: plotBottom - y.to(c.count),
+        fill: '#003DA5'
+      }));
+    });
+
+    return { svg, area, summary: null };
+  }
+
+  if (kind === 'histogram') {
+    const bwidth = binWidth ?? suggestBinWidth(numbers);
+    const bins = binValues(numbers, bwidth);
+    const maxCount = Math.max(1, ...bins.map((b) => b.count));
+    const xNice = { min: bins[0]?.from ?? 0, max: bins[bins.length - 1]?.to ?? 1 };
+    const yNice = niceScale(0, maxCount, { startAtZero: true, targetTicks: 5 });
+    const x = makeScale(xNice.min, xNice.max, plotLeft, plotRight);
+    const y = makeScale(yNice.min, yNice.max, plotBottom, plotTop);
+
+    /* Ticks on the bin edges, not on nice round numbers, so the boundary she
+       reads off the axis is the boundary the bar actually uses. */
+    const edges = bins.map((b) => b.from).concat(bins.length ? [bins[bins.length - 1].to] : []);
+    const stride = Math.ceil(edges.length / 9);
+
+    drawAxes(svg, {
+      area, fonts, height,
+      xTicks: edges.filter((_, i) => i % stride === 0)
+        .map((e) => ({ px: x.to(e), label: tickLabel(e, bwidth) })),
+      yTicks: yNice.ticks.map((t) => ({ px: y.to(t), label: tickLabel(t, yNice.step) })),
+      xTitle: valueTitle, yTitle: countLabel, grid: 'y'
+    });
+
+    for (const bin of bins) {
+      if (bin.count === 0) continue;
+      svg.append(svgEl('rect', {
+        x: x.to(bin.from),
+        y: y.to(bin.count),
+        width: Math.max(1, x.to(bin.to) - x.to(bin.from)),
+        height: plotBottom - y.to(bin.count),
+        fill: '#003DA5',
+        stroke: PAPER,
+        'stroke-width': 1
+      }));
+    }
+
+    return { svg, area, summary: null, binWidth: bwidth, bins };
+  }
+
+  /* dot and box both sit on a plain number line */
+  const xNice = niceScale(
+    axis.min ?? Math.min(...numbers),
+    axis.max ?? Math.max(...numbers),
+    { startAtZero: axis.startAtZero ?? false }
+  );
+  const x = makeScale(xNice.min, xNice.max, plotLeft, plotRight);
+
+  drawAxes(svg, {
+    area, fonts, height,
+    xTicks: xNice.ticks.map((t) => ({ px: x.to(t), label: tickLabel(t, xNice.step) })),
+    yTicks: [],
+    xTitle: valueTitle,
+    yTitle: '',
+    grid: 'x',
+    showY: false
+  });
+
+  if (kind === 'box') {
+    summary = fiveNumberSummary(numbers);
+    if (summary) {
+      const midY = (plotTop + plotBottom) / 2;
+      const boxH = Math.min((plotBottom - plotTop) * 0.46, fonts.label * 11);
+      const stroke = Math.max(2, fonts.label / 6);
+
+      /* Whiskers to the smallest and largest values. Year 8 box plots do not
+         carry the 1.5 IQR outlier rule, and inventing one here would put marks
+         on the chart she has no way to explain. */
+      svg.append(svgEl('line', {
+        x1: x.to(summary.min), y1: midY, x2: x.to(summary.q1), y2: midY,
+        stroke: INK, 'stroke-width': stroke
+      }));
+      svg.append(svgEl('line', {
+        x1: x.to(summary.q3), y1: midY, x2: x.to(summary.max), y2: midY,
+        stroke: INK, 'stroke-width': stroke
+      }));
+      for (const end of [summary.min, summary.max]) {
+        svg.append(svgEl('line', {
+          x1: x.to(end), y1: midY - boxH * 0.28, x2: x.to(end), y2: midY + boxH * 0.28,
+          stroke: INK, 'stroke-width': stroke
+        }));
+      }
+
+      svg.append(svgEl('rect', {
+        x: x.to(summary.q1), y: midY - boxH / 2,
+        width: Math.max(1, x.to(summary.q3) - x.to(summary.q1)), height: boxH,
+        fill: '#E9EEF8', stroke: '#003DA5', 'stroke-width': stroke
+      }));
+      svg.append(svgEl('line', {
+        x1: x.to(summary.median), y1: midY - boxH / 2,
+        x2: x.to(summary.median), y2: midY + boxH / 2,
+        stroke: '#003DA5', 'stroke-width': stroke * 1.6
+      }));
+
+      /* Every one of the five named on the chart, so the picture and the panel
+         say the same thing and the export explains itself. */
+      const marks = [
+        ['smallest', summary.min], ['Q1', summary.q1], ['median', summary.median],
+        ['Q3', summary.q3], ['largest', summary.max]
+      ];
+      /* Full label size. Shrinking these put them at 27.6px in the slide
+         export, under the 28px floor the film brief sets - the same slip as the
+         extrapolation caption, so the suite now checks every chart type. */
+      marks.forEach(([name, value], index) => {
+        svg.append(svgEl('text', {
+          x: x.to(value),
+          y: index % 2 ? midY - boxH * 0.75 : midY + boxH * 0.95 + fonts.label * 0.6,
+          'text-anchor': 'middle', 'font-size': fonts.label, fill: SAGE
+        }, `${name} ${plainNumber(value)}`));
+      });
+    }
+    return { svg, area, summary };
+  }
+
+  /* dot plot: one dot per measurement, stacked where they repeat */
+  const groups = new Map();
+  for (const value of numbers) groups.set(value, (groups.get(value) ?? 0) + 1);
+  const tallest = Math.max(1, ...groups.values());
+
+  /* Dots grow to use the height rather than sitting in a thin line along the
+     bottom of an empty box, and shrink again when a tall stack needs the room. */
+  const room = plotBottom - plotTop - fonts.label;
+  const radius = Math.max(2, Math.min(fonts.label * 0.9, room * 0.55 / Math.max(1, tallest * 2.4)));
+
+  for (const [value, count] of groups) {
+    for (let i = 0; i < count; i += 1) {
+      svg.append(svgEl('circle', {
+        cx: x.to(value),
+        cy: plotBottom - radius * 1.6 - i * radius * 2.4,
+        r: radius,
+        fill: INK
+      }));
+    }
+  }
+
+  return { svg, area, summary: null, tallest };
+}
+
 /* ---- export -------------------------------------------------------------- */
 
 function serialise(svg) {
@@ -558,7 +943,7 @@ export function toPngBlob(svg, { scale = 2 } = {}) {
 /* 1920x1080 for the film crews. Built from a fresh chart at slide type sizes
    rather than a scaled-up screen chart, so the 28px minimum is a property of
    the render rather than a coincidence of the scale factor. */
-export async function toSlideBlob(spec, { title = '', commentary = '' } = {}) {
+export async function toSlideBlob(spec, { title = '', commentary = '', render = renderChart } = {}) {
   const W = 1920;
   const H = 1080;
   const MARGIN = 96; /* 5% safe area */
@@ -570,7 +955,7 @@ export async function toSlideBlob(spec, { title = '', commentary = '' } = {}) {
   const chartWidth = W - MARGIN * 2;
   const chartHeight = chartBottom - chartTop;
 
-  const { svg: inner } = renderChart({
+  const { svg: inner } = render({
     ...spec,
     width: chartWidth,
     height: chartHeight,
@@ -649,6 +1034,36 @@ export function parsePairs(text) {
   }
 
   return { rows, skipped };
+}
+
+/* One column. Values stay as typed so categories survive; `numeric` says
+   whether they all read as numbers, and the tool lets her overrule it. */
+export function parseColumn(text) {
+  const raw = [];
+  const skipped = [];
+
+  for (const [index, line] of String(text).split(/\r?\n/).entries()) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    /* Tolerate a two-column paste by taking the first field. */
+    const first = trimmed.split(/[\t,;]/)[0].trim();
+    if (!first) { skipped.push(index + 1); continue; }
+    raw.push(first);
+  }
+
+  const looksNumeric = (v) => /\d/.test(v) && Number.isFinite(Number(v.replace(/[^0-9.eE+-]/g, '')));
+
+  /* A single non-numeric line on top of numbers is a column heading, not a
+     category. Keeping it would turn her whole column categorical. */
+  let header = null;
+  if (raw.length > 1 && !looksNumeric(raw[0]) && raw.slice(1).every(looksNumeric)) {
+    header = raw.shift();
+  }
+
+  const numeric = raw.length > 0 && raw.every(looksNumeric);
+  const numbers = numeric ? raw.map((v) => Number(v.replace(/[^0-9.eE+-]/g, ''))) : [];
+
+  return { values: raw, numbers, numeric, header, skipped };
 }
 
 export function leastSquares(points) {

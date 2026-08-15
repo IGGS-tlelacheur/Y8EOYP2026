@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · One variable</title>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the tool</a>
+
+<header class="masthead">
+  <img class="crest" src="../assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">One variable · Dot, column, pie, histogram, box</div>
+  </div>
+  <div class="who no-print"><a href="../hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>One variable on its own</h1>
+  <p>
+    One column of measurements, five ways of showing it. Not every way suits
+    every kind of data, which is most of the point.
+  </p>
+
+  <section class="panel no-print" id="data-panel">
+    <h2>1 · Your data</h2>
+
+    <div id="data-open">
+      <div class="field">
+        <label for="paste">One column</label>
+        <span class="help">
+          One measurement per line. Numbers, or words like <i>yes</i> and
+          <i>no</i>. If you paste numbers with a heading on top, the heading is
+          used as the label. With words, every line counts as an answer — so
+          leave the heading out.
+        </span>
+        <textarea id="paste" spellcheck="false"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" id="use-paste">Use these numbers</button>
+        <button class="btn secondary" type="button" id="use-table">Use my collection table</button>
+        <button class="btn secondary" type="button" id="use-example">Use the example from the Card</button>
+      </div>
+    </div>
+
+    <div class="done-summary" id="data-done" hidden>
+      <span class="what">
+        <b id="data-count"></b>
+        <span id="data-note"></span>
+      </span>
+      <button class="btn secondary" type="button" id="change-data">Change the numbers</button>
+    </div>
+
+    <div class="msg" id="data-msg" hidden>
+      <span class="mark" id="data-mark"></span>
+      <span id="data-text"></span>
+    </div>
+  </section>
+
+  <div class="tool">
+    <div class="chart-col">
+      <div class="chart-wrap" id="chart-wrap"></div>
+
+      <div class="actions no-print" style="margin-top:1rem;">
+        <button class="btn" type="button" id="export-png" disabled>Save my chart</button>
+        <button class="btn secondary" type="button" id="export-slide" disabled>Save for the film</button>
+        <button class="btn secondary" type="button" id="attach" disabled>Attach to our Card</button>
+      </div>
+      <p class="note no-print" id="export-why">
+        Name what you measured, and give its units, before you save. A chart
+        nobody can read the axis of does not prove anything.
+      </p>
+      <div class="msg good no-print" id="saved-msg" hidden>
+        <span class="mark">✓</span><span id="saved-text"></span>
+      </div>
+    </div>
+
+    <div class="side no-print">
+      <section class="panel">
+        <h2>2 · Which chart</h2>
+        <div class="chart-picker" id="picker" role="group" aria-label="Chart type"></div>
+        <div class="msg" id="suit-msg" hidden>
+          <span class="mark">!</span>
+          <span id="suit-text"></span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>3 · Label it</h2>
+        <div class="row">
+          <div class="field">
+            <label for="v-label">You measured…</label>
+            <input type="text" id="v-label" maxlength="40" placeholder="Shower length">
+          </div>
+          <div class="field">
+            <label for="v-unit">in</label>
+            <input type="text" id="v-unit" maxlength="20" placeholder="minutes">
+          </div>
+        </div>
+        <div class="field">
+          <label for="title">Title (optional)</label>
+          <input type="text" id="title" maxlength="60">
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="as-categories">
+          <span>
+            <b>Treat these as categories</b>
+            Turn this on when the numbers are labels, like class 7 and class 8,
+            rather than amounts.
+          </span>
+        </div>
+      </section>
+
+      <section class="panel" id="bin-panel" hidden>
+        <h2>4 · Bin width</h2>
+        <p class="note">
+          How wide each bar is. Wide bars hide the shape; narrow bars show every
+          wobble. Move it and watch what happens.
+        </p>
+        <div class="field">
+          <label for="bin-width">Each bar covers <b id="bin-shown"></b></label>
+          <input type="range" id="bin-width" min="0" max="10" step="1" value="4">
+        </div>
+        <p class="note" id="bin-count"></p>
+      </section>
+
+      <section class="panel" id="summary-panel" hidden>
+        <h2>4 · The five numbers</h2>
+        <p class="note">
+          A box plot is a picture of these five. Every one is on the chart too.
+        </p>
+        <ul class="five" id="five"></ul>
+        <p class="note" id="iqr-note"></p>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import {
+  renderUni, toPngBlob, toSlideBlob, downloadBlob,
+  parseColumn, fiveNumberSummary, suggestBinWidth, binValues, tally, roundSensibly
+} from '../js/chart.js';
+import { getProfile, getTableData, putChart } from '../js/store.js';
+
+/* The shower lengths from the Card's worked example A. Same reconstruction as
+   tools/bi.html - see the note there. */
+const EXAMPLE = [2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 11];
+
+const KINDS = [
+  { id: 'dot', name: 'Dot plot', blurb: 'One dot per measurement' },
+  { id: 'column', name: 'Column', blurb: 'One bar per category' },
+  { id: 'pie', name: 'Pie', blurb: 'Slices of a whole' },
+  { id: 'histogram', name: 'Histogram', blurb: 'Numbers grouped into bins' },
+  { id: 'box', name: 'Box plot', blurb: 'The five numbers' }
+];
+
+/* Bin widths she can choose between, as multiples of the suggested one. A free
+   number box lets her type 0.0001 and hang the browser building 90,000 bars. */
+const BIN_STEPS = [0.2, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8];
+
+const state = {
+  values: [],
+  numbers: [],
+  numeric: true,
+  asCategories: false,
+  kind: 'dot',
+  label: '',
+  unit: '',
+  title: '',
+  binIndex: 4
+};
+
+const wrap = document.querySelector('#chart-wrap');
+let chart = null;
+let frame = null;
+
+/* ---- data ---------------------------------------------------------------- */
+
+function say(message, kind) {
+  const box = document.querySelector('#data-msg');
+  document.querySelector('#data-mark').textContent = kind === 'problem' ? '!' : '✓';
+  document.querySelector('#data-text').textContent = message;
+  box.className = `msg ${kind === 'problem' ? 'problem' : 'good'}`;
+  box.hidden = false;
+}
+
+function foldData(count, note) {
+  document.querySelector('#data-open').hidden = true;
+  document.querySelector('#data-done').hidden = false;
+  document.querySelector('#data-count').textContent =
+    `${count} measurement${count === 1 ? '' : 's'}`;
+  document.querySelector('#data-note').textContent = note ?? '';
+  document.querySelector('#data-msg').hidden = true;
+}
+
+document.querySelector('#change-data').addEventListener('click', () => {
+  document.querySelector('#data-open').hidden = false;
+  document.querySelector('#data-done').hidden = true;
+  document.querySelector('#paste').focus();
+});
+
+function setValues({ values, numbers, numeric }, note) {
+  state.values = values;
+  state.numbers = numbers;
+  state.numeric = numeric;
+  /* A column of words has no bins and no quartiles, so start it somewhere it
+     can actually be drawn. */
+  if (!numeric && !['column', 'pie'].includes(state.kind)) state.kind = 'column';
+  state.binIndex = 4;
+  foldData(values.length, note);
+  renderPicker();
+  render();
+}
+
+document.querySelector('#use-paste').addEventListener('click', () => {
+  const parsed = parseColumn(document.querySelector('#paste').value);
+  if (parsed.values.length < 1) {
+    return say('Put at least one measurement in the box, one per line.', 'problem');
+  }
+  if (parsed.header && !document.querySelector('#v-label').value.trim()) {
+    document.querySelector('#v-label').value = parsed.header;
+    readLabels();
+  }
+  const note = parsed.header ? `heading "${parsed.header}" ignored` : 'from what you typed';
+  setValues(parsed, note);
+});
+
+document.querySelector('#use-table').addEventListener('click', () => {
+  const data = getTableData();
+  if (!data) {
+    return say('There is nothing in your collection table yet. Build it first, then come back.', 'problem');
+  }
+  const column = data.columns[0];
+  const values = data.rows.map((row) => String(row[0] ?? '').trim()).filter(Boolean);
+  if (!values.length) {
+    return say('The first column of your collection table is empty.', 'problem');
+  }
+  document.querySelector('#v-label').value = column?.name ?? '';
+  document.querySelector('#v-unit').value = column?.unit ?? '';
+  readLabels();
+  setValues(parseColumn(values.join('\n')), 'from your collection table');
+});
+
+document.querySelector('#use-example').addEventListener('click', () => {
+  document.querySelector('#paste').value = EXAMPLE.join('\n');
+  document.querySelector('#v-label').value = 'Shower length';
+  document.querySelector('#v-unit').value = 'minutes';
+  readLabels();
+  setValues(parseColumn(EXAMPLE.join('\n')), 'from the worked example on the Card');
+});
+
+/* ---- labels and options -------------------------------------------------- */
+
+function readLabels() {
+  state.label = document.querySelector('#v-label').value.trim();
+  state.unit = document.querySelector('#v-unit').value.trim();
+  state.title = document.querySelector('#title').value.trim();
+  render();
+}
+
+for (const id of ['v-label', 'v-unit', 'title']) {
+  document.querySelector(`#${id}`).addEventListener('input', readLabels);
+}
+
+document.querySelector('#as-categories').addEventListener('change', (event) => {
+  state.asCategories = event.target.checked;
+  if (!usableAsNumbers() && !['column', 'pie'].includes(state.kind)) state.kind = 'column';
+  renderPicker();
+  render();
+});
+
+function usableAsNumbers() {
+  return state.numeric && !state.asCategories;
+}
+
+/* ---- chart picker -------------------------------------------------------- */
+
+function renderPicker() {
+  const picker = document.querySelector('#picker');
+  picker.textContent = '';
+
+  for (const kind of KINDS) {
+    const numbersOnly = ['histogram', 'box', 'dot'].includes(kind.id);
+    const allowed = numbersOnly ? usableAsNumbers() : true;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `pick${state.kind === kind.id ? ' on' : ''}`;
+    button.disabled = !allowed;
+    button.setAttribute('aria-pressed', String(state.kind === kind.id));
+
+    const name = document.createElement('b');
+    name.textContent = kind.name;
+    const blurb = document.createElement('span');
+    blurb.textContent = allowed ? kind.blurb : 'Needs numbers';
+    button.append(name, blurb);
+
+    button.addEventListener('click', () => {
+      state.kind = kind.id;
+      renderPicker();
+      render();
+    });
+
+    picker.append(button);
+  }
+}
+
+/* Warn, do not block. A pie of the wrong thing is a lesson if she can see it. */
+function suitability() {
+  const box = document.querySelector('#suit-msg');
+  const text = document.querySelector('#suit-text');
+  const categories = tally(state.values);
+
+  if (state.kind === 'pie' && usableAsNumbers()) {
+    text.textContent =
+      'These are amounts, not groups, so the slices do not really mean anything. '
+      + 'A pie works when every measurement belongs to one of a few named groups.';
+    box.hidden = false;
+    return;
+  }
+  if (state.kind === 'pie' && categories.length > 8) {
+    text.textContent =
+      `There are ${categories.length} different groups here. Past about eight, the slices `
+      + 'get too thin to compare. A column chart will read better.';
+    box.hidden = false;
+    return;
+  }
+  if (state.kind === 'column' && usableAsNumbers() && tally(state.values).length > 12) {
+    text.textContent =
+      'Every different number gets its own bar here, which is a lot of bars. '
+      + 'A histogram groups them into bins instead.';
+    box.hidden = false;
+    return;
+  }
+  box.hidden = true;
+}
+
+/* ---- histogram bins ------------------------------------------------------ */
+
+/* "1 minutes" is the kind of thing a 13-year-old notices and a spec does not
+   mention. Exactly one of something drops the plural. */
+function amount(value) {
+  const number = roundSensibly(value);
+  if (!state.unit) return String(number);
+  const unit = number === 1 ? state.unit.replace(/s$/, '') : state.unit;
+  return `${number} ${unit}`;
+}
+
+function currentBinWidth() {
+  const base = suggestBinWidth(state.numbers);
+  return Number((base * BIN_STEPS[state.binIndex]).toPrecision(6));
+}
+
+document.querySelector('#bin-width').addEventListener('input', (event) => {
+  state.binIndex = Number(event.target.value);
+  render();
+});
+
+function showBins() {
+  const panel = document.querySelector('#bin-panel');
+  if (state.kind !== 'histogram' || !usableAsNumbers()) { panel.hidden = true; return; }
+
+  const width = currentBinWidth();
+  const bins = binValues(state.numbers, width);
+  document.querySelector('#bin-shown').textContent = amount(width);
+  document.querySelector('#bin-count').textContent =
+    `${bins.length} bar${bins.length === 1 ? '' : 's'}, `
+    + `the tallest holding ${Math.max(0, ...bins.map((b) => b.count))} of your ${state.numbers.length}.`;
+  panel.hidden = false;
+}
+
+/* ---- five-number summary ------------------------------------------------- */
+
+const FIVE_ROWS = [
+  ['The smallest', 'min'],
+  ['Quarter of the way up (Q1)', 'q1'],
+  ['The middle (median)', 'median'],
+  ['Three quarters up (Q3)', 'q3'],
+  ['The largest', 'max']
+];
+
+function showSummary() {
+  const panel = document.querySelector('#summary-panel');
+  if (state.kind !== 'box' || !usableAsNumbers()) { panel.hidden = true; return; }
+
+  const summary = fiveNumberSummary(state.numbers);
+  if (!summary) { panel.hidden = true; return; }
+
+  const list = document.querySelector('#five');
+  list.textContent = '';
+
+  for (const [name, key] of FIVE_ROWS) {
+    const li = document.createElement('li');
+    const what = document.createElement('span');
+    what.textContent = name;
+    const value = document.createElement('b');
+    value.textContent = amount(summary[key]);
+    li.append(what, value);
+    list.append(li);
+  }
+
+  document.querySelector('#iqr-note').textContent =
+    `The middle half of your measurements sits between ${amount(summary.q1)} `
+    + `and ${amount(summary.q3)} — a spread of ${amount(summary.iqr)}.`;
+  panel.hidden = false;
+}
+
+/* ---- render -------------------------------------------------------------- */
+
+function spec() {
+  return {
+    kind: state.kind,
+    width: 660,
+    height: 440,
+    values: usableAsNumbers() ? state.numbers : state.values,
+    label: state.label,
+    unit: usableAsNumbers() ? state.unit : '',
+    countLabel: 'How many',
+    title: state.title,
+    binWidth: state.kind === 'histogram' ? currentBinWidth() : null
+  };
+}
+
+function render() {
+  if (frame) return;
+  frame = requestAnimationFrame(() => {
+    frame = null;
+    chart = renderUni(spec());
+    wrap.replaceChildren(chart.svg);
+    showBins();
+    showSummary();
+    suitability();
+    updateExportState();
+  });
+}
+
+/* ---- export -------------------------------------------------------------- */
+
+function labelsComplete() {
+  /* Units only apply to amounts. "Yes" is not measured in anything. */
+  return Boolean(state.label) && (usableAsNumbers() ? Boolean(state.unit) : true);
+}
+
+function updateExportState() {
+  const ready = labelsComplete() && state.values.length > 0;
+  for (const id of ['export-png', 'export-slide', 'attach']) {
+    document.querySelector(`#${id}`).disabled = !ready;
+  }
+  document.querySelector('#export-why').hidden = ready;
+}
+
+function slug(text, fallback) {
+  const out = String(text ?? '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+  return out || fallback;
+}
+
+function chartName() {
+  return `${slug(getProfile()?.crew, 'crew')}-chart-1`;
+}
+
+function saved(message) {
+  document.querySelector('#saved-text').textContent = message;
+  document.querySelector('#saved-msg').hidden = false;
+}
+
+document.querySelector('#export-png').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    downloadBlob(await toPngBlob(chart.svg, { scale: 2 }), `${chartName()}.png`);
+    saved('Chart saved to your downloads.');
+  } catch (err) {
+    saved(`The chart did not save. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+document.querySelector('#export-slide').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    const summary = usableAsNumbers() ? fiveNumberSummary(state.numbers) : null;
+    const commentary = summary
+      ? `Middle value ${amount(summary.median)}, from ${summary.n} measurements`
+      : `${state.values.length} measurements`;
+    const blob = await toSlideBlob(spec(), {
+      title: state.title || `${state.label}${state.unit ? ` (${state.unit})` : ''}`,
+      commentary,
+      render: renderUni
+    });
+    downloadBlob(blob, `${chartName()}-1920x1080.png`);
+    saved('Full-size version saved, 1920 by 1080, ready for the film.');
+  } catch (err) {
+    saved(`That did not save. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+document.querySelector('#attach').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    await putChart({
+      id: `chart1-${Date.now()}`,
+      blob: await toPngBlob(chart.svg, { scale: 2 }),
+      kind: `univariate-${state.kind}`,
+      title: state.title || state.label,
+      xLabel: state.label,
+      xUnit: state.unit,
+      yLabel: 'How many',
+      yUnit: '',
+      created: new Date().toISOString(),
+      roomId: 'tools'
+    });
+    saved('Attached. It will appear in the Chart 1 slot on your Card.');
+  } catch (err) {
+    saved(`That did not attach. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+renderPicker();
+render();
+</script>
+</body>
+</html>
