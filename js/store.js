@@ -150,6 +150,19 @@ export function awardBadge(name) {
   return badges[name];
 }
 
+/* ---- the crew's own collected data --------------------------------------- */
+
+/* Written by tools/table.html at stage 4 and read by both chart tools, so a
+   girl types her measurements once rather than once per chart. */
+export function getTableData() {
+  const data = readJson(KEYS.data, null);
+  return data?.columns?.length ? data : null;
+}
+
+export function setTableData({ columns, rows }) {
+  return writeJson(KEYS.data, { columns, rows });
+}
+
 /* ---- IndexedDB ----------------------------------------------------------- */
 
 function request(req) {

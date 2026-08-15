@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Two variables</title>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the tool</a>
+
+<header class="masthead">
+  <img class="crest" src="../assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Two variables · Scatterplot</div>
+  </div>
+  <div class="who no-print"><a href="../hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Two variables together</h1>
+  <p>
+    Put two columns of numbers in, get a scatterplot out. Then place a line
+    through the points and use it to predict.
+  </p>
+
+  <section class="panel no-print">
+    <h2>1 · Your data</h2>
+    <div class="field">
+      <label for="paste">Two columns of numbers</label>
+      <span class="help">
+        One pair per line, separated by a comma, a tab or a space. The first
+        number goes across, the second goes up.
+      </span>
+      <textarea id="paste" spellcheck="false"></textarea>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="use-paste">Use these numbers</button>
+      <button class="btn secondary" type="button" id="use-table">Use my collection table</button>
+      <button class="btn secondary" type="button" id="use-example">Use the example from the Card</button>
+    </div>
+    <div class="msg" id="data-msg" hidden>
+      <span class="mark" id="data-mark"></span>
+      <span id="data-text"></span>
+    </div>
+  </section>
+
+  <div class="tool">
+    <div>
+      <div class="chart-wrap" id="chart-wrap"></div>
+
+      <div class="actions no-print" style="margin-top:1rem;">
+        <button class="btn" type="button" id="export-png" disabled>Save my chart</button>
+        <button class="btn secondary" type="button" id="export-slide" disabled>Save for the film</button>
+        <button class="btn secondary" type="button" id="attach" disabled>Attach to our Card</button>
+      </div>
+      <p class="note no-print" id="export-why">
+        Name both axes and give both units before you save. A chart nobody can
+        read the axes of does not prove anything.
+      </p>
+      <div class="msg good no-print" id="saved-msg" hidden>
+        <span class="mark">✓</span><span id="saved-text"></span>
+      </div>
+    </div>
+
+    <div class="side no-print">
+      <section class="panel">
+        <h2>2 · Label your axes</h2>
+        <div class="field">
+          <label for="x-label">Across the bottom is…</label>
+          <input type="text" id="x-label" maxlength="40" placeholder="Shower length">
+        </div>
+        <div class="field">
+          <label for="x-unit">measured in</label>
+          <input type="text" id="x-unit" maxlength="20" placeholder="minutes">
+        </div>
+        <div class="field">
+          <label for="y-label">Up the side is…</label>
+          <input type="text" id="y-label" maxlength="40" placeholder="Water used">
+        </div>
+        <div class="field">
+          <label for="y-unit">measured in</label>
+          <input type="text" id="y-unit" maxlength="20" placeholder="litres">
+        </div>
+        <div class="field">
+          <label for="title">Title (optional)</label>
+          <input type="text" id="title" maxlength="60">
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="zero">
+          <span><b>Start both axes at zero</b>Turn this off to zoom in on the points.</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>3 · Your line of best fit</h2>
+        <p class="note" id="fit-hint">
+          Put a line through the middle of the points, with about as many above
+          it as below.
+        </p>
+        <div class="actions">
+          <button class="btn" type="button" id="place-fit">Place my line</button>
+          <button class="btn secondary" type="button" id="clear-fit" hidden>Start the line again</button>
+        </div>
+
+        <div class="readout" id="fit-readout" hidden style="margin-top:1rem;">
+          <span class="lbl">Your line</span>
+          <span class="eq" id="equation"></span>
+          <p id="gradient-plain"></p>
+        </div>
+
+        <p class="note" id="drag-help" hidden style="margin-top:.75rem;">
+          Drag either end. Or tab to an end and move it with the arrow keys —
+          hold shift to move further.
+        </p>
+      </section>
+
+      <section class="panel" id="predict-panel" hidden>
+        <h2>4 · Use it to predict</h2>
+        <div class="field">
+          <label for="predict-x" id="predict-label">Choose a value across the bottom</label>
+          <input type="number" id="predict-x" step="any" inputmode="decimal">
+        </div>
+        <div class="readout" id="predict-readout" hidden>
+          <p id="predict-text"></p>
+          <p id="predict-warning" hidden>
+            <span class="beyond">Beyond our data</span>
+          </p>
+          <p class="note" id="predict-why" hidden>
+            Nobody measured out here, so this is a guess based on the line
+            carrying on. It might not.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Side quest</h2>
+        <div class="switch">
+          <input type="checkbox" id="least-squares">
+          <span>
+            <b>Show the computer's line</b>
+            The computer works out one exact line. Place yours first, then see
+            how close you were.
+          </span>
+        </div>
+        <p class="note" id="ls-readout" hidden></p>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import {
+  renderChart, toPngBlob, toSlideBlob, downloadBlob, pointerToData,
+  parsePairs, leastSquares, roundSensibly
+} from '../js/chart.js';
+import { getProfile, getTableData, putChart } from '../js/store.js';
+
+/* The Card's worked example A, so the numbers here are ones the girls have
+   already met on paper rather than something new to decode. */
+const EXAMPLE = [
+  [2, 21], [3, 33], [3, 28], [4, 47], [4, 40], [5, 55], [5, 63], [6, 60],
+  [6, 68], [6, 55], [7, 76], [7, 69], [8, 82], [8, 74], [9, 91], [9, 81],
+  [10, 103], [11, 118]
+];
+
+const state = {
+  points: [],
+  xLabel: '', xUnit: '', yLabel: '', yUnit: '', title: '',
+  startAtZero: false,
+  fit: null,
+  showLeastSquares: false,
+  predictX: null
+};
+
+const wrap = document.querySelector('#chart-wrap');
+let chart = null;
+let dragging = null;
+let focusedHandle = null;
+let frame = null;
+
+/* ---- data in ------------------------------------------------------------- */
+
+function say(message, kind) {
+  const box = document.querySelector('#data-msg');
+  document.querySelector('#data-mark').textContent = kind === 'problem' ? '!' : '✓';
+  document.querySelector('#data-text').textContent = message;
+  box.className = `msg ${kind === 'problem' ? 'problem' : 'good'}`;
+  box.hidden = false;
+}
+
+function setPoints(rows, note) {
+  state.points = rows;
+  state.fit = null;
+  state.predictX = null;
+  document.querySelector('#clear-fit').hidden = true;
+  document.querySelector('#fit-readout').hidden = true;
+  document.querySelector('#drag-help').hidden = true;
+  document.querySelector('#predict-panel').hidden = true;
+  document.querySelector('#predict-readout').hidden = true;
+  if (note) say(note, 'good');
+  render();
+}
+
+document.querySelector('#use-paste').addEventListener('click', () => {
+  const { rows, skipped } = parsePairs(document.querySelector('#paste').value);
+  if (rows.length < 2) {
+    return say('Put at least two pairs of numbers in the box, one pair per line.', 'problem');
+  }
+  const note = skipped.length
+    ? `Using ${rows.length} pairs. Line${skipped.length === 1 ? '' : 's'} ${skipped.join(', ')} had no pair of numbers on ${skipped.length === 1 ? 'it' : 'them'}, so ${skipped.length === 1 ? 'it was' : 'they were'} left out.`
+    : `Using ${rows.length} pairs.`;
+  setPoints(rows, note);
+});
+
+document.querySelector('#use-table').addEventListener('click', () => {
+  const data = getTableData();
+  if (!data) {
+    return say('There is nothing in your collection table yet. Build it first, then come back.', 'problem');
+  }
+  const rows = data.rows
+    .map((row) => [Number(row[0]), Number(row[1])])
+    .filter((pair) => pair.every(Number.isFinite));
+  if (rows.length < 2) {
+    return say('Your collection table needs at least two rows with numbers in the first two columns.', 'problem');
+  }
+  const [first, second] = data.columns;
+  document.querySelector('#x-label').value = first?.name ?? '';
+  document.querySelector('#x-unit').value = first?.unit ?? '';
+  document.querySelector('#y-label').value = second?.name ?? '';
+  document.querySelector('#y-unit').value = second?.unit ?? '';
+  readLabels();
+  setPoints(rows, `Using ${rows.length} rows from your collection table.`);
+});
+
+document.querySelector('#use-example').addEventListener('click', () => {
+  document.querySelector('#paste').value = EXAMPLE.map((p) => p.join(', ')).join('\n');
+  document.querySelector('#x-label').value = 'Shower length';
+  document.querySelector('#x-unit').value = 'minutes';
+  document.querySelector('#y-label').value = 'Water used';
+  document.querySelector('#y-unit').value = 'litres';
+  readLabels();
+  setPoints(EXAMPLE.map((p) => [...p]), 'Using the 18 showers from the worked example.');
+});
+
+/* ---- labels -------------------------------------------------------------- */
+
+function readLabels() {
+  state.xLabel = document.querySelector('#x-label').value.trim();
+  state.xUnit = document.querySelector('#x-unit').value.trim();
+  state.yLabel = document.querySelector('#y-label').value.trim();
+  state.yUnit = document.querySelector('#y-unit').value.trim();
+  state.title = document.querySelector('#title').value.trim();
+  updatePredictLabel();
+  render();
+}
+
+for (const id of ['x-label', 'x-unit', 'y-label', 'y-unit', 'title']) {
+  document.querySelector(`#${id}`).addEventListener('input', readLabels);
+}
+
+document.querySelector('#zero').addEventListener('change', (event) => {
+  state.startAtZero = event.target.checked;
+  render();
+});
+
+function updatePredictLabel() {
+  const label = state.xLabel
+    ? `Choose a ${state.xLabel.toLowerCase()}${state.xUnit ? ` in ${state.xUnit}` : ''}`
+    : 'Choose a value across the bottom';
+  document.querySelector('#predict-label').textContent = label;
+}
+
+/* ---- the fit line -------------------------------------------------------- */
+
+function dataRange() {
+  if (!state.points.length) return null;
+  const xs = state.points.map((p) => p[0]);
+  const ys = state.points.map((p) => p[1]);
+  return {
+    xMin: Math.min(...xs), xMax: Math.max(...xs),
+    yMin: Math.min(...ys), yMax: Math.max(...ys)
+  };
+}
+
+document.querySelector('#place-fit').addEventListener('click', () => {
+  const range = dataRange();
+  if (!range) return say('Put some numbers in first.', 'problem');
+
+  /* Starts flat at the average height, spanning the middle of the data. It is
+     deliberately not the least-squares line - tilting it is the exercise. */
+  const meanY = state.points.reduce((sum, p) => sum + p[1], 0) / state.points.length;
+  const span = range.xMax - range.xMin || 1;
+  state.fit = {
+    x1: range.xMin + span * 0.15,
+    y1: meanY,
+    x2: range.xMax - span * 0.15,
+    y2: meanY
+  };
+
+  document.querySelector('#clear-fit').hidden = false;
+  document.querySelector('#drag-help').hidden = false;
+  document.querySelector('#predict-panel').hidden = false;
+  render();
+});
+
+document.querySelector('#clear-fit').addEventListener('click', () => {
+  state.fit = null;
+  state.predictX = null;
+  document.querySelector('#predict-x').value = '';
+  document.querySelector('#clear-fit').hidden = true;
+  document.querySelector('#fit-readout').hidden = true;
+  document.querySelector('#drag-help').hidden = true;
+  document.querySelector('#predict-panel').hidden = true;
+  document.querySelector('#predict-readout').hidden = true;
+  render();
+});
+
+function fitLine() {
+  if (!state.fit) return null;
+  const { x1, y1, x2, y2 } = state.fit;
+  const m = (y2 - y1) / ((x2 - x1) || 1e-9);
+  return { m, c: y1 - m * x1 };
+}
+
+function showEquation() {
+  const line = fitLine();
+  const readout = document.querySelector('#fit-readout');
+  if (!line) { readout.hidden = true; return; }
+
+  const m = roundSensibly(line.m);
+  const c = roundSensibly(line.c);
+  document.querySelector('#equation').textContent =
+    `y = ${m}x ${c < 0 ? '−' : '+'} ${Math.abs(c)}`;
+
+  const rise = Math.abs(m);
+  const direction = m >= 0 ? 'goes up' : 'goes down';
+  const xThing = state.xUnit ? `1 ${state.xUnit.replace(/s$/, '')}` : '1 across the bottom';
+  const yThing = state.yUnit ? `${rise} ${state.yUnit}` : `${rise} up the side`;
+  document.querySelector('#gradient-plain').textContent =
+    `For every extra ${xThing}, ${state.yLabel ? state.yLabel.toLowerCase() : 'the second measurement'} ${direction} by about ${yThing}.`;
+
+  readout.hidden = false;
+}
+
+/* ---- prediction ---------------------------------------------------------- */
+
+document.querySelector('#predict-x').addEventListener('input', (event) => {
+  const value = Number(event.target.value);
+  state.predictX = event.target.value === '' || !Number.isFinite(value) ? null : value;
+  render();
+});
+
+function showPrediction() {
+  const readout = document.querySelector('#predict-readout');
+  const line = fitLine();
+  const range = dataRange();
+
+  if (!line || state.predictX === null || !range) { readout.hidden = true; return; }
+
+  const y = line.m * state.predictX + line.c;
+  const beyond = state.predictX < range.xMin || state.predictX > range.xMax;
+
+  const xText = `${roundSensibly(state.predictX)}${state.xUnit ? ` ${state.xUnit}` : ''}`;
+  const yText = `${roundSensibly(y)}${state.yUnit ? ` ${state.yUnit}` : ''}`;
+  document.querySelector('#predict-text').textContent =
+    `At ${xText}, your line reads about ${yText}.`;
+
+  document.querySelector('#predict-warning').hidden = !beyond;
+  document.querySelector('#predict-why').hidden = !beyond;
+  readout.hidden = false;
+}
+
+/* ---- least squares, side quest ------------------------------------------- */
+
+document.querySelector('#least-squares').addEventListener('change', (event) => {
+  state.showLeastSquares = event.target.checked;
+  render();
+});
+
+function showLeastSquares() {
+  const readout = document.querySelector('#ls-readout');
+  if (!state.showLeastSquares || state.points.length < 2) { readout.hidden = true; return; }
+  const ls = leastSquares(state.points);
+  if (!ls) { readout.hidden = true; return; }
+  const mine = fitLine();
+  const text = `The computer's line is y = ${roundSensibly(ls.m)}x ${ls.c < 0 ? '−' : '+'} ${Math.abs(roundSensibly(ls.c))}.`;
+  readout.textContent = mine
+    ? `${text} Yours has a gradient of ${roundSensibly(mine.m)}.`
+    : text;
+  readout.hidden = false;
+}
+
+/* ---- render -------------------------------------------------------------- */
+
+function spec() {
+  const range = dataRange();
+  const line = fitLine();
+  return {
+    width: 660,
+    height: 440,
+    points: state.points,
+    xLabel: state.xLabel,
+    xUnit: state.xUnit,
+    yLabel: state.yLabel,
+    yUnit: state.yUnit,
+    title: state.title,
+    axis: { startAtZero: state.startAtZero },
+    fit: state.fit,
+    dataRange: range,
+    prediction: line && state.predictX !== null
+      ? { x: state.predictX, y: line.m * state.predictX + line.c }
+      : null,
+    showHandles: Boolean(state.fit)
+  };
+}
+
+function render() {
+  if (frame) return;
+  frame = requestAnimationFrame(() => {
+    frame = null;
+    chart = renderChart(spec());
+    wrap.replaceChildren(chart.svg);
+
+    /* Focus is lost when the SVG is replaced, which would strand a girl driving
+       the handles from the keyboard mid-nudge. */
+    if (focusedHandle) {
+      chart.svg.querySelector(`[data-handle="${focusedHandle}"]`)?.focus();
+    }
+
+    showEquation();
+    showPrediction();
+    showLeastSquares();
+    updateExportState();
+  });
+}
+
+/* ---- dragging ------------------------------------------------------------ */
+
+/* Pointer Events throughout: one codepath for finger, stylus and trackpad.
+   Move and up are bound to the window rather than the handle, because the
+   handle element is rebuilt on every frame of the drag. */
+wrap.addEventListener('pointerdown', (event) => {
+  const handle = event.target.closest('[data-handle]');
+  if (!handle || !state.fit) return;
+  dragging = handle.dataset.handle;
+  focusedHandle = dragging;
+  handle.focus();
+  event.preventDefault();
+});
+
+window.addEventListener('pointermove', (event) => {
+  if (!dragging || !chart) return;
+  const at = pointerToData(chart.svg, event, chart.x, chart.y);
+  if (!at) return;
+  if (dragging === 'a') { state.fit.x1 = at.x; state.fit.y1 = at.y; }
+  else { state.fit.x2 = at.x; state.fit.y2 = at.y; }
+  render();
+});
+
+window.addEventListener('pointerup', () => { dragging = null; });
+window.addEventListener('pointercancel', () => { dragging = null; });
+
+/* ---- keyboard ------------------------------------------------------------ */
+
+const NUDGE_KEYS = {
+  ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]
+};
+
+wrap.addEventListener('keydown', (event) => {
+  const handle = event.target.closest('[data-handle]');
+  if (!handle || !state.fit || !chart) return;
+  const move = NUDGE_KEYS[event.key];
+  if (!move) return;
+
+  event.preventDefault();
+  const steps = event.shiftKey ? 10 : 1;
+  const xStep = (chart.xNice.max - chart.xNice.min) / 100;
+  const yStep = (chart.yNice.max - chart.yNice.min) / 100;
+
+  if (handle.dataset.handle === 'a') {
+    state.fit.x1 += move[0] * xStep * steps;
+    state.fit.y1 += move[1] * yStep * steps;
+  } else {
+    state.fit.x2 += move[0] * xStep * steps;
+    state.fit.y2 += move[1] * yStep * steps;
+  }
+  focusedHandle = handle.dataset.handle;
+  render();
+});
+
+wrap.addEventListener('focusin', (event) => {
+  const handle = event.target.closest('[data-handle]');
+  focusedHandle = handle ? handle.dataset.handle : null;
+});
+
+/* ---- export -------------------------------------------------------------- */
+
+function labelsComplete() {
+  return Boolean(state.xLabel && state.xUnit && state.yLabel && state.yUnit);
+}
+
+function updateExportState() {
+  /* The single highest-value bit of nagging in the build: no export until both
+     axes are named and both units are given. */
+  const ready = labelsComplete() && state.points.length > 0;
+  for (const id of ['export-png', 'export-slide', 'attach']) {
+    document.querySelector(`#${id}`).disabled = !ready;
+  }
+  document.querySelector('#export-why').hidden = ready;
+}
+
+function slug(text, fallback) {
+  const out = String(text ?? '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+  return out || fallback;
+}
+
+function chartName() {
+  const profile = getProfile();
+  return `${slug(profile?.crew, 'crew')}-chart-2`;
+}
+
+function saved(message) {
+  document.querySelector('#saved-text').textContent = message;
+  document.querySelector('#saved-msg').hidden = false;
+}
+
+document.querySelector('#export-png').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    const blob = await toPngBlob(chart.svg, { scale: 2 });
+    downloadBlob(blob, `${chartName()}.png`);
+    saved('Chart saved to your downloads.');
+  } catch (err) {
+    saved(`The chart did not save. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+document.querySelector('#export-slide').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    const line = fitLine();
+    const commentary = line
+      ? `Our line: y = ${roundSensibly(line.m)}x ${line.c < 0 ? '−' : '+'} ${Math.abs(roundSensibly(line.c))}`
+      : '';
+    const blob = await toSlideBlob(spec(), {
+      title: state.title || `${state.yLabel} against ${state.xLabel}`,
+      commentary
+    });
+    downloadBlob(blob, `${chartName()}-1920x1080.png`);
+    saved('Full-size version saved, 1920 by 1080, ready for the film.');
+  } catch (err) {
+    saved(`That did not save. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+document.querySelector('#attach').addEventListener('click', async (event) => {
+  event.currentTarget.disabled = true;
+  try {
+    const blob = await toPngBlob(chart.svg, { scale: 2 });
+    await putChart({
+      id: `chart2-${Date.now()}`,
+      blob,
+      kind: 'bivariate',
+      title: state.title || `${state.yLabel} against ${state.xLabel}`,
+      xLabel: state.xLabel, xUnit: state.xUnit,
+      yLabel: state.yLabel, yUnit: state.yUnit,
+      created: new Date().toISOString(),
+      roomId: 'tools'
+    });
+    saved('Attached. It will appear in the Chart 2 slot on your Card.');
+  } catch (err) {
+    saved(`That did not attach. ${err.message}. Try again.`);
+  } finally {
+    updateExportState();
+  }
+});
+
+render();
+</script>
+</body>
+</html>

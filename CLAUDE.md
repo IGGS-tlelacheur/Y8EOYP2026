@@ -76,16 +76,24 @@ say so once, in a sentence, and then follow it anyway.
 Match the existing Data Evidence Card, which the students will already have seen.
 
 ```
---ink:       #06232B    deep teal, body text
---teal:      #3E6570    headings, table headers, rules
---teal-mid:  #4A6A70
---sage:      #7E9793    secondary text
---sage-pale: #DCE6E3    fills
---line:      #B7C8C4    borders
---paper:     #FBFBF9    background
---gold:      #F2B705    highlights, badges earned
---gold-dark: #B98A05
+--brand:      #003DA5   school primary. Headings, rules, controls, masthead
+--brand-dark: #002B75   hover and pressed
+--brand-mid:  #2C5BB8   secondary controls
+--brand-tint: #E9EEF8   page surround, pale fills
+--ink:        #06232B   body text
+--sage:       #7E9793   secondary text
+--sage-pale:  #DCE6E3   neutral fills
+--line:       #B7C8C4   borders
+--paper:      #FBFBF9   background
+--gold:       #F2B705   highlights, badges earned, focus ring
+--gold-dark:  #B98A05
 ```
+
+**The site is school blue; the Card stays teal.** `#003DA5` replaced the Card's
+`--teal` as the site primary on 15/08/2026. The printed Data Evidence Card is
+unchanged and the girls still meet it first, so `card.html` keeps the Card's own
+teals — held as `--card-teal` / `--card-teal-mid` in `site.css` and used nowhere
+else. If the Card is ever reissued in blue, delete those two tokens.
 
 - **Headings and student-facing display text:** Patrick Hand. Self-host the woff2.
 - **Body and UI:** a clean humanist sans, self-hosted. Card print styles already assume

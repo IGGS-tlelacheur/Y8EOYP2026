@@ -15,15 +15,27 @@
 }
 
 :root {
+  /* School primary. Every heading, rule, control and masthead on the site.
+     9.5:1 against paper, so it carries body-weight text safely. */
+  --brand: #003DA5;
+  --brand-dark: #002B75;
+  --brand-mid: #2C5BB8;
+  --brand-tint: #E9EEF8;
+
   --ink: #06232B;
-  --teal: #3E6570;
-  --teal-mid: #4A6A70;
   --sage: #7E9793;
   --sage-pale: #DCE6E3;
   --line: #B7C8C4;
   --paper: #FBFBF9;
   --gold: #F2B705;
   --gold-dark: #B98A05;
+
+  /* The Data Evidence Card's own teals. The Card is already printed and the
+     girls meet it before the site, so its palette stays exactly as it is and
+     card.html will use these at stage 5. Nothing else should. */
+  --card-teal: #3E6570;
+  --card-teal-mid: #4A6A70;
+
   /* The Card's handwriting blue. Display text only, never a UI state. */
   --pen: #1D3F8F;
 
@@ -39,7 +51,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { background: var(--sage-pale); }
+html { background: var(--brand-tint); }
 
 body {
   margin: 0;
@@ -58,7 +70,7 @@ h1, h2, h3 {
   font-family: var(--font-hand);
   font-weight: 400;
   line-height: 1.15;
-  color: var(--teal);
+  color: var(--brand);
   margin: 0 0 0.5em;
 }
 
@@ -68,7 +80,7 @@ h3 { font-size: 1.3rem; }
 
 p { margin: 0 0 1em; max-width: var(--measure); }
 
-a { color: var(--teal); text-underline-offset: 0.2em; }
+a { color: var(--brand); text-underline-offset: 0.2em; }
 a:hover { color: var(--ink); }
 
 /* Patrick Hand has no subscript two, so the programme name is composed rather
@@ -85,7 +97,7 @@ a:hover { color: var(--ink); }
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--teal);
+  color: var(--brand);
   margin-bottom: 0.35em;
 }
 
@@ -122,7 +134,7 @@ a:hover { color: var(--ink); }
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: var(--teal);
+  background: var(--brand);
   color: var(--paper);
   border-bottom: 3px solid var(--ink);
 }
@@ -133,7 +145,7 @@ a:hover { color: var(--ink); }
   font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--sage-pale);
+  color: var(--brand-tint);
 }
 .masthead .who { margin-left: auto; text-align: right; font-size: 0.85rem; }
 
@@ -160,7 +172,7 @@ main {
 
 .field .help { display: block; color: var(--sage); font-size: 0.85rem; margin-bottom: 0.4rem; }
 
-input[type='text'], input[type='email'], select {
+input[type='text'], input[type='email'], input[type='number'], select, textarea {
   width: 100%;
   min-height: var(--tap);
   padding: 0.6rem 0.7rem;
@@ -170,6 +182,10 @@ input[type='text'], input[type='email'], select {
   border: 1.5px solid var(--line);
   border-radius: 0;
 }
+
+textarea { min-height: 9rem; resize: vertical; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 0.95rem; }
+
+input:invalid { border-color: var(--gold-dark); }
 
 input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
   outline: 3px solid var(--gold);
@@ -187,8 +203,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   font: inherit;
   font-weight: 600;
   color: var(--paper);
-  background: var(--teal);
-  border: 1.5px solid var(--teal);
+  background: var(--brand);
+  border: 1.5px solid var(--brand);
   border-radius: 0;
   cursor: pointer;
   /* Touch is the primary input on this fleet. */
@@ -197,11 +213,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 .btn:hover { background: var(--ink); border-color: var(--ink); }
 
-.btn.secondary { color: var(--teal); background: transparent; }
-.btn.secondary:hover { color: var(--paper); background: var(--teal-mid); border-color: var(--teal-mid); }
+.btn.secondary { color: var(--brand); background: transparent; }
+.btn.secondary:hover { color: var(--paper); background: var(--brand-mid); border-color: var(--brand-mid); }
 
 .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
-.btn[disabled]:hover { background: var(--teal); border-color: var(--teal); }
+.btn[disabled]:hover { background: var(--brand); border-color: var(--brand); }
 
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 
@@ -223,7 +239,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .msg .mark { font-weight: 700; }
 .msg[hidden] { display: none; }
 .msg.problem { border-left-color: var(--gold-dark); background: #FCF3D6; }
-.msg.good { border-left-color: var(--teal); }
+.msg.good { border-left-color: var(--brand); }
 
 /* ---- badge rack ---------------------------------------------------------- */
 
@@ -280,13 +296,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   color: inherit;
 }
 
-a.room:hover { border-color: var(--teal); background: var(--sage-pale); }
+a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
 
 .room .n {
   font-family: var(--font-hand);
   font-size: 1.9rem;
   line-height: 1;
-  color: var(--teal);
+  color: var(--brand);
   min-width: 2.2rem;
 }
 
@@ -306,6 +322,90 @@ a.room:hover { border-color: var(--teal); background: var(--sage-pale); }
 .room.shut { background: var(--sage-pale); border-style: dashed; }
 .room.shut .n { color: var(--sage); }
 .room.done .state { color: var(--gold-dark); }
+
+/* ---- chart tools --------------------------------------------------------- */
+
+.tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 62rem) {
+  .tool { grid-template-columns: 1fr; }
+}
+
+.tool .side { display: grid; gap: 1.25rem; }
+
+.chart-wrap {
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.5rem;
+}
+
+/* height:auto with the viewBox is what stops the chart distorting when the
+   window is resized. touch-action:none is what stops a drag scrolling the page
+   out from under a finger. */
+.chart-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+.handle { cursor: grab; }
+.handle:active { cursor: grabbing; }
+.handle:focus { outline: none; }
+.handle:focus-visible circle:last-of-type {
+  stroke: var(--gold-dark);
+  stroke-width: 5;
+}
+
+.readout {
+  border: 1.5px solid var(--brand);
+  padding: 1rem 1.15rem;
+  background: var(--brand-tint);
+}
+
+.readout .eq {
+  font-family: var(--font-hand);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--pen);
+  display: block;
+  margin: 0.2rem 0 0.6rem;
+}
+
+.readout p { margin: 0 0 0.5rem; }
+.readout > :last-child { margin-bottom: 0; }
+
+.beyond {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  border: 1.5px solid var(--gold);
+  background: #FCF3D6;
+  padding: 0.15em 0.5em;
+}
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.row .field { margin-bottom: 0; }
+
+.switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-height: var(--tap);
+  padding: 0.5rem 0;
+}
+
+.switch input { width: 1.35rem; height: 1.35rem; margin-top: 0.15rem; flex: none; }
+.switch span { font-size: 0.92rem; }
+.switch b { display: block; }
 
 /* ---- footer -------------------------------------------------------------- */
 
