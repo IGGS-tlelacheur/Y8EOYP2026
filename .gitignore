@@ -1,0 +1,15 @@
+# Never commit the plaintext sources. data/*.json is generated from these.
+private/*
+!private/*.example.*
+
+# Local
+.DS_Store
+Thumbs.db
+node_modules/
+*.log
+.vscode/
+.idea/
+
+# Student work must never end up in the repo
+*.h2ocard
+*.h2o
