@@ -267,19 +267,31 @@ document.querySelector('#use-table').addEventListener('click', () => {
   if (!data) {
     return say('There is nothing in your collection table yet. Build it first, then come back.', 'problem');
   }
-  const rows = data.rows
+  /* An empty cell has to be dropped before Number() sees it. Number('') is 0
+     and 0 is a perfectly finite number, so a measurement she never took would
+     otherwise arrive as a real zero and drag the fit line down with it. */
+  const complete = data.rows.filter((row) =>
+    [0, 1].every((i) => String(row[i] ?? '').trim() !== '')
+  );
+  const rows = complete
     .map((row) => [Number(row[0]), Number(row[1])])
     .filter((pair) => pair.every(Number.isFinite));
+
   if (rows.length < 2) {
     return say('Your collection table needs at least two rows with numbers in the first two columns.', 'problem');
   }
+
+  const dropped = data.rows.length - rows.length;
+  const note = dropped
+    ? `from your collection table, leaving out ${dropped} row${dropped === 1 ? '' : 's'} with a gap or a word in it`
+    : 'from your collection table';
   const [first, second] = data.columns;
   document.querySelector('#x-label').value = first?.name ?? '';
   document.querySelector('#x-unit').value = first?.unit ?? '';
   document.querySelector('#y-label').value = second?.name ?? '';
   document.querySelector('#y-unit').value = second?.unit ?? '';
   readLabels();
-  setPoints(rows, 'from your collection table');
+  setPoints(rows, note);
 });
 
 document.querySelector('#use-example').addEventListener('click', () => {

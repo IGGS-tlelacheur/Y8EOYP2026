@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Collection table</title>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the table</a>
+
+<header class="masthead screen-only">
+  <img class="crest" src="../assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Collection table</div>
+  </div>
+  <div class="who no-print"><a href="../hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main" class="screen-only">
+  <h1>Your collection table</h1>
+  <p>
+    Decide what you are measuring, print a sheet to write on, then type your
+    measurements in here. Your charts read straight from this table.
+  </p>
+
+  <section class="panel">
+    <h2>1 · What are you measuring?</h2>
+    <p class="note">
+      Two columns lets you compare one thing against another, which is what the
+      Card asks for. One column on its own still works.
+    </p>
+    <div id="columns"></div>
+    <div class="actions" style="margin-top:1rem;">
+      <button class="btn secondary" type="button" id="add-column">Add a column</button>
+      <button class="btn secondary" type="button" id="drop-column">Remove the last column</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>2 · Your measurements</h2>
+    <div class="grid-scroll">
+      <table class="grid" id="grid">
+        <thead><tr id="grid-head"></tr></thead>
+        <tbody id="grid-body"></tbody>
+      </table>
+    </div>
+    <div class="actions" style="margin-top:1rem;">
+      <button class="btn secondary" type="button" id="add-rows">Add five more rows</button>
+      <button class="btn secondary" type="button" id="clear-rows">Empty the table</button>
+    </div>
+
+    <div class="msg" id="checks" hidden>
+      <span class="mark">!</span>
+      <span>
+        <b id="checks-title"></b>
+        <ul id="checks-list" class="checks"></ul>
+        <span class="note">Nothing here stops you. Have a look, then carry on.</span>
+      </span>
+    </div>
+    <div class="msg good" id="all-good" hidden>
+      <span class="mark">✓</span>
+      <span id="all-good-text"></span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>3 · Use it</h2>
+    <div class="actions">
+      <button class="btn" type="button" id="save">Save for my charts</button>
+      <button class="btn secondary" type="button" id="print">Print a blank sheet</button>
+      <button class="btn secondary" type="button" id="export-csv">Save as a CSV file</button>
+      <label class="btn secondary" for="import-csv" style="cursor:pointer;">Open a CSV file</label>
+      <input type="file" id="import-csv" accept=".csv,text/csv" hidden>
+    </div>
+    <div class="msg good" id="saved" hidden>
+      <span class="mark">✓</span><span id="saved-text"></span>
+    </div>
+    <p class="note" style="margin-top:1rem;">
+      The printed sheet is blank, for writing on while you collect. What you type
+      in here goes to your charts and to the CSV file.
+    </p>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<!-- Printed instead of the page above. Blank on purpose: it is for writing on. -->
+<section class="record-sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-head">
+    <div>
+      <div class="sheet-sub">H₂O — Towards 2040 · Year 8</div>
+      <div class="sheet-title">Collection sheet</div>
+    </div>
+    <div class="sheet-meta">
+      <div>Crew ................................</div>
+      <div>Name ................................</div>
+      <div>Date ...... / ...... / ..............</div>
+    </div>
+  </div>
+  <p class="sheet-method">
+    How we are measuring, so anyone could repeat it:
+    <span class="sheet-rule"></span>
+    <span class="sheet-rule"></span>
+  </p>
+  <table class="sheet-grid" id="sheet-grid"></table>
+  <div class="sheet-foot">
+    Same method every time. If something goes wrong, write it down rather than
+    leaving the row out.
+  </div>
+</section>
+
+<script type="module">
+import { getTableData, setTableData } from '../js/store.js';
+import { fiveNumberSummary, roundSensibly } from '../js/chart.js';
+
+/* 20 rows of 9mm keeps the sheet on one A4 page at four columns, with room to
+   spare for a printer whose margins are not ours. Twice what the Collector
+   badge asks for. */
+const BLANK_PRINT_ROWS = 20;
+const MAX_COLUMNS = 4;
+
+const state = {
+  columns: [
+    { name: '', unit: '', type: 'number' },
+    { name: '', unit: '', type: 'number' }
+  ],
+  rows: []
+};
+
+function emptyRow() {
+  return state.columns.map(() => '');
+}
+
+function ensureRows(count) {
+  while (state.rows.length < count) state.rows.push(emptyRow());
+}
+
+/* ---- CSV ----------------------------------------------------------------- */
+/* Local to this page because nothing else reads a CSV. Quoted fields are
+   handled because a category like "yes, sometimes" would otherwise split into
+   two columns and quietly corrupt her data. */
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let quoted = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 1; }
+        else quoted = false;
+      } else field += ch;
+      continue;
+    }
+    if (ch === '"') { quoted = true; continue; }
+    if (ch === ',') { row.push(field); field = ''; continue; }
+    if (ch === '\r') continue;
+    if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; continue; }
+    field += ch;
+  }
+  row.push(field);
+  rows.push(row);
+
+  return rows
+    .map((r) => r.map((f) => f.trim()))
+    .filter((r) => r.some((f) => f !== ''));
+}
+
+function toCsv(columns, rows) {
+  const quote = (value) => {
+    const text = String(value ?? '');
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
+  const head = columns.map((c) => quote(c.unit ? `${c.name} (${c.unit})` : c.name));
+  return [head, ...rows.map((r) => r.map(quote))].map((r) => r.join(',')).join('\n');
+}
+
+/* "Shower length (minutes)" splits back into a name and a unit. */
+function splitHeading(heading) {
+  const match = String(heading).match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+  return match ? { name: match[1].trim(), unit: match[2].trim() } : { name: String(heading).trim(), unit: '' };
+}
+
+/* ---- column editor ------------------------------------------------------- */
+
+function renderColumns() {
+  const host = document.querySelector('#columns');
+  host.textContent = '';
+
+  state.columns.forEach((column, index) => {
+    const fieldset = document.createElement('fieldset');
+    fieldset.className = 'col-def';
+
+    const legend = document.createElement('legend');
+    legend.textContent = `Column ${index + 1}`;
+    fieldset.append(legend);
+
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    for (const [key, label, placeholder] of [
+      ['name', 'What you measured', 'Shower length'],
+      ['unit', 'Its units', 'minutes']
+    ]) {
+      const field = document.createElement('div');
+      field.className = 'field';
+      const el = document.createElement('label');
+      el.textContent = label;
+      el.htmlFor = `col-${index}-${key}`;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = `col-${index}-${key}`;
+      input.maxLength = key === 'unit' ? 20 : 40;
+      input.placeholder = placeholder;
+      input.value = column[key];
+      input.addEventListener('input', () => {
+        column[key] = input.value;
+        renderHead();
+        renderSheet();
+      });
+      field.append(el, input);
+      row.append(field);
+    }
+
+    const typeField = document.createElement('div');
+    typeField.className = 'field';
+    const typeLabel = document.createElement('label');
+    typeLabel.textContent = 'What goes in it';
+    typeLabel.htmlFor = `col-${index}-type`;
+    const select = document.createElement('select');
+    select.id = `col-${index}-type`;
+    for (const [value, text] of [['number', 'Numbers'], ['words', 'Words']]) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      option.selected = column.type === value;
+      select.append(option);
+    }
+    select.addEventListener('change', () => {
+      column.type = select.value;
+      check();
+    });
+    typeField.append(typeLabel, select);
+    row.append(typeField);
+
+    fieldset.append(row);
+    host.append(fieldset);
+  });
+
+  document.querySelector('#add-column').disabled = state.columns.length >= MAX_COLUMNS;
+  document.querySelector('#drop-column').disabled = state.columns.length <= 1;
+}
+
+document.querySelector('#add-column').addEventListener('click', () => {
+  if (state.columns.length >= MAX_COLUMNS) return;
+  state.columns.push({ name: '', unit: '', type: 'number' });
+  for (const row of state.rows) row.push('');
+  renderAll();
+});
+
+document.querySelector('#drop-column').addEventListener('click', () => {
+  if (state.columns.length <= 1) return;
+  state.columns.pop();
+  for (const row of state.rows) row.pop();
+  renderAll();
+});
+
+/* ---- the grid ------------------------------------------------------------ */
+
+function headingOf(column, index) {
+  const name = column.name.trim() || `Column ${index + 1}`;
+  return column.unit.trim() ? `${name} (${column.unit.trim()})` : name;
+}
+
+function renderHead() {
+  const head = document.querySelector('#grid-head');
+  head.textContent = '';
+
+  const corner = document.createElement('th');
+  corner.className = 'rownum';
+  corner.scope = 'col';
+  corner.textContent = '#';
+  head.append(corner);
+
+  state.columns.forEach((column, index) => {
+    const th = document.createElement('th');
+    th.scope = 'col';
+    th.textContent = headingOf(column, index);
+    head.append(th);
+  });
+
+  const spare = document.createElement('th');
+  spare.className = 'rownum';
+  spare.scope = 'col';
+  spare.append(document.createTextNode(''));
+  head.append(spare);
+}
+
+function renderBody() {
+  const body = document.querySelector('#grid-body');
+  body.textContent = '';
+
+  state.rows.forEach((row, rowIndex) => {
+    const tr = document.createElement('tr');
+
+    const num = document.createElement('td');
+    num.className = 'rownum';
+    num.textContent = String(rowIndex + 1);
+    tr.append(num);
+
+    state.columns.forEach((column, colIndex) => {
+      const td = document.createElement('td');
+      const input = document.createElement('input');
+      input.type = 'text';
+      /* Not type=number: it swallows a typo like "12o" instead of showing her
+         that she typed one, and the check below is friendlier than the browser's. */
+      input.inputMode = column.type === 'number' ? 'decimal' : 'text';
+      input.value = row[colIndex] ?? '';
+      input.setAttribute('aria-label', `Row ${rowIndex + 1}, ${headingOf(column, colIndex)}`);
+      input.dataset.row = String(rowIndex);
+      input.dataset.col = String(colIndex);
+      input.addEventListener('input', () => {
+        row[colIndex] = input.value;
+        scheduleCheck();
+      });
+      input.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        if (rowIndex === state.rows.length - 1) {
+          state.rows.push(emptyRow());
+          renderBody();
+        }
+        focusCell(rowIndex + 1, colIndex);
+      });
+      td.append(input);
+      tr.append(td);
+    });
+
+    const bin = document.createElement('td');
+    bin.className = 'rownum';
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'row-drop';
+    remove.textContent = '×';
+    remove.setAttribute('aria-label', `Delete row ${rowIndex + 1}`);
+    remove.addEventListener('click', () => {
+      state.rows.splice(rowIndex, 1);
+      if (!state.rows.length) ensureRows(1);
+      renderBody();
+      check();
+    });
+    bin.append(remove);
+    tr.append(bin);
+
+    body.append(tr);
+  });
+}
+
+function focusCell(rowIndex, colIndex) {
+  document.querySelector(`#grid-body input[data-row="${rowIndex}"][data-col="${colIndex}"]`)?.focus();
+}
+
+document.querySelector('#add-rows').addEventListener('click', () => {
+  ensureRows(state.rows.length + 5);
+  renderBody();
+});
+
+document.querySelector('#clear-rows').addEventListener('click', () => {
+  state.rows = [];
+  ensureRows(8);
+  renderBody();
+  check();
+});
+
+/* ---- checks -------------------------------------------------------------- */
+/* Every one of these is a prompt, never a block. A girl who has genuinely
+   measured 300 litres needs to be able to record 300 litres. */
+
+function filledRows() {
+  return state.rows.filter((row) => row.some((cell) => String(cell).trim() !== ''));
+}
+
+function looksNumeric(value) {
+  const text = String(value).trim();
+  return text !== '' && /^-?\d*\.?\d+$/.test(text.replace(/,/g, ''));
+}
+
+function findProblems() {
+  const problems = [];
+  const rows = filledRows();
+
+  state.rows.forEach((row, rowIndex) => {
+    const anyFilled = row.some((cell) => String(cell).trim() !== '');
+    if (!anyFilled) return;
+
+    state.columns.forEach((column, colIndex) => {
+      const raw = String(row[colIndex] ?? '').trim();
+      const where = `Row ${rowIndex + 1}, ${headingOf(column, colIndex)}`;
+
+      if (raw === '') {
+        problems.push(`${where} is empty. Leave it out altogether, or write down what happened.`);
+        return;
+      }
+      if (column.type === 'number' && !looksNumeric(raw)) {
+        problems.push(`${where} says "${raw}", which is not a number. Change the column to Words if that is what you meant.`);
+      }
+    });
+  });
+
+  /* Far-out values, at three times the middle spread rather than the usual one
+     and a half, so it only speaks up for something really unlikely - a missing
+     decimal point or an extra nought. */
+  state.columns.forEach((column, colIndex) => {
+    if (column.type !== 'number') return;
+    const numbers = rows.map((r) => r[colIndex]).filter(looksNumeric).map(Number);
+    if (numbers.length < 5) return;
+    const summary = fiveNumberSummary(numbers);
+    if (!summary || summary.iqr === 0) return;
+    const low = summary.q1 - 3 * summary.iqr;
+    const high = summary.q3 + 3 * summary.iqr;
+
+    state.rows.forEach((row, rowIndex) => {
+      const raw = String(row[colIndex] ?? '').trim();
+      if (!looksNumeric(raw)) return;
+      const value = Number(raw);
+      if (value < low || value > high) {
+        problems.push(
+          `Row ${rowIndex + 1}, ${headingOf(column, colIndex)} is ${roundSensibly(value)}, `
+          + `a long way from the rest. Worth checking you meant that.`
+        );
+      }
+    });
+  });
+
+  return problems;
+}
+
+let checkTimer = null;
+function scheduleCheck() {
+  clearTimeout(checkTimer);
+  checkTimer = setTimeout(check, 400);
+}
+
+function check() {
+  const problems = findProblems();
+  const box = document.querySelector('#checks');
+  const good = document.querySelector('#all-good');
+  const rows = filledRows();
+
+  if (problems.length) {
+    document.querySelector('#checks-title').textContent =
+      `${problems.length} thing${problems.length === 1 ? '' : 's'} worth a look`;
+    const list = document.querySelector('#checks-list');
+    list.textContent = '';
+    for (const problem of problems.slice(0, 12)) {
+      const li = document.createElement('li');
+      li.textContent = problem;
+      list.append(li);
+    }
+    if (problems.length > 12) {
+      const li = document.createElement('li');
+      li.textContent = `…and ${problems.length - 12} more.`;
+      list.append(li);
+    }
+    box.hidden = false;
+    good.hidden = true;
+    return;
+  }
+
+  box.hidden = true;
+  if (rows.length) {
+    document.querySelector('#all-good-text').textContent =
+      `${rows.length} row${rows.length === 1 ? '' : 's'} filled in, nothing odd. `
+      + `${rows.length < 10 ? 'The Collector badge asks for at least 10.' : 'That is enough for the Collector badge.'}`;
+    good.hidden = false;
+  } else {
+    good.hidden = true;
+  }
+}
+
+/* ---- the printed sheet --------------------------------------------------- */
+
+function renderSheet() {
+  const table = document.querySelector('#sheet-grid');
+  table.textContent = '';
+
+  const head = document.createElement('tr');
+  const corner = document.createElement('th');
+  corner.textContent = '#';
+  corner.className = 'rownum';
+  head.append(corner);
+  state.columns.forEach((column, index) => {
+    const th = document.createElement('th');
+    th.textContent = headingOf(column, index);
+    head.append(th);
+  });
+  const notes = document.createElement('th');
+  notes.textContent = 'Anything odd?';
+  head.append(notes);
+  table.append(head);
+
+  for (let i = 0; i < BLANK_PRINT_ROWS; i += 1) {
+    const tr = document.createElement('tr');
+    const num = document.createElement('td');
+    num.className = 'rownum';
+    num.textContent = String(i + 1);
+    tr.append(num);
+    for (let c = 0; c < state.columns.length + 1; c += 1) tr.append(document.createElement('td'));
+    table.append(tr);
+  }
+}
+
+document.querySelector('#print').addEventListener('click', () => {
+  renderSheet();
+  window.print();
+});
+
+/* ---- save, import, export ------------------------------------------------ */
+
+function say(message) {
+  document.querySelector('#saved-text').textContent = message;
+  document.querySelector('#saved').hidden = false;
+}
+
+document.querySelector('#save').addEventListener('click', () => {
+  const rows = filledRows();
+  if (!rows.length) return say('There is nothing in the table yet.');
+  setTableData({ columns: state.columns, rows });
+  say(`Saved ${rows.length} row${rows.length === 1 ? '' : 's'}. Your chart tools can read it now.`);
+});
+
+document.querySelector('#export-csv').addEventListener('click', () => {
+  const blob = new Blob([toCsv(state.columns, filledRows())], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'our-measurements.csv';
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  say('Saved as our-measurements.csv in your downloads.');
+});
+
+document.querySelector('#import-csv').addEventListener('change', async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  const rows = parseCsv(await file.text());
+  event.target.value = '';
+
+  if (!rows.length) return say('That file had nothing in it.');
+
+  const [heading, ...rest] = rows;
+  const headingIsData = heading.every((cell) => looksNumeric(cell));
+  const body = headingIsData ? rows : rest;
+  const width = Math.min(MAX_COLUMNS, Math.max(1, ...body.map((r) => r.length)));
+
+  state.columns = [];
+  for (let i = 0; i < width; i += 1) {
+    const parsed = headingIsData ? { name: '', unit: '' } : splitHeading(heading[i] ?? '');
+    const column = body.filter((r) => String(r[i] ?? '').trim() !== '');
+    const numeric = column.filter((r) => looksNumeric(r[i])).length;
+
+    /* Mostly-numbers is a number column with a typo in it, not a word column.
+       Demoting the whole column on one stray value would hide the typo AND
+       quietly disable the histogram, dot plot and box plot downstream. The
+       stragglers get flagged by the checks instead, which is the point. */
+    state.columns.push({
+      name: parsed.name,
+      unit: parsed.unit,
+      type: numeric >= 2 && numeric / column.length >= 0.7 ? 'number' : 'words'
+    });
+  }
+
+  state.rows = body.map((r) => Array.from({ length: width }, (_, i) => String(r[i] ?? '').trim()));
+  ensureRows(Math.max(8, state.rows.length));
+  renderAll();
+  say(`Opened ${state.rows.filter((r) => r.some((c) => c !== '')).length} rows from ${file.name}.`);
+});
+
+/* ---- start --------------------------------------------------------------- */
+
+function renderAll() {
+  renderColumns();
+  renderHead();
+  renderBody();
+  renderSheet();
+  check();
+}
+
+const saved = getTableData();
+if (saved?.columns?.length) {
+  state.columns = saved.columns.map((c) => ({ name: c.name ?? '', unit: c.unit ?? '', type: c.type ?? 'number' }));
+  state.rows = (saved.rows ?? []).map((r) => state.columns.map((_, i) => String(r[i] ?? '')));
+}
+ensureRows(Math.max(8, state.rows.length));
+renderAll();
+</script>
+</body>
+</html>

@@ -496,6 +496,151 @@ input[type='range'] {
   touch-action: manipulation;
 }
 
+/* ---- collection table ---------------------------------------------------- */
+
+.col-def {
+  border: 1.5px solid var(--line);
+  padding: 0.75rem 1rem 1rem;
+  margin: 0 0 0.9rem;
+}
+
+.col-def legend {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--brand);
+  padding: 0 0.4rem;
+}
+
+.col-def .row { grid-template-columns: 2fr 1fr 1fr; margin-bottom: 0; }
+
+@media (max-width: 46rem) {
+  .col-def .row { grid-template-columns: 1fr; }
+}
+
+.grid-scroll { overflow-x: auto; }
+
+.grid { border-collapse: collapse; width: 100%; }
+
+.grid th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+  padding: 0.4rem 0.5rem;
+  border-bottom: 2px solid var(--brand);
+  white-space: nowrap;
+}
+
+.grid td { padding: 0; border-bottom: 1px solid var(--line); }
+
+.grid td input {
+  width: 100%;
+  min-width: 7rem;
+  min-height: var(--tap);
+  border: none;
+  border-right: 1px solid var(--line);
+  padding: 0.5rem;
+  font: inherit;
+  background: transparent;
+}
+
+.grid td input:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+
+.grid .rownum {
+  width: 2.5rem;
+  text-align: center;
+  color: var(--sage);
+  font-size: 0.85rem;
+  border-bottom-color: var(--line);
+}
+
+.row-drop {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: none;
+  background: none;
+  color: var(--sage);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.row-drop:hover { color: var(--gold-dark); }
+
+.checks { margin: 0.4rem 0 0.6rem; padding-left: 1.1rem; }
+.checks li { margin-bottom: 0.3rem; font-size: 0.92rem; }
+
+/* ---- the printed collection sheet ---------------------------------------- */
+/* Hidden on screen. It exists to be printed and written on, so it carries no
+   colour fills and no thin hairlines. */
+
+.record-sheet { display: none; }
+
+@media print {
+  .screen-only { display: none !important; }
+
+  .record-sheet {
+    display: block;
+    font-family: var(--font-body);
+    color: #000;
+  }
+
+  .sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2.5px solid #000;
+    padding-bottom: 2.5mm;
+  }
+
+  .sheet-sub {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 7pt;
+    font-weight: 700;
+  }
+
+  .sheet-title { font-family: var(--font-hand); font-size: 22pt; line-height: 1; }
+  .sheet-meta { text-align: right; font-size: 9pt; line-height: 1.9; }
+
+  .sheet-method { font-size: 9pt; margin: 3mm 0 2mm; max-width: none; }
+  .sheet-rule { display: block; border-bottom: 1px solid #000; height: 7mm; }
+
+  .sheet-grid { width: 100%; border-collapse: collapse; margin-top: 2mm; }
+
+  .sheet-grid th {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: left;
+    padding: 1.5mm 2mm;
+    border: 1px solid #000;
+  }
+
+  /* 9mm gives room for a 13-year-old's handwriting with a biro. */
+  .sheet-grid td {
+    height: 9mm;
+    border: 1px solid #000;
+    padding: 0 2mm;
+  }
+
+  .sheet-grid .rownum { width: 8mm; text-align: center; font-size: 8pt; }
+
+  .sheet-foot {
+    margin-top: 3mm;
+    font-size: 8pt;
+    border-top: 1px solid #000;
+    padding-top: 1.5mm;
+  }
+
+  .sheet-grid tr { break-inside: avoid; }
+}
+
 /* ---- footer -------------------------------------------------------------- */
 
 .foot {
