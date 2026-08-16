@@ -55,7 +55,7 @@ model on the `.h2ocard` plus per-lesson export, and the badge design changes wit
 - Hub: badge rack, room list with lock states, export button.
 
 **Verify:** log in as a test ID; confirm the same ID typed three different ways
-(`l.smith`, `L.Smith`, `L.Smith@ivanhoegirls.vic.edu.au`) produces one profile and one
+(with and without spaces, in either case) produces one profile and one
 variant. Confirm an ID not on the roll is refused. Clear site data, log in again, confirm
 the variant is identical. Confirm no plaintext answer appears anywhere in `view-source`.
 

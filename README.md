@@ -71,4 +71,4 @@ GitHub Pages serves `main`. A push is a deploy and there is no staging environme
 
 Student names, work and progress live in the browser and in the crew's own OneDrive
 folder. Nothing is transmitted anywhere. `data/roll.json` contains SHA-256 hashes of
-student IDs and no personal data; the plaintext roll is git-ignored and stays that way.
+school IDs and no personal data; the plaintext roll is git-ignored and stays that way.

@@ -98,11 +98,14 @@ export function getProfile() {
   return p?.studentId ? p : null;
 }
 
-export function setProfile({ studentId, display, crew, variant }) {
+/* `role` is 'student' or 'staff', read off her roll entry at login. Nothing in
+   the rooms branches on it yet; staff.html at stage 10 will. */
+export function setProfile({ studentId, display, crew, role, variant }) {
   return writeJson(KEYS.profile, {
     studentId,
     display,
     crew,
+    role: role ?? 'student',
     variant,
     created: new Date().toISOString()
   });

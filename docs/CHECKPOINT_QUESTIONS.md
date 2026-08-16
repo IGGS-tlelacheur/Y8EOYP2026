@@ -33,44 +33,53 @@ Defined in the room body, before any checkpoint:
 
 ---
 
-### `cp2.1` — the label on an axis · Type B
+### `cp2.1` — which axis the EV belongs on · Type B
+
+**Rewritten 17/08/2026**, on your instruction. It was *read the label off the
+horizontal axis*, which failed the rung-3 test: the method **is** reading the
+label, so there was no operation left to stop one step short of. This version has
+a reason behind it, which gives the ladder something to walk down.
 
 **Artefact.** Chart 1: a supplied scatterplot of her variant, ten to fourteen
 points, both axes labelled with a unit, no line drawn.
 
 **Stem**
 
-> Chart 1 shows one point for each shower. Look at the horizontal axis.
-> Which label describes it? Choose one.
+> Crew 7 chose how long each shower ran, then measured the water it used. They
+> are drawing Chart 1. Which variable belongs on the horizontal axis, and why?
+> Choose one.
 
 **Options**
 
 | key | label |
 |---|---|
-| `opt_a` | Shower length, in minutes ✅ |
-| `opt_b` | Shower length, in seconds |
-| `opt_c` | Water used, in litres |
-| `opt_d` | Water used, in minutes |
+| `opt_a` | Shower length, because it is the one they chose ✅ |
+| `opt_b` | Water used, because it is the one they measured |
+| `opt_c` | Shower length, because minutes are smaller numbers than litres |
+| `opt_d` | Either one, as long as both axes are labelled |
 
-Two variables × two units, so no option can be eliminated without reading both
-halves of the label.
+Every option carries a reason, so the right answer cannot be picked off the
+variable name alone. `opt_c` names the correct variable for a wrong reason and is
+the one to watch: a girl who picks it has the rule but not the idea. `opt_b`
+has the EV and RV the wrong way round. `opt_d` is the "it doesn't matter"
+misconception.
 
-**Rung 1** (18 words)
+**Rung 1** (17 words)
 
-> The horizontal axis is the one along the bottom of the chart. Its label is
-> printed underneath it.
+> One of the two variables was chosen by the crew. The other was measured
+> afterwards, once the shower had run.
 
 **Rung 2**
 
-> A different chart shows one point for each car. The label under its horizontal
-> axis reads *Age, in years*. So the horizontal axis is age, and the unit is
-> years. Both halves matter: *Age, in months* would be a different label.
+> A crew set a tap to 1, 2, 3 and 4 turns open and measured the water that came
+> out each time. They chose the number of turns. The water was the answer they
+> got back. Turns went along the bottom, water went up the side.
 
 **Rung 3**
 
-> Put a finger on the axis along the bottom of Chart 1. Read what is printed
-> under it. It names one thing and one unit. Two options name that thing. Only
-> one of those two uses the unit printed on your chart.
+> The EV is the one you choose or change, and it goes along the bottom. Decide
+> which of Crew 7's two variables they chose rather than measured. Two options
+> name that one. Only one of those two gives the real reason.
 
 ---
 
@@ -549,16 +558,16 @@ Run per `docs/CHECKPOINT_CONTRACT.md` §7 against every stem and every rung abov
 | 2. Coach test | Pass. Crib lines still to be written for `staff.html` at stage 10. |
 | 3. Variant parity | **Cannot pass yet.** Written against variant 1 only; the other five land at stage 7. Answer types and accepted-value counts are fixed above, so parity is checkable then. |
 | 4. Direction parity | Pass. Every stem and rung read back with variant 5 substituted. `cp5.1` rung 2 is deliberately negative. |
-| 5. Rung 3 test | Pass on eleven. **`cp2.1` is the weak one** — see below. |
+| 5. Rung 3 test | Pass on all twelve. `cp2.1` was the weak one and was rewritten on 17/08/2026 — see below. |
 
-### The one I am not happy with
+### `cp2.1` — resolved 17/08/2026
 
-**`cp2.1` rung 3.** The task is to read a label off an axis, so the method *is*
-reading the label. There is no operation left to stop one step short of. The best
-I have narrows the four options to two and leaves her to compare the unit, which
-is one comparison rather than one calculation.
+It used to read a label off an axis, and its rung 3 could not be written properly
+because the method *was* reading the label: there was no operation to stop one
+step short of. Your call was to make it the harder question — which axis the EV
+belongs on — and it is rewritten above. Rung 3 now narrows to the two options
+naming the right variable and leaves her to choose between two reasons, which is
+a decision rather than a lookup.
 
-It may be that `cp2.1` is too shallow to carry a four-rung ladder, and that
-the fix is to make it a harder question rather than to write a better rung 3 — for
-instance, asking which axis the EV belongs on, which has a reason behind it. That
-changes the contract's inventory, so it is your call, not mine.
+The answer key moved with it. `opt_a` is still the correct key, so no student's
+vault code changes.

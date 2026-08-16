@@ -18,35 +18,82 @@ export async function sha256Hex(text) {
     .join('');
 }
 
-/* Trims, lowercases, drops any @domain and strips anything that is not a
-   letter, digit, dot or hyphen, so the three ways a girl might type her own
-   address all land on one string. Note a space is stripped rather than read as
-   a dot, so a surname typed with a space is a different identity and gets
-   stopped at the door. That is deliberate: better refused than a ghost profile.
-   No example identity is written here, so the pre-merge grep for student names
-   stays meaningful. */
-export function normaliseIdentity(input) {
-  let s = String(input ?? '').trim().toLowerCase();
-  const at = s.indexOf('@');
-  if (at !== -1) s = s.slice(0, at);
-  return s.replace(/[^a-z0-9.-]/g, '');
+/* The school ID as she types it. Digits only in practice, but letters are kept
+   in case a staff ID ever carries one; spaces and hyphens go, so an ID typed in
+   two halves still lands on one string. Applied identically in
+   scripts/build-data.mjs - if the two drift, nobody can log in.
+
+   No example identity is written anywhere in this file, so the pre-merge grep
+   for real IDs stays meaningful. */
+export function normaliseId(input) {
+  return String(input ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+/* Case and stray spaces forgiven. She is thirteen, the password is a word about
+   water, and being locked out by a capital letter teaches her nothing. */
+export function normalisePassword(input) {
+  return String(input ?? '').trim().toLowerCase().replace(/\s+/g, '');
+}
+
+/* Her ID alone, hashed. This drives her dataset variant and every vault token,
+   so it must not depend on the password: changing a password would otherwise
+   change every code she has already written down. */
 export async function deriveStudentId(input) {
-  const normalised = normaliseIdentity(input);
+  const normalised = normaliseId(input);
   if (normalised.length < 2) return null;
   return sha256Hex(normalised);
+}
+
+/* ID and password together, stretched.
+
+   data/roll.json is public and holds one of these per person. A plain SHA-256 of
+   a five-digit ID and a five-letter word is recoverable on a laptop in an
+   afternoon, and the roll is a list of real children. PBKDF2 costs one login
+   about a tenth of a second and costs an attacker that same tenth of a second
+   per guess, across the whole space.
+
+   This is the one place effort goes into making a gate stronger. CLAUDE.md's
+   rule that the escape-room gating stays thin is about vault codes, which are
+   worth nothing to anyone; it was never about the roll.
+
+   One published salt rather than one per person, because a per-person salt would
+   force a derivation against all two hundred entries on every login. */
+export async function deriveCredential(id, password, { salt, iterations }) {
+  const secret = `${normaliseId(id)}:${normalisePassword(password)}`;
+  const material = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret), 'PBKDF2', false, ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: encoder.encode(salt), iterations, hash: 'SHA-256' },
+    material,
+    256
+  );
+  return [...new Uint8Array(bits)]
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export async function loadRoll(url = 'data/roll.json') {
   const res = await fetch(url, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`roll unavailable (${res.status})`);
   const roll = await res.json();
-  return new Set(roll.ids ?? []);
+  if (!roll?.salt || !roll?.iterations) throw new Error('roll is missing its salt');
+  return {
+    salt: roll.salt,
+    iterations: roll.iterations,
+    entries: new Map((roll.entries ?? []).map((e) => [e.h, e.r]))
+  };
 }
 
-export function isOnRoll(studentId, roll) {
-  return Boolean(studentId) && roll.has(studentId);
+/* Returns the role on success and null on failure, so the caller cannot treat
+   "not on the roll" as a truthy anything. Nothing here says which half was
+   wrong: a page that distinguishes a bad ID from a bad password hands an
+   enumerator the roll one field at a time. */
+export async function checkCredential(id, password, roll) {
+  const normalised = normaliseId(id);
+  if (normalised.length < 2 || normalisePassword(password).length < 2) return null;
+  const hash = await deriveCredential(id, password, roll);
+  return roll.entries.get(hash) ?? null;
 }
 
 /* Applied identically here and in scripts/build-data.mjs. If the two ever drift,

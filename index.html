@@ -50,10 +50,21 @@
 
     <form id="form" novalidate>
       <div class="field">
-        <label for="identity">School email or student ID</label>
-        <span class="help">Either works. Capitals do not matter.</span>
+        <label for="identity">Your school ID</label>
+        <span class="help">The number on your student card.</span>
         <input type="text" id="identity" name="identity" autocomplete="username"
-               autocapitalize="none" spellcheck="false" required>
+               inputmode="numeric" autocapitalize="none" spellcheck="false" required>
+      </div>
+
+      <div class="field">
+        <label for="password">Your password</label>
+        <span class="help">The water word your teacher gave you. Capitals do not matter.</span>
+        <div class="with-toggle">
+          <input type="password" id="password" name="password" autocomplete="current-password"
+                 autocapitalize="none" spellcheck="false" required>
+          <button class="btn secondary" type="button" id="show-password"
+                  aria-pressed="false">Show</button>
+        </div>
       </div>
 
       <div class="field">
@@ -106,7 +117,7 @@
 </main>
 
 <script type="module">
-import { deriveStudentId, loadRoll, isOnRoll } from './js/vault.js';
+import { deriveStudentId, loadRoll, checkCredential } from './js/vault.js';
 import { assignVariant } from './js/variants.js';
 import {
   getProfile, setProfile, importBundle, clearEverything, storageWorks, requestPersistence
@@ -163,6 +174,7 @@ form.addEventListener('submit', async (event) => {
   hide();
 
   const identity = document.querySelector('#identity').value;
+  const password = document.querySelector('#password').value;
   const display = document.querySelector('#display').value.trim();
   const crew = crewSelect.value;
 
@@ -170,21 +182,28 @@ form.addEventListener('submit', async (event) => {
   if (!crew) return show('Choose your crew from the list.');
 
   go.disabled = true;
+  go.textContent = 'Checking…';
   try {
     const studentId = await deriveStudentId(identity);
     if (!studentId) {
-      return show('Type your school email or your student ID, then sign in again.');
+      return show('Type your school ID, then sign in again.');
     }
 
     const roll = await loadRoll('data/roll.json');
-    if (!isOnRoll(studentId, roll)) {
+
+    /* Stretched, so this takes about a tenth of a second rather than none. */
+    const role = await checkCredential(identity, password, roll);
+
+    /* One message for both halves. Telling her which of the two was wrong would
+       let anyone work through the roll one field at a time. */
+    if (!role) {
       return show(
-        'That is not on the Year 8 list. Check the spelling and try again. ' +
-        'If it still will not go through, ask your teacher to look you up.'
+        'That ID and password do not go together. Check both and try again. '
+        + 'If it still will not go through, ask your teacher to look you up.'
       );
     }
 
-    setProfile({ studentId, display, crew, variant: assignVariant(studentId) });
+    setProfile({ studentId, display, crew, role, variant: assignVariant(studentId) });
 
     /* Asked for here because it has to follow a user gesture, and signing in is
        the only one that happens on this page. Never gated on, never shown to
@@ -198,7 +217,20 @@ form.addEventListener('submit', async (event) => {
     show('The list of names did not load. Refresh the page and try again.');
   } finally {
     go.disabled = false;
+    go.textContent = 'Sign in';
   }
+});
+
+/* A password she cannot see is a password she cannot fix a typo in, and this one
+   is a word about water, not a secret worth hiding from the girl next to her. */
+const passwordField = document.querySelector('#password');
+document.querySelector('#show-password').addEventListener('click', (event) => {
+  const button = event.currentTarget;
+  const showing = passwordField.type === 'text';
+  passwordField.type = showing ? 'password' : 'text';
+  button.textContent = showing ? 'Show' : 'Hide';
+  button.setAttribute('aria-pressed', String(!showing));
+  passwordField.focus();
 });
 
 document.querySelector('#restore').addEventListener('change', async (event) => {

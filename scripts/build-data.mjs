@@ -8,7 +8,10 @@
 //   node scripts/build-data.mjs --check    verify outputs are current, exit 1 if not
 //
 // Sources (git-ignored, see data/README.md):
-//   private/roll.csv       one student ID or email per line, header optional
+//   private/roll.csv       ID,Staff_Student,Password with a header row. One line
+//                          per person, students and staff alike. The ID drives
+//                          her dataset variant and every vault code; the password
+//                          only opens the door.
 //   private/answers.json   plaintext answer key, shape documented below
 //
 // private/answers.json:
@@ -32,7 +35,7 @@
 // to recover the answer, because the repo holds hashes and a hash does not
 // invert. Publishing the band is harmless - the question implies it already.
 
-import { createHash } from 'node:crypto';
+import { createHash, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -41,11 +44,21 @@ const CHECK = process.argv.includes('--check');
 
 const sha256 = (s) => createHash('sha256').update(s, 'utf8').digest('hex');
 
-function normalise(input) {
-  let s = String(input).trim().toLowerCase();
-  const at = s.indexOf('@');
-  if (at !== -1) s = s.slice(0, at);
-  return s.replace(/[^a-z0-9.-]/g, '');
+// Must match normaliseId() and normalisePassword() in js/vault.js character for
+// character. If either drifts, nobody can log in.
+function normaliseId(input) {
+  return String(input ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function normalisePassword(input) {
+  return String(input ?? '').trim().toLowerCase().replace(/\s+/g, '');
+}
+
+// Must match deriveCredential() in js/vault.js. PBKDF2-SHA256 over
+// "id:password", one published salt, output hex.
+function credential(id, password, salt, iterations) {
+  const secret = `${normaliseId(id)}:${normalisePassword(password)}`;
+  return pbkdf2Sync(secret, salt, iterations, 32, 'sha256').toString('hex');
 }
 
 // Must match canonicalise() in js/vault.js character for character. If the two
@@ -96,24 +109,96 @@ function emit(path, obj) {
 
 // ---- roll -----------------------------------------------------------------
 
-const rawIds = read('private/roll.csv')
-  .split(/\r?\n/)
-  .map((l) => l.split(',')[0])
-  .map(normalise)
-  .filter((s) => s.length > 1 && s !== 'id' && s !== 'email' && s !== 'studentid');
+// private/roll.csv: ID,Staff_Student,Password with a header row. Excel writes a
+// BOM, which would otherwise make the first column name "﻿ID".
+// Measured at 16 ms for 150,000 in Edge on the target hardware, which is far
+// cheaper than budgeted, so it buys more. 600,000 is the current OWASP figure for
+// PBKDF2-SHA256 and costs a login about 65 ms - below the threshold where anyone
+// notices a button. Raising this invalidates every credential on the roll, so it
+// changes only alongside a rebuild.
+const ITERATIONS = 600000;
 
-const unique = [...new Set(rawIds)];
-if (unique.length !== rawIds.length) {
-  console.warn(`note: ${rawIds.length - unique.length} duplicate ID(s) collapsed`);
+function parseCsv(text) {
+  const lines = text.replace(/^﻿/, '').split(/\r?\n/).filter((l) => l.trim() !== '');
+  const head = lines.shift().split(',').map((h) => h.trim().toLowerCase());
+  const col = {
+    id: head.indexOf('id'),
+    role: head.findIndex((h) => h.includes('staff') || h === 'role'),
+    password: head.indexOf('password')
+  };
+  if (col.id === -1 || col.password === -1) {
+    console.error('private/roll.csv needs at least an "ID" and a "Password" column.');
+    process.exit(1);
+  }
+  return lines.map((line, i) => {
+    const cells = line.split(',').map((c) => c.trim());
+    return {
+      line: i + 2,
+      id: cells[col.id] ?? '',
+      role: (col.role === -1 ? '' : cells[col.role] ?? '').toLowerCase(),
+      password: cells[col.password] ?? ''
+    };
+  });
 }
 
-const ids = unique.map(sha256).sort();
+// The salt is published in roll.json and must stay put: regenerating it would
+// invalidate every credential on the roll. Reused when one already exists, which
+// also keeps --check deterministic.
+const priorRoll = existsSync(resolve(ROOT, 'data/roll.json'))
+  ? JSON.parse(read('data/roll.json'))
+  : null;
+const salt = priorRoll?.salt ?? randomBytes(16).toString('hex');
+
+const people = parseCsv(read('private/roll.csv'));
+const usable = [];
+const skipped = [];
+const odd = [];
+
+for (const p of people) {
+  const id = normaliseId(p.id);
+  const password = normalisePassword(p.password);
+  if (id.length < 2 || password.length < 2) {
+    skipped.push(p.line);
+    continue;
+  }
+  // Everyone on this roll is meant to have a five-character ID. A shorter one is
+  // usually Excel eating a leading zero, and that locks a real person out with
+  // no symptom other than "it says my ID is wrong".
+  if (id.length !== 5) odd.push(`line ${p.line} (${id.length} characters)`);
+  usable.push({ id, password, role: p.role.startsWith('staff') ? 'staff' : 'student' });
+}
+
+const seen = new Map();
+for (const p of usable) {
+  if (seen.has(p.id)) {
+    console.error(
+      `LEAK RISK: the ID on line ${p.line ?? '?'} appears twice on the roll. Two people `
+      + 'sharing an ID share a dataset variant and every vault code. Fix the CSV.'
+    );
+    process.exit(1);
+  }
+  seen.set(p.id, true);
+}
+
+if (skipped.length) {
+  console.warn(`note: ${skipped.length} row(s) skipped for a blank ID or password: lines ${skipped.join(', ')}`);
+}
+if (odd.length) {
+  console.warn(`note: ${odd.length} ID(s) are not five characters: ${odd.join(', ')}`);
+}
+
+// Sorted by hash, so the published order carries nothing about class lists.
+const entries = usable
+  .map((p) => ({ h: credential(p.id, p.password, salt, ITERATIONS), r: p.role }))
+  .sort((a, b) => (a.h < b.h ? -1 : 1));
 
 emit('data/roll.json', {
-  version: 1,
+  version: 2,
   generated: new Date().toISOString().slice(0, 10),
-  count: ids.length,
-  ids
+  salt,
+  iterations: ITERATIONS,
+  count: entries.length,
+  entries
 });
 
 // ---- answers --------------------------------------------------------------
@@ -219,6 +304,47 @@ for (const cp of Object.values(src.checkpoints ?? {})) {
 for (const r of Object.values(src.rooms ?? {})) {
   if (written.includes(String(r.bypass))) {
     console.error('LEAK: a plaintext bypass code appears in the output');
+    process.exit(1);
+  }
+}
+
+// The roll is a list of real children, so this one is checked by shape rather
+// than by search. Searching does not work here: an ID is five digits, a hash is
+// hex, and digits are hex, so a given ID turns up inside 12,800 characters of
+// hash about one time in eight. The first run of this guard fired on a hash.
+//
+// Proving there is nowhere for a plaintext to hide is stronger than looking for
+// it. Every key is enumerated, every value is matched against the only shape it
+// is allowed to have, and anything unrecognised fails.
+const rollKeys = ['version', 'generated', 'salt', 'iterations', 'count', 'entries'];
+const rollOut = JSON.parse(read('data/roll.json'));
+
+for (const key of Object.keys(rollOut)) {
+  if (!rollKeys.includes(key)) {
+    console.error(`LEAK: data/roll.json has an unexpected key "${key}"`);
+    process.exit(1);
+  }
+}
+if (!/^[0-9a-f]{32}$/.test(rollOut.salt)) {
+  console.error('LEAK: the salt in data/roll.json is not 32 hex characters');
+  process.exit(1);
+}
+if (!/^\d{4}-\d{2}-\d{2}$/.test(rollOut.generated)) {
+  console.error('LEAK: the generated date in data/roll.json is not a plain date');
+  process.exit(1);
+}
+for (const entry of rollOut.entries) {
+  const keys = Object.keys(entry).sort().join(',');
+  if (keys !== 'h,r') {
+    console.error(`LEAK: a roll entry has keys "${keys}", expected "h,r"`);
+    process.exit(1);
+  }
+  if (!/^[0-9a-f]{64}$/.test(entry.h)) {
+    console.error('LEAK: a roll entry hash is not 64 hex characters');
+    process.exit(1);
+  }
+  if (entry.r !== 'student' && entry.r !== 'staff') {
+    console.error(`LEAK: a roll entry role is "${entry.r}", expected student or staff`);
     process.exit(1);
   }
 }

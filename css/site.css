@@ -172,6 +172,12 @@ main {
 
 .field .help { display: block; color: var(--sage); font-size: 0.85rem; margin-bottom: 0.4rem; }
 
+/* A field with a Show/Hide button beside it. The button keeps the full 44px tap
+   target and the input keeps the rest of the row. */
+.with-toggle { display: flex; gap: 0.5rem; align-items: stretch; }
+.with-toggle input { flex: 1; min-width: 0; }
+.with-toggle .btn { flex: none; padding-top: 0; padding-bottom: 0; }
+
 input[type='text'], input[type='email'], input[type='number'], select, textarea {
   width: 100%;
   min-height: var(--tap);

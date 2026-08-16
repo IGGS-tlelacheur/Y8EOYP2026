@@ -61,19 +61,24 @@ Every page must work offline once loaded and must print sensibly.
 ## 3. Identity and storage
 
 ### Login
-`index.html` asks for the student's **school email or student ID number**, plus a
-**display name** and a **crew** chosen from a dropdown.
+`index.html` asks for the student's **school ID** and a **password**, plus a
+**display name** and a **crew** chosen from a dropdown. There is no email field
+anywhere in the programme — removed 17/08/2026 on the client's instruction, since
+every student and every staff member has a school ID and not all have an address
+they can recall.
 
 ```
-identity  = normalise(email or ID)
-studentId = SHA-256(identity)
+studentId  = SHA-256(normaliseId(id))
+credential = PBKDF2-SHA256(normaliseId(id) + ':' + normalisePassword(pw), salt, 150000)
 ```
 
-Normalisation, applied before hashing: trim, casefold to lowercase, strip the `@domain`
-if a full email is typed, strip spaces and anything that is not alphanumeric, a dot or a
-hyphen. So `L.Smith`, `l.smith` and `L.Smith@ivanhoegirls.vic.edu.au` all resolve to the
-same student. Reject anything that does not match the expected pattern rather than
-silently creating a ghost account.
+Normalisation before hashing: trim, casefold to lowercase, strip anything that is not
+alphanumeric from the ID and any whitespace from the password. So the ID typed with or
+without spaces, and the password in any case, all resolve to the same person.
+
+**`studentId` comes from the ID alone.** It drives the dataset variant and every vault
+token, so it must not move when a password is retyped in a different case or changed
+later.
 
 Three deliberate separations:
 
@@ -82,11 +87,20 @@ Three deliberate separations:
   else, so a typo there is cosmetic rather than fatal.
 - **The identity is never displayed** after login. The hub greets her by display name.
 
-**Ship a hashed allowlist.** Generate SHA-256 of every valid student ID in the cohort
-(about 180 hashes) into `data/roll.json`. Login checks membership before creating a
-profile, so a mistyped ID is caught at the door rather than three lessons later. No
-personal data enters the repository — hashes only, and they cannot be reversed to an
-email or an ID.
+**Ship a stretched allowlist.** `data/roll.json` holds one PBKDF2 hash per person, with
+the role (`student` or `staff`) beside it, sorted by hash so the order carries nothing.
+Login checks membership before creating a profile, so a mistyped ID is caught at the door
+rather than three lessons later. No personal data enters the repository.
+
+The password is deliberately low-stakes — a word about water, shared by the teacher — but
+the roll is a list of real children on a public repo, and a plain SHA-256 of a five-digit
+ID and a five-letter word is recoverable on a laptop in an afternoon. PBKDF2 at 150 000
+iterations costs a login about a tenth of a second and costs an attacker that same tenth
+of a second per guess. This is the one gate in the programme worth strengthening; the
+escape-room codes stay thin as specified.
+
+A failed login says one thing for both fields. Telling her which half was wrong hands an
+enumerator the roll one field at a time.
 
 `staff.html` keeps a **re-link** tool anyway, for the girl who is on the roll under an ID
 she does not know.
@@ -589,7 +603,7 @@ tools there is no Lesson 4, and without the Card there is no deliverable.
 ## 13. Still to iron out
 
 ### 13.1 Identity — resolved
-Login is by school email or student ID number, case-insensitive, checked against a hashed
+Login is by school ID and password, case-insensitive, checked against a stretched
 roll. Crew and display name are held separately from the identity. See section 3.
 
 ### 13.2 Absentees — resolved

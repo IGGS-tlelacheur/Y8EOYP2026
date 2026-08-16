@@ -5,8 +5,10 @@ hand and do not write plaintext into them.
 
 Sources live in `private/`, which is git-ignored:
 
-- `private/roll.csv` — one student ID or school email per line. Export it from the
-  school system, drop it in, never commit it.
+- `private/roll.csv` — `ID,Staff_Student,Password`, one line per person, students and
+  staff alike. Export it from the school system, drop it in, never commit it. Only
+  hashes are published, and the salt in `data/roll.json` must never be regenerated once
+  the roll is live.
 - `private/answers.json` — the plaintext answer key. See `private/answers.example.json`
   for the shape.
 
