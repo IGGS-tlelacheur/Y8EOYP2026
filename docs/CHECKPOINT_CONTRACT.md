@@ -246,9 +246,9 @@ a term already taught, so **these are the words, and no others.**
 
 | Use | Not |
 |---|---|
-| line of good fit | line of best fit, trend line, regression line |
+| line of best fit | line of good fit, trend line, regression line |
+| explanatory variable (EV) / response variable (RV) | independent / dependent, x-variable / y-variable |
 | scatterplot | scatter graph, scatter diagram |
-| independent variable / dependent variable | explanatory / response *(see note)* |
 | association, correlation | link, connection, trend |
 | strong / weak, positive / negative, no relationship | high, low, up, down |
 | linear / non-linear | straight, curved |
@@ -258,19 +258,34 @@ a term already taught, so **these are the words, and no others.**
 | gradient | slope, rate |
 | numerical (discrete, continuous) / categorical (nominal, ordinal) | quantitative / qualitative |
 | sample, census, bias, representative | fair, random |
-| dot plot, column graph, stem-and-leaf plot, histogram, box plot, pie chart | bar chart, bar graph |
+| dot plot, column graph, histogram, box plot, pie chart | bar chart, bar graph |
 
-**Two clashes to be aware of.**
+**Both of the top two rows overrule the worksheets** *(settled 16/08/2026)*. Each
+therefore gets one bridging sentence, on first use in the first room that needs it,
+and never again — because a girl who met the other word last term needs to be told
+once that it is the same thing, and `CLAUDE.md` requires every term defined on
+first use.
 
-1. **The printed Card says "line of best fit". The worksheets say "line of good
-   fit", every time.** The rooms use *line of good fit*, because that is what was
-   taught first. `card.html` cannot be changed — the Card is already on paper — so
-   the L5 room bridges the two once, on first use, and then never again: *"On your
-   Data Evidence Card this is called the line of best fit. It is the same line."*
-2. Chapter 14 uses **independent/dependent** and **explanatory/response** for the
-   same idea, in the same chapter. The rooms use *independent* and *dependent*
-   only, since those are the ones that appear in the bivariate sections the
-   programme actually draws on.
+1. **Line of best fit.** The worksheets say *line of good fit* throughout; the
+   printed Card says *line of best fit*, and the Card wins. L5 bridges once:
+   *"Your worksheets call this the line of good fit. It is the same line."*
+2. **Explanatory and response variable.** Chapter 14 uses both this pair and
+   independent/dependent, but only ever uses explanatory/response in its
+   **categorical** sections — the numerical bivariate sections, which is all this
+   programme touches, say independent/dependent. So for these girls EV and RV are
+   effectively new. L2 bridges once, and defines both: *"The explanatory variable
+   is the one you choose or change. The response variable is the one you measure.
+   Your worksheets sometimes call these the independent and dependent variable."*
+
+Full term on first appearance in a room, then the abbreviation — the same rule this
+document already applies to units. The **EV goes on the horizontal axis**, and the
+rooms say so, because the Card's own fields are *Variable 1* and *Variable 2* and
+do not settle which is which.
+
+### Displays
+
+The stem-and-leaf plot is dropped entirely *(settled 16/08/2026)*. It is taught in
+11.02, it is not in `tools/uni.html`, and it is not worth a distractor slot.
 
 ### Difficulty
 
@@ -295,8 +310,7 @@ one, so the format is never the difficulty:
 | `cp5.2`, `cp5.3` | 14.06 Q8, Q10 — predict inside, then outside, the range of the data |
 
 **`cp4.1` distractors must be displays `tools/uni.html` can actually produce** — dot
-plot, column graph, pie chart, histogram, box plot. The stem-and-leaf plot is taught
-in 11.02 but the tool does not make one, so it is never the right answer.
+plot, column graph, pie chart, histogram, box plot. Four of those five, every time.
 
 ---
 

@@ -283,6 +283,19 @@ relationship, and you were right. So should we ban the ice creams?* They get cau
 their own earlier answer rather than by a worked example, which is the difference between
 recognising the lesson and having learnt it.
 
+**Seeing it early is fine** (settled 16/08/2026). Lesson 1 will claim out loud that
+ice-cream sellers are causing drought, and invite them to think about why that is wrong,
+so some crews will arrive at Lesson 2 already looking for hot weather. That costs nothing:
+the Lesson 2 item only asks for direction and strength, and *strong positive* is the
+honest answer either way — a girl who spots the hidden variable has not fallen for
+anything and has not answered wrongly. Lesson 6 becomes a callback rather than a trap,
+which is the better shape for a self-directed room in any case: nobody has to feel caught
+out in a room with no teacher in it to laugh with.
+
+Open, for Stage 8: whether the ice-cream-and-drought claim **replaces** Claim A in the
+Lesson 1 deck or sits alongside it. Two absurd claims in one 20-minute deck may be one
+too many.
+
 Lesson 6 then resolves both: A is dismantled by you in the deck, twice over — the
 correlation is spurious *and* the axis was cut. B is handed back to the crews to dismantle
 themselves. Whichever crew names "hot weather" first gets the credit.
