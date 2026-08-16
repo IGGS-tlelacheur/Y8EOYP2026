@@ -158,9 +158,21 @@ line from the back. Nothing on a slide is under 28px on the 1280 stage — about
 deeper than that, raise `.slide .small` and re-check.
 
 ### Stage 10 — Staff
-`staff.html`, certificates, printed staff sheet
+`staff.html`, `certificate.html`, `js/cribs.js`, `scripts/make-staff-sheet.mjs`
 
-Bypass codes, reset, re-link, export/import, plain-English crib notes per room.
+Crib notes live in `js/cribs.js` and hold no answers, so the screen and the paper read
+from one source and cannot drift apart.
+
+```
+node scripts/make-staff-sheet.mjs     writes private/staff-sheet.html — print it
+```
+
+That sheet carries the four staff codes and all seventy-two answers, which is precisely
+why it is generated into `private/` and never committed. `staff.html` itself holds
+nothing secret at all.
+
+`data/programme.json` needs the dates and a signature name before certificates are
+printed. Until then the certificate shows them as visible placeholders and says so.
 
 **Verify:** hand `staff.html` to someone who does not teach maths and ask them to answer
 "is this crew's work good enough?" using only what is on screen. If they hesitate, the

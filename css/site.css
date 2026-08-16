@@ -1638,3 +1638,156 @@ blockquote.said p {
   }
   .deck-notes b { text-transform: uppercase; letter-spacing: 0.1em; font-size: 8pt; }
 }
+
+/* ---- supervisor page ----------------------------------------------------- */
+
+.crib {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--brand);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: var(--gap);
+  break-inside: avoid;
+}
+
+.crib-head { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.crib-head h3 { margin: 0; }
+
+.crib-room {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.crib-badge {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+  border: 1.5px solid var(--brand-mid);
+  padding: 0.1em 0.55em;
+}
+
+.crib-deliverable { background: var(--brand-tint); padding: 0.55rem 0.8rem; max-width: none; }
+
+.crib-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: 0.35rem;
+}
+
+/* The one line to read aloud. Set apart because it is the thing a supervisor
+   reaches for while a girl is looking up at them. */
+.crib-say {
+  border-left: 4px solid var(--gold);
+  background: #FFFBF0;
+  padding: 0.55rem 0.8rem;
+  max-width: none;
+}
+
+.crib-dont { color: var(--sage); font-size: 0.94rem; max-width: none; margin-bottom: 0; }
+
+.trouble { margin: 0; }
+.trouble dt { font-weight: 700; color: var(--brand); margin-top: 0.9rem; }
+.trouble dt:first-child { margin-top: 0; }
+.trouble dd { margin: 0.2rem 0 0; max-width: var(--measure); }
+
+.state-list { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.35rem; }
+.state-list li { display: flex; gap: 0.6rem; align-items: baseline; }
+.state-list .state-mark { font-weight: 700; width: 1.2rem; }
+.state-list .state-note { color: var(--sage); font-size: 0.9rem; }
+.state-list li.on .state-mark { color: var(--brand); }
+.state-list li.off { color: var(--sage); }
+
+@media print {
+  .crib, .trouble dt, .trouble dd { break-inside: avoid; }
+}
+
+/* ---- certificate --------------------------------------------------------- */
+/* One sheet, landscape. It prints at any stage of the programme, so a girl who
+   has two badges gets a certificate with two badges on it rather than a gap. */
+
+.cert {
+  max-width: 62rem;
+  margin: 0 auto 2rem;
+  padding: 2.5rem 3rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.cert-rule { height: 6px; background: var(--brand); margin: 0 0 1.5rem; }
+.cert-rule:last-child { margin: 1.5rem 0 0; }
+
+.cert-head { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.75rem; }
+.cert-crest { height: 64px; width: auto; }
+.cert-school { font-family: var(--font-hand); font-size: 1.5rem; color: var(--brand); }
+.cert-programme { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage); }
+
+.cert-awarded { font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); margin: 0; max-width: none; }
+.cert-name { font-family: var(--font-hand); font-size: 3.4rem; line-height: 1.1; color: var(--ink); margin: 0.3rem 0 0.1rem; max-width: none; }
+.cert-of { font-size: 0.95rem; color: var(--sage); margin: 0 0 1.5rem; max-width: none; }
+.cert-body { max-width: 38rem; margin: 0 auto 1.75rem; }
+
+.cert-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+
+.cert-badge {
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  min-width: 11rem;
+  padding: 0.9rem 0.75rem;
+  border: 1.5px solid var(--brand-mid);
+}
+
+.cert-glyph { font-size: 1.9rem; color: var(--gold-dark); line-height: 1; }
+.cert-badge b { color: var(--brand); }
+.cert-badge-what { font-size: 0.8rem; color: var(--sage); max-width: 12rem; }
+.cert-none { color: var(--sage); }
+
+.cert-foot { display: flex; justify-content: center; gap: 4rem; margin-top: 1rem; }
+.cert-sign { min-width: 16rem; }
+.cert-line { border-bottom: 1px solid var(--ink); height: 2.2rem; }
+.cert-sign-name { font-size: 0.95rem; padding-top: 0.35rem; }
+.cert-sign-role { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); }
+
+.cert-missing { color: var(--gold-dark); font-style: italic; }
+
+@media print {
+  /* The one landscape page in the programme. @page is document-scoped, so this
+     rule only holds because certificate.html is its own document. */
+  @page { size: A4 landscape; margin: 0; }
+  body.cert-doc { background: #fff; }
+  body.cert-doc .no-print { display: none !important; }
+  /* Measured at 229mm with four badges and a long name, against 210mm of
+     landscape A4. Everything below is the 19mm coming back out. A certificate
+     that silently runs onto a second page is worse than a plain one. */
+  .cert {
+    max-width: none;
+    margin: 0;
+    border: none;
+    padding: 9mm 16mm;
+    height: 210mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cert-rule { height: 4px; margin: 0 0 6mm; }
+  .cert-rule:last-child { margin: 6mm 0 0; }
+  .cert-head { margin-bottom: 6mm; }
+  .cert-crest { height: 46px; }
+  .cert-name { font-size: 34pt; margin: 1mm 0 0; }
+  .cert-of { margin-bottom: 6mm; }
+  .cert-body { margin-bottom: 6mm; }
+  .cert-badges { gap: 4mm; margin-bottom: 6mm; }
+  .cert-badge { break-inside: avoid; padding: 3mm 3mm; min-width: 46mm; }
+  .cert-glyph { font-size: 1.5rem; }
+  .cert-foot { margin-top: 0; gap: 24mm; }
+  .cert-line { height: 12mm; }
+}

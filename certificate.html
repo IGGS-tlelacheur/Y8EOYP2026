@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Certificate</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="cert-doc">
+
+<div class="no-print" style="padding:1.5rem;max-width:62rem;margin:0 auto;">
+  <p class="note">
+    This prints on one sheet, landscape. It prints whatever she has earned so far,
+    so it works before the end of the programme as well as at it.
+  </p>
+  <div class="actions">
+    <button class="btn" type="button" id="print">Print it</button>
+    <a class="btn secondary" href="hub.html">Back to the hub</a>
+  </div>
+  <div class="msg" id="warn" hidden></div>
+</div>
+
+<div class="cert" id="cert">
+  <div class="cert-rule"></div>
+
+  <header class="cert-head">
+    <img class="cert-crest" src="assets/iggs-crest.png" alt="">
+    <div>
+      <div class="cert-school" id="school"></div>
+      <div class="cert-programme" id="programme"></div>
+    </div>
+  </header>
+
+  <p class="cert-awarded">This is to certify that</p>
+  <p class="cert-name" id="name"></p>
+  <p class="cert-of" id="of"></p>
+
+  <p class="cert-body">
+    completed the mathematics strand of <span id="programme-inline"></span>,
+    a study of bivariate data: asking a question about water, measuring it,
+    charting it, and predicting from it.
+  </p>
+
+  <div class="cert-badges" id="badges"></div>
+
+  <div class="cert-foot">
+    <div class="cert-sign">
+      <div class="cert-line"></div>
+      <div class="cert-sign-name" id="signatory"></div>
+      <div class="cert-sign-role" id="signatory-role"></div>
+    </div>
+    <div class="cert-sign">
+      <div class="cert-line"></div>
+      <div class="cert-sign-name" id="dates"></div>
+      <div class="cert-sign-role">Programme dates</div>
+    </div>
+  </div>
+
+  <div class="cert-rule"></div>
+</div>
+
+<script type="module">
+import { getProfile, getBadges, BADGES } from './js/store.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const BADGE_NAMES = {
+  reader: 'Reader', collector: 'Collector', plotter: 'Plotter', predictor: 'Predictor'
+};
+const BADGE_GLYPHS = { reader: '◆', collector: '▲', plotter: '●', predictor: '★' };
+const BADGE_FOR = {
+  reader: 'read a scatterplot and said what one point meant',
+  collector: 'planned a fair method and collected the data by hand',
+  plotter: 'chose the right chart and made an axis tell the truth',
+  predictor: 'drew a line of best fit and said what it was worth'
+};
+
+const programme = await (await fetch('data/programme.json', { cache: 'no-cache' })).json();
+
+/* A placeholder that has not been filled in is shown as a placeholder, never as
+   a blank line. A certificate quietly missing its dates is worse than one that
+   says out loud that they are not set yet. docs/DATA_CONTRACTS.md §7. */
+const TODO = 'TODO(content)';
+const missing = [];
+function fill(id, value, what) {
+  const node = document.querySelector(id);
+  if (!value || value === TODO) {
+    missing.push(what);
+    node.textContent = `[${what}]`;
+    node.classList.add('cert-missing');
+    return;
+  }
+  node.textContent = value;
+}
+
+document.querySelector('#school').textContent = programme.school;
+document.querySelector('#programme').textContent = `${programme.programme} · ${programme.strand}`;
+document.querySelector('#programme-inline').textContent = programme.programme;
+
+document.querySelector('#name').textContent = profile.display;
+document.querySelector('#of').textContent = `${programme.cohort} · ${profile.crew}`;
+
+fill('#signatory', programme.signatory, 'signature name');
+fill('#signatory-role', programme.signatoryRole, 'title');
+
+const dates = (programme.startDate === TODO || programme.endDate === TODO)
+  ? null
+  : `${programme.startDate} – ${programme.endDate}`;
+fill('#dates', dates, 'programme dates');
+
+const badges = getBadges();
+const earned = BADGES.filter((b) => badges[b]);
+const host = document.querySelector('#badges');
+
+if (earned.length === 0) {
+  const note = document.createElement('p');
+  note.className = 'cert-none';
+  note.textContent = 'No badges earned yet. Come back when there are some.';
+  host.append(note);
+} else {
+  for (const badge of earned) {
+    const box = document.createElement('div');
+    box.className = 'cert-badge';
+    const glyph = document.createElement('span');
+    glyph.className = 'cert-glyph';
+    glyph.textContent = BADGE_GLYPHS[badge];
+    glyph.setAttribute('aria-hidden', 'true');
+    const name = document.createElement('b');
+    name.textContent = BADGE_NAMES[badge];
+    const what = document.createElement('span');
+    what.className = 'cert-badge-what';
+    what.textContent = BADGE_FOR[badge];
+    box.append(glyph, name, what);
+    host.append(box);
+  }
+}
+
+if (missing.length) {
+  const box = document.querySelector('#warn');
+  box.className = 'msg problem';
+  box.textContent = '';
+  const mark = document.createElement('span');
+  mark.className = 'mark';
+  mark.textContent = '!';
+  const body = document.createElement('span');
+  body.textContent = `Not set yet: ${missing.join(', ')}. Fill these into `
+    + 'data/programme.json once and every certificate in the cohort has them.';
+  box.append(mark, body);
+  box.hidden = false;
+}
+
+document.querySelector('#print').addEventListener('click', () => window.print());
+</script>
+</body>
+</html>

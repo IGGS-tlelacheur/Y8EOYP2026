@@ -153,18 +153,23 @@
     <span class="box"></span>
     <span class="what">
       <b>Four bypass codes</b>
-      <span><b>Generated 17/08/2026</b>, hashed on the site. This table is the only
-        plaintext copy — keep this sheet.</span>
+      <span><b>Retired 17/08/2026.</b> The first set was hardcoded in a build
+        script and reached the public repo, so it has been replaced rather than
+        re-hidden. The new codes are on the generated staff sheet
+        (<code>private/staff-sheet.html</code>) and are not in the repository at
+        all.</span>
     </span>
   </li>
 </ul>
 
 <table>
   <tr><th style="width:32mm">Room</th><th>Bypass code</th></tr>
-  <tr><td>L2 Reader</td><td><code>RAINGAUGE-L2</code></td></tr>
-  <tr><td>L3 Collector</td><td><code>RIVERMOUTH-L3</code></td></tr>
-  <tr><td>L4 Plotter</td><td><code>TIDEMARK-L4</code></td></tr>
-  <tr><td>L5 Predictor</td><td><code>WATERSHED-L5</code></td></tr>
+  <tr><td>L2 Reader</td><td rowspan="4" style="vertical-align:middle">
+    On the staff sheet: run <code>node scripts/make-staff-sheet.mjs</code> and print
+    <code>private/staff-sheet.html</code>. It also carries all 72 answers.</td></tr>
+  <tr><td>L3 Collector</td></tr>
+  <tr><td>L4 Plotter</td></tr>
+  <tr><td>L5 Predictor</td></tr>
 </table>
 
 <h2><span class="when">Before it runs at school</span>The cohort</h2>

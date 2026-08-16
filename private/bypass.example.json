@@ -1,0 +1,9 @@
+{
+  "_note": "Copy to private/bypass.json and change every code. That file is git-ignored; this example is committed and must never hold a real code.",
+  "rooms": {
+    "l2": "EXAMPLE-CODE-L2",
+    "l3": "EXAMPLE-CODE-L3",
+    "l4": "EXAMPLE-CODE-L4",
+    "l5": "EXAMPLE-CODE-L5"
+  }
+}

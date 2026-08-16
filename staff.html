@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Supervisor page</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Supervisor page</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to the hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Supervisor page</h1>
+
+  <div class="msg" id="who"></div>
+
+  <p class="note no-print">
+    This page is not secret and not locked. It is simply not linked from anywhere a
+    student goes. It holds no answers — those are on the printed sheet.
+  </p>
+
+  <section class="panel">
+    <h2>What each room is asking for</h2>
+    <p>
+      You do not need to know the mathematics to answer “is this good enough?”.
+      Everything below is something you can see on her screen.
+    </p>
+    <div id="cribs"></div>
+  </section>
+
+  <section class="panel">
+    <h2>What each badge needs</h2>
+    <p>
+      Three questions answered is never the whole thing, except in Lesson 2. The
+      room always says out loud what is missing.
+    </p>
+    <table class="crew-sheet-table" id="badge-rules"></table>
+  </section>
+
+  <section class="panel">
+    <h2>When it goes wrong</h2>
+    <dl class="trouble" id="trouble"></dl>
+  </section>
+
+  <section class="panel no-print">
+    <h2>This laptop</h2>
+    <div id="student"></div>
+    <div class="actions">
+      <a class="btn secondary" href="certificate.html">Her certificate</a>
+      <button class="btn secondary" type="button" id="refresh">Read it again</button>
+    </div>
+  </section>
+
+  <section class="panel no-print">
+    <h2>Open a room for her</h2>
+    <p>
+      Use the staff code for that room, from the printed sheet. It opens the room
+      without a student code and is recorded, so you can see later that it was used.
+    </p>
+    <div class="field">
+      <label for="bypass-room">Room</label>
+      <select id="bypass-room">
+        <option value="l3">Lesson 3 · Collector</option>
+        <option value="l4">Lesson 4 · Plotter</option>
+        <option value="l5">Lesson 5 · Predictor</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="bypass-code">Staff code</label>
+      <span class="help">From the printed sheet. Capitals do not matter.</span>
+      <input type="text" id="bypass-code" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="bypass-go">Open that room</button>
+    </div>
+    <div class="msg" id="bypass-msg" hidden></div>
+  </section>
+
+  <section class="panel no-print">
+    <h2>Move her work, or start it again</h2>
+    <p>
+      Her badges, her codes and her data set all come back on their own when she
+      signs in — they are worked out from her ID. Only her typed sentences and her
+      collection table need the file.
+    </p>
+    <div class="actions">
+      <button class="btn" type="button" id="export">Export her work</button>
+      <label class="btn secondary" for="import" style="cursor:pointer;">Import a .h2o file</label>
+      <input type="file" id="import" accept=".h2o,application/json" hidden>
+    </div>
+    <div class="msg" id="move-msg" hidden></div>
+
+    <p class="note" style="margin-top:1.25rem;">
+      Starting again wipes this laptop only, and cannot be undone. Export first.
+    </p>
+    <div class="actions">
+      <button class="btn secondary" type="button" id="reset-room">Reset one room</button>
+      <select id="reset-which" aria-label="Which room to reset">
+        <option value="l2">Lesson 2</option>
+        <option value="l3">Lesson 3</option>
+        <option value="l4">Lesson 4</option>
+        <option value="l5">Lesson 5</option>
+      </select>
+      <button class="btn secondary" type="button" id="reset-all">Sign her out and wipe this laptop</button>
+    </div>
+    <div class="msg" id="reset-msg" hidden></div>
+  </section>
+
+  <section class="panel no-print">
+    <h2>If her work has vanished</h2>
+    <p class="note">
+      What this browser says about its own storage. Useful only when something has
+      already gone wrong.
+    </p>
+    <table class="crew-sheet-table" id="diagnostics"></table>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 ·
+    Supervisor page · holds no answers
+  </p>
+</main>
+
+<script type="module">
+import {
+  getProfile, getProgress, getBadges, getTableData, getCard, getPersistence,
+  exportToFile, importBundle, clearEverything, BADGES
+} from './js/store.js';
+import { staffOpen } from './js/room.js';
+import { CRIBS, BADGE_RULES, TROUBLE } from './js/cribs.js';
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function say(id, text, kind) {
+  const box = document.querySelector(id);
+  box.className = `msg ${kind ?? ''}`.trim();
+  box.textContent = '';
+  box.append(el('span', 'mark', kind === 'good' ? '✓' : '!'), el('span', null, text));
+  box.hidden = false;
+}
+
+/* ---- who is on this laptop ------------------------------------------------ */
+
+const profile = getProfile();
+const who = document.querySelector('#who');
+
+if (!profile) {
+  who.className = 'msg problem';
+  who.append(el('span', 'mark', '!'), el('span', null,
+    'Nobody is signed in on this laptop. The crib notes below still work; the buttons need a student signed in.'));
+} else if (profile.role === 'staff') {
+  who.className = 'msg good';
+  who.append(el('span', 'mark', '✓'), el('span', null,
+    `Signed in as ${profile.display}, staff. Sign in as the student to use the buttons on her work.`));
+} else {
+  who.className = 'msg';
+  who.append(el('span', 'mark', '!'), el('span', null,
+    `Signed in as ${profile.display}, ${profile.crew}, data set ${profile.variant + 1} of 6. Everything below acts on her work on this laptop.`));
+}
+
+/* ---- crib notes ----------------------------------------------------------- */
+
+const cribs = document.querySelector('#cribs');
+for (const crib of CRIBS) {
+  const box = el('section', 'crib');
+  const head = el('div', 'crib-head');
+  head.append(
+    el('span', 'crib-room', crib.room),
+    el('h3', null, crib.name),
+    el('span', 'crib-badge', crib.badge ? `${crib.badge} badge` : 'No badge')
+  );
+  box.append(head);
+
+  box.append(el('p', null, crib.asking));
+
+  const deliverable = el('p', 'crib-deliverable');
+  deliverable.append(el('b', null, 'To finish: '), document.createTextNode(crib.deliverable));
+  box.append(deliverable);
+
+  box.append(el('p', 'crib-label', 'Good enough when'));
+  const list = el('ul', 'checks');
+  for (const line of crib.goodEnough) list.append(el('li', null, line));
+  box.append(list);
+
+  const said = el('p', 'crib-say');
+  said.append(el('b', null, 'If she is stuck, say: '), document.createTextNode(crib.sayThis));
+  box.append(said);
+
+  const dont = el('p', 'crib-dont');
+  dont.append(el('b', null, 'Do not worry about: '), document.createTextNode(crib.dontWorry));
+  box.append(dont);
+
+  cribs.append(box);
+}
+
+/* ---- badge rules and trouble ---------------------------------------------- */
+
+const rules = document.querySelector('#badge-rules');
+const rhead = el('thead');
+const rrow = el('tr');
+rrow.append(el('th', null, 'Badge'), el('th', null, 'Room'), el('th', null, 'Needs'));
+rhead.append(rrow);
+rules.append(rhead);
+const rbody = el('tbody');
+for (const [badge, room, needs] of BADGE_RULES) {
+  const tr = el('tr');
+  tr.append(el('td', null, badge), el('td', null, room), el('td', null, needs));
+  rbody.append(tr);
+}
+rules.append(rbody);
+
+const trouble = document.querySelector('#trouble');
+for (const item of TROUBLE) {
+  trouble.append(el('dt', null, item.when), el('dd', null, item.do));
+}
+
+/* ---- this laptop ---------------------------------------------------------- */
+
+function paintStudent() {
+  const host = document.querySelector('#student');
+  host.textContent = '';
+  if (!profile) {
+    host.append(el('p', 'note', 'Nobody signed in.'));
+    return;
+  }
+
+  const badges = getBadges();
+  const progress = getProgress();
+  const table = getTableData();
+  const card = getCard();
+  const rows = table?.rows?.filter((r) => r.some((c) => String(c ?? '').trim() !== '')).length ?? 0;
+  const charts = ['chart1', 'chart2'].filter((s) => card.charts?.[s]?.dataUrl).length;
+
+  const list = el('ul', 'state-list');
+  for (const badge of BADGES) {
+    const done = Boolean(badges[badge]);
+    const li = el('li', done ? 'on' : 'off');
+    li.append(
+      el('span', 'state-mark', done ? '✓' : '·'),
+      el('span', null, `${badge[0].toUpperCase()}${badge.slice(1)}`),
+      el('span', 'state-note', done ? 'earned' : 'not yet')
+    );
+    list.append(li);
+  }
+  host.append(list);
+
+  const detail = el('ul', 'checks');
+  for (const room of ['l2', 'l3', 'l4', 'l5']) {
+    const state = progress.rooms?.[room] ?? {};
+    const done = Object.values(state.checkpoints ?? {}).filter((c) => c.done).length;
+    const bits = [`${done} of 3 questions`];
+    if (state.bypassed) bits.push('opened with a staff code');
+    detail.append(el('li', null, `${room.toUpperCase()}: ${bits.join(', ')}`));
+  }
+  detail.append(el('li', null, `Collection table: ${rows} row${rows === 1 ? '' : 's'}`));
+  detail.append(el('li', null, `Charts on the Card: ${charts} of 2`));
+  host.append(detail);
+}
+paintStudent();
+
+document.querySelector('#refresh').addEventListener('click', paintStudent);
+
+/* ---- open a room ---------------------------------------------------------- */
+
+document.querySelector('#bypass-go').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  if (!profile) return say('#bypass-msg', 'Sign the student in first.', 'problem');
+  const room = document.querySelector('#bypass-room').value;
+  const code = document.querySelector('#bypass-code').value.trim();
+  if (!code) return say('#bypass-msg', 'Type the staff code from the printed sheet.', 'problem');
+
+  button.disabled = true;
+  try {
+    const answers = await (await fetch('data/answers.json', { cache: 'no-cache' })).json();
+    const opened = await staffOpen(room, code, answers);
+    if (opened) {
+      say('#bypass-msg', `${room.toUpperCase()} is open on this laptop. She can go straight in.`, 'good');
+      paintStudent();
+    } else {
+      say('#bypass-msg', 'That code does not match that room. Check you have the right line on the sheet.', 'problem');
+    }
+  } catch {
+    say('#bypass-msg', 'The answer file did not load. Check the laptop is online, then try again.', 'problem');
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* ---- move or reset -------------------------------------------------------- */
+
+document.querySelector('#export').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    const bytes = await exportToFile();
+    say('#move-msg', `Exported ${Math.max(1, Math.round(bytes / 1024))} KB. Put it on her drive or a stick.`, 'good');
+  } catch {
+    say('#move-msg', 'That did not download. Try again, or use the hub.', 'problem');
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.querySelector('#import').addEventListener('change', async (event) => {
+  const [file] = event.target.files;
+  event.target.value = '';
+  if (!file) return;
+  try {
+    const { charts } = await importBundle(file);
+    say('#move-msg', `Restored, including ${charts} chart image${charts === 1 ? '' : 's'}. Reload the hub to see it.`, 'good');
+    paintStudent();
+  } catch (err) {
+    say('#move-msg', err.message, 'problem');
+  }
+});
+
+/* Two presses, never one. This is the only irreversible button on the site and
+   it is on the page a stranger is most likely to be poking at. */
+function arm(button, confirmText, run) {
+  let armed = false;
+  const original = button.textContent;
+  button.addEventListener('click', async () => {
+    if (!armed) {
+      armed = true;
+      button.textContent = confirmText;
+      say('#reset-msg', 'Press it again to go through with it. Anything else on the page cancels.', 'problem');
+      return;
+    }
+    armed = false;
+    button.textContent = original;
+    await run();
+  });
+  document.addEventListener('click', (event) => {
+    if (event.target === button || !armed) return;
+    armed = false;
+    button.textContent = original;
+    document.querySelector('#reset-msg').hidden = true;
+  });
+}
+
+arm(document.querySelector('#reset-room'), 'Press again to reset that room', async () => {
+  const room = document.querySelector('#reset-which').value;
+  const progress = getProgress();
+  delete progress.rooms[room];
+  window.localStorage.setItem('h2o.v1.progress',
+    JSON.stringify({ schema: 1, rooms: progress.rooms }));
+  say('#reset-msg', `${room.toUpperCase()} reset. Her badge for it stays — badges are not taken back.`, 'good');
+  paintStudent();
+});
+
+arm(document.querySelector('#reset-all'), 'Press again to wipe this laptop', async () => {
+  await clearEverything();
+  say('#reset-msg', 'Wiped. She will need to sign in again, and her codes and badges will come back.', 'good');
+  paintStudent();
+});
+
+/* ---- diagnostics ---------------------------------------------------------- */
+
+async function paintDiagnostics() {
+  const table = document.querySelector('#diagnostics');
+  table.textContent = '';
+  const body = el('tbody');
+
+  const row = (label, value) => {
+    const tr = el('tr');
+    tr.append(el('td', null, label), el('td', null, value));
+    body.append(tr);
+  };
+
+  row('Secure context', window.isSecureContext ? 'yes' : 'NO — nothing will work here');
+
+  const persisted = getPersistence();
+  row('Storage marked persistent',
+    persisted ? (persisted.granted ? 'yes' : 'not granted — normal, and nothing depends on it') : 'never asked');
+
+  try {
+    const estimate = await Promise.race([
+      navigator.storage?.estimate?.() ?? Promise.resolve(null),
+      new Promise((r) => setTimeout(() => r(null), 3000))
+    ]);
+    if (estimate) {
+      const mb = (n) => `${Math.round((n ?? 0) / 1e6)} MB`;
+      row('Space available', mb(estimate.quota));
+      row('Space used', mb(estimate.usage));
+      if (estimate.quota && estimate.quota < 3e8) {
+        row('Warning', 'The quota is small. This may be an InPrivate window, where everything is discarded on close.');
+      }
+    } else {
+      row('Space', 'the browser would not say');
+    }
+  } catch {
+    row('Space', 'the browser would not say');
+  }
+
+  table.append(body);
+}
+paintDiagnostics();
+</script>
+</body>
+</html>
