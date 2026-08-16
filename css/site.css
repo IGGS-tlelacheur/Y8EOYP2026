@@ -1466,3 +1466,175 @@ blockquote.said p {
 }
 
 .quest > :last-child { margin-bottom: 0; }
+
+/* ---- decks --------------------------------------------------------------- */
+/* Two decks, one engine. The stage is a fixed 1280x720 box scaled to fit, so a
+   type size checked once is the same type size on any projector. Everything here
+   is in px against that stage, deliberately: rem would follow the browser's font
+   size and the whole point is that it does not. */
+
+.deck {
+  margin: 0;
+  background: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.stage {
+  width: 1280px;
+  height: 720px;
+  flex: none;
+  transform-origin: center center;
+  background: var(--paper);
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.deck.blanked .stage { visibility: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 64px 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+
+.slide[hidden] { display: none; }
+
+.slide h1 {
+  font-family: var(--font-hand);
+  font-size: 78px;
+  line-height: 1.05;
+  color: var(--brand);
+  margin: 0;
+}
+
+.slide h2 {
+  font-family: var(--font-hand);
+  font-size: 56px;
+  line-height: 1.1;
+  color: var(--brand);
+  margin: 0;
+}
+
+/* Type on the stage is checked against the projector, not the browser. On a 2m
+   screen, 32px here lands about 50mm high and 28px about 44mm - the usual rule
+   is a millimetre of height per 200mm of viewing distance, so 28px is legible to
+   roughly 9m back and nothing on a slide goes below it. `.small` was 24px, which
+   broke that floor two lines under the comment stating it. */
+.slide p, .slide li { font-size: 32px; line-height: 1.4; max-width: none; margin: 0; }
+.slide ul { margin: 0; padding-left: 1.1em; display: grid; gap: 14px; }
+.slide .small { font-size: 28px; color: var(--sage); }
+
+.slide .claim {
+  font-family: var(--font-hand);
+  font-size: 64px;
+  line-height: 1.1;
+  color: var(--gold-dark);
+  background: #FFFBF0;
+  border-left: 10px solid var(--gold);
+  padding: 20px 28px;
+}
+
+.slide .define {
+  border-left: 8px solid var(--brand);
+  background: var(--brand-tint);
+  padding: 16px 24px;
+  font-size: 32px;
+}
+
+.slide .define b { color: var(--brand); }
+
+.slide-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+.slide-cols.wide-left { grid-template-columns: 1.35fr 1fr; }
+.slide-figure svg { max-width: 100%; height: auto; display: block; }
+.slide-figure figcaption { font-size: 24px; color: var(--sage); margin-top: 8px; }
+
+.slide .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.slide .three figcaption { font-size: 24px; font-weight: 700; color: var(--brand); }
+
+/* Reveals. Held back rather than absent, so the layout does not jump when one
+   lands. */
+[data-step] { opacity: 0; transition: opacity 140ms linear; }
+[data-step].shown { opacity: 1; }
+
+.slide .eyebrow {
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 700;
+}
+
+.deck-bar {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 5;
+  opacity: 0.35;
+  transition: opacity 140ms linear;
+}
+
+.deck-bar:hover, .deck-bar:focus-within { opacity: 1; }
+
+.deck-bar button {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  font: inherit;
+  font-size: 20px;
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.deck-count { color: var(--paper); font-size: 16px; letter-spacing: 0.1em; padding: 0 8px; }
+
+.deck-notes { display: none; }
+
+/* Printed, a deck is a script: one slide per page with its notes under it, for
+   whoever is standing at the front. */
+@media print {
+  .deck { display: block; height: auto; background: #fff; overflow: visible; }
+  .deck-bar { display: none; }
+  .stage {
+    transform: none !important;
+    width: auto;
+    height: auto;
+    page-break-after: always;
+    break-after: page;
+  }
+  .slide {
+    position: static;
+    display: flex !important;
+    padding: 0 0 10mm;
+    page-break-after: always;
+    break-after: page;
+    border-bottom: 1px solid #999;
+  }
+  .slide[hidden] { display: flex !important; }
+  [data-step] { opacity: 1 !important; }
+  .slide h1 { font-size: 28pt; }
+  .slide h2 { font-size: 20pt; }
+  .slide p, .slide li { font-size: 12pt; }
+  .slide .claim { font-size: 18pt; }
+  .deck-notes {
+    display: block;
+    font-size: 10pt;
+    color: #333;
+    border-top: 1px dashed #999;
+    margin-top: 4mm;
+    padding-top: 2mm;
+  }
+  .deck-notes b { text-transform: uppercase; letter-spacing: 0.1em; font-size: 8pt; }
+}

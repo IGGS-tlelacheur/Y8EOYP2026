@@ -137,12 +137,25 @@ If no answer is stored, it must degrade gracefully and not accuse her of somethi
 did not say.
 
 ### Stage 9 — Decks
-`deck-1.html`, `deck-6.html`
+`deck-1.html`, `deck-6.html`, `js/deck.js`
 
 Keyboard-driven, 16:9, projector-legible, no build step, work offline once loaded.
 
-**Verify:** run on the actual projector at the actual resolution. Minimum type size that
-reads from the back of the room.
+One engine, two content files. Slides are authored as `<section class="slide">` in the
+deck's own HTML, because a deck whose slides live in a JavaScript array is a deck nobody
+edits ten minutes before a lesson. The stage is a fixed 1280×720 box scaled to fit, so
+type checked once is the same type on any projector.
+
+Keys: arrows, space and PageUp/PageDown to move, **B to blank the screen**, F for
+fullscreen, Home/End. `[data-step]` holds a line back until the next press. The slide is
+in the URL hash, so a projector dropping out mid-lesson does not cost forty key presses.
+
+**Printed, a deck is the script**: one slide per page with its speaker notes under it.
+
+**Verify:** run on the actual projector at the actual resolution and read the smallest
+line from the back. Nothing on a slide is under 28px on the 1280 stage — about 44mm on a
+2m screen, legible to roughly 9m at the usual millimetre-per-200mm rule. If the hall is
+deeper than that, raise `.slide .small` and re-check.
 
 ### Stage 10 — Staff
 `staff.html`, certificates, printed staff sheet
