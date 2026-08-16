@@ -10,23 +10,31 @@ SOE laptop, signed in as a student would be.
 
 ## Storage durability — stage 0
 
-**Status: NOT YET RUN.** Required by `docs/STORAGE_AMENDMENT.md` §2, which moved it
-ahead of stage 1. The build has reached stage 6 without it, so it is overdue rather
-than pending.
+**Status: NOT YET RUN ON THE SOE.** Required by `docs/STORAGE_AMENDMENT.md` §2, which
+moved it ahead of stage 1. The build has reached stage 6 without it, so it is overdue
+rather than pending.
 
 The whole progress model rests on this one answer, which is why the amendment pulled it
 to the front.
 
-Procedure, on a school SOE laptop in Edge, signed in as a student:
+### How to run it
 
-1. Load any page on the deployed origin.
-2. In the console: `localStorage.setItem('h2o.probe', Date.now())`, and write a value to
-   an IndexedDB store as well.
-3. Close **every** Edge window. Confirm the process has exited in Task Manager.
-4. Reopen Edge, reload, read both back.
-5. Repeat after a reboot.
-6. Check `edge://policy` for `ClearBrowsingDataOnExit`,
-   `ClearCachedImagesAndFilesOnExit`, and any Site Data deletion policy.
+Open **`docs/soe-probe.html`** on the deployed origin, on a school SOE laptop in Edge,
+and follow the four steps on the page. It writes to `h2o.probe` only, never to
+`h2o.v1.*`, so it is safe to run on a laptop with a girl's real work on it. It reports
+a verdict, and produces a block to paste into the table below.
+
+Doing it by hand instead: `localStorage.setItem('h2o.probe', Date.now())` plus a write
+to an IndexedDB store, close Edge, reopen, read both back, repeat after a reboot.
+
+**Close Edge normally — do not End Task.** A browser that is killed rather than closed
+can lose data it had not yet flushed to disk. That looks exactly like the failure this
+probe is testing for and is not one; it was hit while building the probe, and it
+produced a convincing false Outcome B.
+
+Then check `edge://policy` for `ClearBrowsingDataOnExit`,
+`ClearCachedImagesAndFilesOnExit`, and any Site Data deletion policy. No page can read
+that list, so it is by eye.
 
 | Step | Result | Date |
 |---|---|---|
@@ -42,6 +50,19 @@ and everything currently built assumes it.
 **Outcome B — the probe is gone.** Stop and report. The progress model has to be
 re-based on the `.h2ocard` file plus per-lesson export, and the badge design changes
 with it. Do not work around it in code without a decision.
+
+### What has been verified, and where
+
+The **probe page itself** was tested on the dev machine (Linux, Edge 148 headless) on
+16/08/2026, driving a real browser: profile written, Edge closed and relaunched twice
+against a persistent profile, then the storage wiped behind the page's back. All
+fourteen checks passed — it reports Outcome A correctly, falls back correctly when the
+store is empty, and lets a tester record a loss when the record it would have written
+to is the thing that went missing.
+
+**That says the page works. It says nothing about the school fleet.** A dev laptop with
+no management policy is the easy case. The answer that matters can only come from a
+school SOE laptop with the school's Edge policy applied, and that has not been done.
 
 ---
 

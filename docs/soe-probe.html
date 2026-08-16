@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Stage 0 storage probe</title>
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  /* Only what this page needs. Everything else comes from site.css so the probe
+     runs against the same stylesheet the site does. */
+
+  .verdict {
+    border: 3px solid var(--line);
+    padding: 1.25rem 1.5rem;
+    margin: 0 0 1.5rem;
+  }
+  .verdict h2 { margin-top: 0; border: none; padding: 0; }
+  .verdict .big {
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.4rem;
+    line-height: 1.1;
+  }
+  .verdict p { max-width: none; }
+  .verdict.pass { border-color: var(--brand); background: var(--brand-tint); }
+  .verdict.pass .big { color: var(--brand); }
+  .verdict.fail { border-color: var(--gold-dark); background: #FCF3D6; }
+  .verdict.fail .big { color: var(--gold-dark); }
+  .verdict.idle { background: var(--sage-pale); }
+
+  .code {
+    font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    letter-spacing: 0.28em;
+    color: var(--brand);
+    background: var(--paper);
+    border: 2px solid var(--brand);
+    padding: 0.7rem 1rem 0.7rem 1.3rem;
+    text-align: center;
+    margin: 0.75rem 0 1rem;
+  }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .steps > li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .steps > li:last-child { border-bottom: none; }
+  .steps > li::before {
+    content: counter(step);
+    font-weight: 700;
+    color: var(--paper);
+    background: var(--brand);
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+  }
+  .steps > li.done::before { content: '✓'; background: var(--brand-mid); }
+  .steps > li.now { background: var(--brand-tint); }
+  .steps > li.now::before { background: var(--gold-dark); }
+  .steps b { display: block; margin-bottom: 0.15rem; }
+  .steps .body { min-width: 0; }
+  .steps p { margin: 0.35rem 0 0; }
+
+  table.diag { border-collapse: collapse; width: 100%; margin: 0 0 1rem; }
+  table.diag th, table.diag td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+    font-size: 0.95rem;
+  }
+  table.diag th { width: 15rem; font-weight: 700; color: var(--brand); }
+  table.diag td.good { color: var(--brand); font-weight: 700; }
+  table.diag td.bad { color: var(--gold-dark); font-weight: 700; }
+
+  textarea.paste {
+    width: 100%;
+    min-height: 11rem;
+    font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    .verdict, .steps > li, table.diag { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the probe</a>
+
+<header class="masthead">
+  <img class="crest" src="../assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Stage 0 · Storage probe · staff</div>
+  </div>
+</header>
+
+<main id="main">
+  <h1>Does the storage survive?</h1>
+
+  <p class="note" style="margin-bottom:1.5rem;">
+    This page is not part of the programme and no student needs it. It answers one
+    question: on a school laptop, does what the site saves still exist after Edge has
+    been closed and after the machine has been rebooted. Procedure and rationale:
+    <code>docs/STORAGE_AMENDMENT.md</code> §2. Record the result in
+    <code>docs/SOE_NOTES.md</code>.
+  </p>
+
+  <div class="verdict idle" id="verdict">
+    <p class="big" id="verdict-head">Checking…</p>
+    <p id="verdict-body"></p>
+    <div class="actions no-print" id="lost-actions" hidden style="margin-top:0.9rem;">
+      <button class="btn" type="button" id="declare-lost">I wrote a probe before this, and it is gone</button>
+    </div>
+  </div>
+
+  <section class="panel no-print">
+    <h2>What to do</h2>
+    <ol class="steps" id="steps">
+      <li data-step="write">
+        <div class="body">
+          <b>Write the probe</b>
+          <p>Puts one value in localStorage and one in IndexedDB, exactly as the site
+            does. Nothing a student has saved is touched.</p>
+          <div class="actions" style="margin-top:0.6rem;">
+            <button class="btn" type="button" id="write">Write the probe</button>
+          </div>
+        </div>
+      </li>
+      <li data-step="restart">
+        <div class="body">
+          <b>Close every Edge window, then reopen</b>
+          <p>Every window, not just this tab. Close them normally, with the X or
+            Ctrl+W — <b>do not End Task in Task Manager</b>. A browser that is killed
+            can lose data it had not yet written to disk, which looks exactly like the
+            failure this probe is testing for and is not one. Look in Task Manager to
+            confirm no <code>msedge.exe</code> is left, then reopen Edge and come back
+            to this page.</p>
+          <div class="actions" style="margin-top:0.6rem;">
+            <button class="btn" type="button" id="record-restart">Edge has been restarted — check now</button>
+          </div>
+        </div>
+      </li>
+      <li data-step="reboot">
+        <div class="body">
+          <b>Reboot the laptop, then come back</b>
+          <p>A full restart from the Start menu, not sleep or a lid close.</p>
+          <div class="actions" style="margin-top:0.6rem;">
+            <button class="btn" type="button" id="record-reboot">Laptop has been rebooted — check now</button>
+          </div>
+        </div>
+      </li>
+      <li data-step="policy">
+        <div class="body">
+          <b>Check the browser policy</b>
+          <p>Open <code>edge://policy</code> in another tab and search it for
+            <code>ClearBrowsingDataOnExit</code>,
+            <code>ClearCachedImagesAndFilesOnExit</code>, and anything mentioning
+            <b>Site Data</b>. A page cannot read that list for you, so this one is by
+            eye.</p>
+          <div class="actions" style="margin-top:0.6rem;">
+            <button class="btn secondary" type="button" id="policy-clean">Nothing found</button>
+            <button class="btn secondary" type="button" id="policy-found">Found something</button>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="panel">
+    <h2>What this machine reports</h2>
+    <table class="diag">
+      <tbody id="diag"></tbody>
+    </table>
+    <div class="actions no-print">
+      <button class="btn secondary" type="button" id="refresh">Read these again</button>
+      <button class="btn secondary" type="button" id="ask-persist">Ask for persistent storage</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Result, for <code>docs/SOE_NOTES.md</code></h2>
+    <p class="note">Copy this into the storage durability table.</p>
+    <textarea class="paste" id="paste" readonly aria-label="Result block to copy"></textarea>
+    <div class="actions no-print">
+      <button class="btn" type="button" id="copy">Copy it</button>
+      <button class="btn secondary" type="button" id="print">Print this page</button>
+      <button class="btn secondary" type="button" id="reset">Start the probe over</button>
+    </div>
+    <div class="msg good" id="copied" hidden><span class="mark">✓</span><span id="copied-text"></span></div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040 ·
+    Stage 0 · this page stores nothing under <code>h2o.v1.</code>
+  </p>
+</main>
+
+<script type="module">
+/* Deliberately self-contained. A diagnostic that imports the code it is testing
+   tells you about itself; this one has to be able to say "the site's storage is
+   gone" while still working. It touches h2o.probe only, never h2o.v1.*, so it
+   can be run on a laptop with a girl's real work on it. */
+
+const LS_KEY = 'h2o.probe';
+const DB_NAME = 'h2o-probe';
+const DB_STORE = 'probe';
+
+/* Every await here is on a clock, per CLAUDE.md. This page exists because
+   storage misbehaves, so it is the last place that should hang waiting for it. */
+const TIMEOUT_MS = 4000;
+
+function withTimeout(promise, ms = TIMEOUT_MS) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timed out')), ms))
+  ]);
+}
+
+/* ---- the two stores ------------------------------------------------------- */
+
+function openDb() {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      fn(value);
+    };
+    const timer = setTimeout(() => finish(reject, new Error('storage did not open')), TIMEOUT_MS);
+
+    let req;
+    try {
+      req = indexedDB.open(DB_NAME, 1);
+    } catch (err) {
+      return finish(reject, err);
+    }
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE);
+    };
+    req.onsuccess = () => finish(resolve, req.result);
+    req.onerror = () => finish(reject, req.error);
+    req.onblocked = () => finish(reject, new Error('another tab is holding it open'));
+  });
+}
+
+function dbPut(value) {
+  return openDb().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).put(value, 'probe');
+    tx.oncomplete = () => { db.close(); resolve(true); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+    tx.onabort = () => { db.close(); reject(tx.error); };
+  }));
+}
+
+function dbGet() {
+  return openDb().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const req = tx.objectStore(DB_STORE).get('probe');
+    req.onsuccess = () => { const v = req.result; db.close(); resolve(v ?? null); };
+    req.onerror = () => { db.close(); reject(req.error); };
+  }));
+}
+
+function lsGet() {
+  try {
+    const raw = window.localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function lsPut(value) {
+  try {
+    window.localStorage.setItem(LS_KEY, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* ---- formatting ----------------------------------------------------------- */
+
+const pad = (n) => String(n).padStart(2, '0');
+
+function auStamp(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function sinceWords(iso) {
+  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (!Number.isFinite(mins)) return '';
+  if (mins < 1) return 'less than a minute ago';
+  if (mins < 60) return `${mins} minute${mins === 1 ? '' : 's'} ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  return `${Math.round(hours / 24)} days ago`;
+}
+
+function bytes(n) {
+  if (!Number.isFinite(n)) return '—';
+  if (n >= 1e9) return `${(n / 1e9).toFixed(1)} GB`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(0)} MB`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(0)} KB`;
+  return `${n} bytes`;
+}
+
+/* Four characters from an alphabet with no letters that can be misread on a
+   handwritten note, because the whole point is that she can tell afterwards
+   whether the value she is looking at is the one she wrote. */
+const ALPHABET = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789';
+
+function makeCode() {
+  const values = new Uint32Array(4);
+  crypto.getRandomValues(values);
+  return [...values].map((v) => ALPHABET[v % ALPHABET.length]).join('');
+}
+
+/* ---- state ---------------------------------------------------------------- */
+
+/* One record, written to both stores. localStorage is the one that carries the
+   results, because it is the one the site's progress actually lives in. */
+function blank() {
+  return {
+    code: makeCode(),
+    written: new Date().toISOString(),
+    results: { restart: null, reboot: null, policy: null }
+  };
+}
+
+let record = null;
+let dbRecord = null;
+let dbError = null;
+let diagnostics = {};
+
+async function readEverything() {
+  record = lsGet();
+  dbRecord = null;
+  dbError = null;
+  try {
+    dbRecord = await withTimeout(dbGet());
+  } catch (err) {
+    dbError = err.message || 'unreadable';
+  }
+  await readDiagnostics();
+}
+
+async function readDiagnostics() {
+  const out = {
+    secure: window.isSecureContext,
+    localStorage: null,
+    quota: null,
+    usage: null,
+    persisted: null,
+    origin: window.location.origin
+  };
+
+  try {
+    const probe = `${LS_KEY}.write-test`;
+    window.localStorage.setItem(probe, '1');
+    window.localStorage.removeItem(probe);
+    out.localStorage = true;
+  } catch {
+    out.localStorage = false;
+  }
+
+  if (navigator.storage?.estimate) {
+    try {
+      const est = await withTimeout(navigator.storage.estimate());
+      out.quota = est?.quota ?? null;
+      out.usage = est?.usage ?? null;
+    } catch { /* left null, and the table says so */ }
+  }
+
+  if (navigator.storage?.persisted) {
+    try {
+      out.persisted = await withTimeout(navigator.storage.persisted());
+    } catch { /* left null */ }
+  }
+
+  diagnostics = out;
+}
+
+/* ---- what the stores say -------------------------------------------------- */
+
+function survival() {
+  const ls = Boolean(record);
+  const db = Boolean(dbRecord);
+  const matched = ls && db && record.code === dbRecord.code;
+  return { ls, db, matched, both: ls && db };
+}
+
+/* ---- painting ------------------------------------------------------------- */
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function paintVerdict() {
+  const box = document.querySelector('#verdict');
+  const head = document.querySelector('#verdict-head');
+  const body = document.querySelector('#verdict-body');
+
+  box.className = 'verdict idle';
+
+  /* The one state this page cannot work out for itself. An empty store looks
+     identical whether nothing was ever written or everything was wiped, and
+     those are the two opposite answers to the question being asked. So it says
+     both and lets the person who knows decide. */
+  if (!record && !dbRecord) {
+    head.textContent = 'Nothing stored';
+    body.textContent =
+      'Either the probe has not been written yet, or it was written and has since been '
+      + 'cleared. This page cannot tell those apart — an empty store looks the same either '
+      + 'way. If you have the code on paper from before, use the button below.';
+    document.querySelector('#lost-actions').hidden = false;
+    return;
+  }
+  document.querySelector('#lost-actions').hidden = true;
+
+  const done = record?.results ?? {};
+
+  if (!done.restart) {
+    head.textContent = 'Probe written';
+    body.textContent =
+      `Written ${auStamp(record.written)}, ${sinceWords(record.written)}. Write the code below `
+      + 'on paper before you close Edge, so that afterwards you can tell this probe from a new one.';
+    return;
+  }
+
+  const passedRestart = done.restart?.both;
+  const passedReboot = done.reboot ? done.reboot.both : null;
+
+  if (passedRestart && passedReboot === true) {
+    box.className = 'verdict pass';
+    head.textContent = 'Outcome A — the storage survives';
+    body.textContent =
+      'Both stores came back after an Edge restart and after a reboot. Nothing in the build '
+      + 'changes. Record it in docs/SOE_NOTES.md with today\'s date and carry on to stage 7.';
+    return;
+  }
+
+  if (passedRestart === false || passedReboot === false) {
+    box.className = 'verdict fail';
+    head.textContent = 'Outcome B — something did not survive';
+    body.textContent =
+      'Stop here and report it. The progress model has to be re-based on the crew card file '
+      + 'plus per-lesson export, and the badge design changes with it. Do not work around it in code.';
+    return;
+  }
+
+  head.textContent = 'Edge restart passed';
+  body.textContent = 'Now reboot the laptop and come back to this page for the second check.';
+}
+
+function paintSteps() {
+  const done = record?.results ?? {};
+  const state = {
+    write: Boolean(record),
+    restart: Boolean(done.restart),
+    reboot: Boolean(done.reboot),
+    policy: Boolean(done.policy)
+  };
+
+  const order = ['write', 'restart', 'reboot', 'policy'];
+  const current = order.find((k) => !state[k]);
+
+  /* A declared loss ends the run. Ticking off the steps that led to it would
+     read as progress, and the next thing to do is not step three, it is to
+     stop and report. */
+  if (record?.lost) {
+    for (const li of document.querySelectorAll('.steps > li')) {
+      li.classList.remove('done', 'now');
+    }
+    const old = document.querySelector('#code-box');
+    if (old) old.remove();
+    return;
+  }
+
+  /* Highlighted, never disabled. If the storage has been cleared the page falls
+     back to step 1, and disabling the later steps would lock the tester out of
+     recording the very failure the probe exists to catch. */
+  for (const li of document.querySelectorAll('.steps > li')) {
+    const key = li.dataset.step;
+    li.classList.toggle('done', state[key]);
+    li.classList.toggle('now', key === current);
+  }
+
+  /* The code only means anything between writing the probe and reading it back. */
+  const old = document.querySelector('#code-box');
+  if (old) old.remove();
+  if (record && !state.restart) {
+    const box = el('div', 'code');
+    box.id = 'code-box';
+    box.textContent = record.code;
+    document.querySelector('#verdict').after(box);
+  }
+}
+
+function row(label, value, kind) {
+  const tr = el('tr');
+  tr.append(el('th', null, label));
+  const td = el('td', kind, value);
+  tr.append(td);
+  return tr;
+}
+
+function paintDiagnostics() {
+  const host = document.querySelector('#diag');
+  host.textContent = '';
+  const d = diagnostics;
+  const s = survival();
+
+  host.append(row('Address', d.origin));
+  host.append(row(
+    'Secure context',
+    d.secure ? 'yes' : 'NO — SubtleCrypto and the file picker will not work here',
+    d.secure ? 'good' : 'bad'
+  ));
+  host.append(row('localStorage writable', d.localStorage ? 'yes' : 'NO', d.localStorage ? 'good' : 'bad'));
+  host.append(row(
+    'localStorage probe',
+    record ? `found, code ${record.code}, written ${auStamp(record.written)}` : 'not found',
+    record ? 'good' : 'bad'
+  ));
+  host.append(row(
+    'IndexedDB probe',
+    dbError ? `could not read it — ${dbError}` : (dbRecord ? `found, code ${dbRecord.code}` : 'not found'),
+    dbRecord ? 'good' : 'bad'
+  ));
+  if (record && dbRecord) {
+    host.append(row(
+      'Codes match',
+      s.matched ? 'yes' : 'NO — these are from two different probes',
+      s.matched ? 'good' : 'bad'
+    ));
+  }
+  host.append(row('Storage quota', bytes(d.quota)));
+  host.append(row('Storage in use', bytes(d.usage)));
+  host.append(row(
+    'Persistent storage granted',
+    d.persisted === null ? 'the browser would not say' : (d.persisted ? 'yes' : 'not yet'),
+    d.persisted ? 'good' : undefined
+  ));
+
+  /* docs/STORAGE_AMENDMENT.md §7: detect InPrivate if it is cheap, and it is. */
+  if (Number.isFinite(d.quota) && d.quota > 0 && d.quota < 3e8) {
+    host.append(row(
+      'Warning',
+      'The quota is small enough that this may be an InPrivate window. Everything is '
+      + 'discarded when it closes. Test in an ordinary window.',
+      'bad'
+    ));
+  }
+}
+
+function paintPaste() {
+  const d = diagnostics;
+  const done = record?.results ?? {};
+  const yn = (r) => (r ? (r.both ? 'survived' : 'LOST') : 'not tested');
+  const detail = (r) => {
+    if (!r) return 'not tested';
+    return `localStorage ${r.ls ? 'survived' : 'LOST'}, IndexedDB ${r.db ? 'survived' : 'LOST'}`;
+  };
+  const today = auStamp(new Date().toISOString()).split(' ')[0];
+
+  const lines = [
+    '| Step | Result | Date |',
+    '|---|---|---|',
+    `| localStorage after Edge restart | ${done.restart ? (done.restart.ls ? 'survived' : 'LOST') : 'not tested'} | ${done.restart ? auStamp(done.restart.at).split(' ')[0] : ''} |`,
+    `| IndexedDB after Edge restart | ${done.restart ? (done.restart.db ? 'survived' : 'LOST') : 'not tested'} | ${done.restart ? auStamp(done.restart.at).split(' ')[0] : ''} |`,
+    `| localStorage after reboot | ${done.reboot ? (done.reboot.ls ? 'survived' : 'LOST') : 'not tested'} | ${done.reboot ? auStamp(done.reboot.at).split(' ')[0] : ''} |`,
+    `| IndexedDB after reboot | ${done.reboot ? (done.reboot.db ? 'survived' : 'LOST') : 'not tested'} | ${done.reboot ? auStamp(done.reboot.at).split(' ')[0] : ''} |`,
+    `| \`edge://policy\` — any clear-on-exit policy? | ${done.policy ? done.policy.note : 'not checked'} | ${done.policy ? auStamp(done.policy.at).split(' ')[0] : ''} |`,
+    '',
+    `Outcome: ${outcomeWord()}`,
+    '',
+    '| Field | Result | Date |',
+    '|---|---|---|',
+    `| \`granted\` on the SOE | ${d.persisted === null ? 'no answer' : (d.persisted ? 'yes' : 'not yet')} | ${today} |`,
+    `| \`estimate().quota\` on the SOE | ${bytes(d.quota)} | ${today} |`,
+    '',
+    record?.lost
+      ? 'This record was written AFTER the loss, to capture it. The probe it describes is gone.'
+      : `Probe code ${record?.code ?? '—'}, written ${record ? auStamp(record.written) : '—'}.`,
+    `Origin ${d.origin}. Secure context: ${d.secure ? 'yes' : 'no'}.`,
+    `Restart check: ${detail(done.restart)}. Reboot check: ${detail(done.reboot)}.`,
+    `User agent: ${navigator.userAgent}`
+  ];
+
+  document.querySelector('#paste').value = lines.join('\n');
+}
+
+function outcomeWord() {
+  const done = record?.results ?? {};
+  if (!done.restart) return 'not yet determined';
+  if (!done.restart.both) return 'B — the storage did not survive an Edge restart. STOP AND REPORT.';
+  if (!done.reboot) return 'A so far, restart only. Reboot check still to run.';
+  if (!done.reboot.both) return 'B — the storage did not survive a reboot. STOP AND REPORT.';
+  return 'A — the storage survives. Proceed as specified.';
+}
+
+function paintAll() {
+  paintVerdict();
+  paintSteps();
+  paintDiagnostics();
+  paintPaste();
+}
+
+/* ---- actions -------------------------------------------------------------- */
+
+function say(text) {
+  document.querySelector('#copied-text').textContent = text;
+  document.querySelector('#copied').hidden = false;
+}
+
+async function writeProbe() {
+  const fresh = blank();
+  const okLocal = lsPut(fresh);
+  let okDb = false;
+  try {
+    await withTimeout(dbPut(fresh));
+    okDb = true;
+  } catch { /* reported by the table */ }
+
+  await readEverything();
+  paintAll();
+
+  if (!okLocal || !okDb) {
+    say('One of the two stores would not accept the probe. That is itself a result — read the table above.');
+  } else {
+    say(`Probe ${fresh.code} written to both stores. Note the code, then close every Edge window.`);
+  }
+}
+
+async function recordCheck(which) {
+  await readEverything();
+  const s = survival();
+
+  /* The result is recorded into whichever copy of the record still exists. If
+     localStorage is the one that went, there is nothing left to record into and
+     the verdict is already decided. */
+  const base = record ?? dbRecord;
+  if (!base) {
+    paintAll();
+    say('No probe found in either store. If you wrote one before this, use the button in the '
+      + 'box above to record it as lost — that is Outcome B.');
+    return;
+  }
+
+  base.results = base.results ?? { restart: null, reboot: null, policy: null };
+  base.results[which] = { ls: s.ls, db: s.db, both: s.both, at: new Date().toISOString() };
+
+  lsPut(base);
+  try {
+    await withTimeout(dbPut(base));
+  } catch { /* the localStorage copy is the one that carries results */ }
+
+  await readEverything();
+  paintAll();
+  say(s.both
+    ? 'Both stores came back. Result recorded.'
+    : 'Something did not come back. Result recorded — read the verdict above.');
+}
+
+async function recordPolicy(note) {
+  const base = record ?? dbRecord;
+  if (!base) return say('Write the probe first.');
+  base.results = base.results ?? { restart: null, reboot: null, policy: null };
+  base.results.policy = { note, at: new Date().toISOString() };
+  lsPut(base);
+  await readEverything();
+  paintAll();
+  say('Policy check recorded.');
+}
+
+/* Recording a loss needs somewhere to record it, and the place it would have gone
+   is the thing that went. So this writes a fresh record whose only content is the
+   failure, and marks it so nobody later mistakes it for a probe that passed. */
+async function declareLost() {
+  const failed = blank();
+  failed.lost = true;
+  const which = 'restart';
+  failed.results[which] = {
+    ls: false,
+    db: false,
+    both: false,
+    at: new Date().toISOString(),
+    note: 'declared by the tester: a probe was written earlier and neither store had it afterwards'
+  };
+
+  lsPut(failed);
+  try {
+    await withTimeout(dbPut(failed));
+  } catch { /* if this one will not write either, the paste block still says so */ }
+
+  await readEverything();
+  paintAll();
+  say('Recorded as Outcome B. Copy the result block below and stop here — the progress '
+    + 'model has to be re-based before stage 7.');
+}
+
+document.querySelector('#declare-lost').addEventListener('click', declareLost);
+document.querySelector('#write').addEventListener('click', writeProbe);
+document.querySelector('#record-restart').addEventListener('click', () => recordCheck('restart'));
+document.querySelector('#record-reboot').addEventListener('click', () => recordCheck('reboot'));
+document.querySelector('#policy-clean').addEventListener('click',
+  () => recordPolicy('no clear-on-exit policy found'));
+document.querySelector('#policy-found').addEventListener('click',
+  () => recordPolicy('POLICY FOUND — see the notes below the table'));
+
+document.querySelector('#refresh').addEventListener('click', async () => {
+  await readEverything();
+  paintAll();
+  say('Read again.');
+});
+
+document.querySelector('#ask-persist').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    if (!navigator.storage?.persist) return say('This browser does not offer persistent storage.');
+    const granted = await withTimeout(navigator.storage.persist());
+    await readDiagnostics();
+    paintDiagnostics();
+    paintPaste();
+    say(granted
+      ? 'Granted. This origin is now out of best-effort eviction.'
+      : 'Not granted. Chromium decides this on engagement, so it may say yes on a later visit. Nothing is gated on it.');
+  } catch {
+    say('The browser did not answer within four seconds. Nothing depends on it.');
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.querySelector('#copy').addEventListener('click', async () => {
+  const field = document.querySelector('#paste');
+  field.select();
+  try {
+    await navigator.clipboard.writeText(field.value);
+    say('Copied. Paste it into docs/SOE_NOTES.md.');
+  } catch {
+    say('Could not reach the clipboard. The text is selected — press Ctrl+C.');
+  }
+});
+
+document.querySelector('#print').addEventListener('click', () => window.print());
+
+document.querySelector('#reset').addEventListener('click', async () => {
+  try {
+    window.localStorage.removeItem(LS_KEY);
+  } catch { /* nothing useful to do */ }
+  try {
+    await withTimeout(dbPut(null));
+  } catch { /* nothing useful to do */ }
+  record = null;
+  dbRecord = null;
+  await readEverything();
+  paintAll();
+  say('Cleared. Press "Write the probe" to start again.');
+});
+
+await readEverything();
+paintAll();
+</script>
+</body>
+</html>

@@ -28,10 +28,14 @@ The hardest thing is stage 2 and it is deliberately early — everything from Le
 onwards depends on it, and if the charting engine is wrong, it is wrong six times.
 
 ### Stage 0 — Does the storage survive?
-No code. Twenty minutes on a school SOE laptop, in Edge, signed in as a student.
+Twenty minutes on a school SOE laptop, in Edge. Open `docs/soe-probe.html` on the
+deployed origin and follow the four steps on it; it writes to `h2o.probe` only, so it
+is safe to run on a laptop with a girl's real work on it.
 
-Procedure and results table: `docs/SOE_NOTES.md`. Rationale:
-`docs/STORAGE_AMENDMENT.md` §2.
+Results table: `docs/SOE_NOTES.md`. Rationale: `docs/STORAGE_AMENDMENT.md` §2.
+
+**Close Edge normally, never End Task.** A killed browser loses data it had not
+flushed, which fakes a failure convincingly.
 
 This is the only unknown that can invalidate the storage design, which is why it sits
 ahead of stage 1 rather than inside stage 11. **It has not been run, and the build has

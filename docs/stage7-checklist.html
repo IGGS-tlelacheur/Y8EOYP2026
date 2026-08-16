@@ -88,14 +88,14 @@
     <span class="what">
       <b>Does the storage survive a restart?</b>
       <span>
-        Your amendment moved this ahead of everything else and it has not been run.
-        On a school laptop in Edge: load the site, run
-        <code>localStorage.setItem('h2o.probe', Date.now())</code> in the console, close
-        every Edge window, reopen and read it back. Repeat after a reboot. Check
-        <code>edge://policy</code> for anything clearing site data on exit. Steps and a
-        results table: <code>docs/SOE_NOTES.md</code>.
-        <b>If it survives, nothing changes.</b> If not, tell me before stage 7 — the
-        progress model and the badge design both have to be re-based.
+        Moved ahead of everything else by your amendment, and not yet run. On a school
+        laptop, open <code>docs/soe-probe.html</code> on the live site and follow the
+        four steps: write the probe, close Edge and reopen, reboot, check
+        <code>edge://policy</code>. It gives a verdict and a block to paste into
+        <code>docs/SOE_NOTES.md</code>, and touches nothing a student has saved.
+        <b>Close Edge normally, never End Task</b> — a killed browser loses unflushed
+        data and fakes a failure. <b>If it survives, nothing changes.</b> If not, tell
+        me before stage 7: the progress model and the badge design both get re-based.
       </span>
     </span>
   </li>
@@ -132,8 +132,8 @@
 
 <div class="note stop">
   <b>If the numbers are invented, the staff sheet says so</b> — the same decision you
-  already made for the drinking-fountain data. Lesson 6 is a lesson about honesty
-  with data, and it cannot be built on quietly invented data.
+  made for the drinking-fountain data. Lesson 6 is about honesty with data and cannot
+  be built on quietly invented data.
 </div>
 
 <h2><span class="when">Needed during stage 7</span>Content</h2>
