@@ -27,6 +27,20 @@ Bottom-up. The rooms are thin wrappers around the tools, so the tools come first
 The hardest thing is stage 2 and it is deliberately early — everything from Lesson 4
 onwards depends on it, and if the charting engine is wrong, it is wrong six times.
 
+### Stage 0 — Does the storage survive?
+No code. Twenty minutes on a school SOE laptop, in Edge, signed in as a student.
+
+Procedure and results table: `docs/SOE_NOTES.md`. Rationale:
+`docs/STORAGE_AMENDMENT.md` §2.
+
+This is the only unknown that can invalidate the storage design, which is why it sits
+ahead of stage 1 rather than inside stage 11. **It has not been run, and the build has
+reached stage 6 without it.** Outcome A (the probe survives) is expected and is what
+everything built so far assumes. Outcome B means stopping and re-basing the progress
+model on the `.h2ocard` plus per-lesson export, and the badge design changes with it.
+
+**Verify:** the table in `docs/SOE_NOTES.md` is filled in, with a date.
+
 ### Stage 1 — Foundations
 `js/store.js`, `js/vault.js`, `js/variants.js`, `index.html`, `hub.html`, `css/site.css`
 
@@ -133,9 +147,10 @@ crib notes are not finished. This is the single most important test in the proje
 ### Stage 11 — Lab test
 On the real hardware, on the school network, with real accounts.
 
-Cache clear mid-session. Two crew members editing the Card. OneDrive sync lag. A student
-who mistypes her ID. A crew with no data using the borrowed dataset. Print from the
-actual printer.
+Cache clear mid-session — now a **confirmation of stage 0, not a discovery**. Two crew
+members editing the Card. OneDrive sync lag, including a save that stalls: confirm no
+button is left disabled. A student who mistypes her ID. A crew with no data using the
+borrowed dataset. Print from the actual printer.
 
 ---
 

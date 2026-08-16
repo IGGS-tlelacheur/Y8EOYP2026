@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 4 · Plotting it</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 4 · Plotter</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Plotting it</h1>
+
+  <section class="panel lock" id="lock" hidden>
+    <h2>This room is locked</h2>
+    <p>Type the code you wrote down at the end of Lesson 3.</p>
+    <p><label class="lbl" for="vault">Your code from Lesson 3</label></p>
+    <div class="actions">
+      <input type="text" id="vault" data-vault autocomplete="off" spellcheck="false">
+      <button class="btn" type="button" data-vault-go>Open the room</button>
+    </div>
+    <div class="msg" data-vault-msg hidden></div>
+    <p class="note">
+      Lost the code? Open Lesson 3 again. Your answers are still there and the
+      code is worked out from them, so it comes back.
+    </p>
+  </section>
+
+  <div id="room" hidden>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      Today you make charts instead of reading them. First you decide which
+      chart suits which data, and what an axis has to do before a chart can be
+      trusted. Then you make your own two charts and put them on your crew's
+      Card.
+    </p>
+    <p>
+      There are three questions to answer. Each one gives you a piece of a code,
+      and the three pieces together open Lesson 5.
+    </p>
+    <p class="note">
+      Take as long as you need. If a question will not come, press
+      <b>I need a hint</b>. The hints get more helpful each time, and the last one
+      tells you the answer. You still get your piece of the code.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Five displays, and what each one is for</h2>
+    <p>
+      A <b>dot plot</b> puts one dot above the number line for each measurement.
+      Measurements with the same value stack up on top of each other.
+    </p>
+    <p>
+      A <b>histogram</b> sorts the measurements into equal intervals and draws
+      one column for each interval, as tall as the number of measurements in it.
+    </p>
+    <p>
+      A <b>box plot</b> draws the middle half of the measurements as a box, with
+      a line inside it at the middle value and a line out to each end.
+    </p>
+    <p>
+      A <b>pie chart</b> cuts a circle into slices, one slice for each category.
+      It shows what share each category has of the whole.
+    </p>
+    <p>
+      A <b>column graph</b> draws one column for each named thing, as tall as the
+      value of that thing.
+    </p>
+    <p class="note">
+      The scatterplot you read in Lesson 2 is the sixth. It is the only one of
+      the six that shows two measurements at once.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Chart 4</h2>
+    <p>
+      This is the water Crew 7's household used in the shower on each day of one
+      week. Question 2 asks about it.
+    </p>
+    <figure class="room-chart" id="chart4"></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Scale</h2>
+    <p>
+      The <b>scale</b> is what the numbers on an axis do: where the axis starts,
+      and how big each step between them is. Charts A, B and C below show the
+      same six measurements. Only the scale is different.
+    </p>
+    <div class="chart-grid" id="scaling"></div>
+    <p class="note">
+      Look at each vertical axis on its own before you compare the columns.
+    </p>
+  </section>
+
+  <section class="panel" id="checkpoints">
+    <h2>Your three questions</h2>
+    <div id="cp-host"></div>
+  </section>
+
+  <section class="panel" id="finish" hidden></section>
+
+  <section class="panel">
+    <h2>Now make your own two charts</h2>
+    <p>
+      Your badge needs two charts on your crew's Card, as well as the three
+      questions above.
+    </p>
+    <ul class="checks">
+      <li><b>Chart 1</b> shows one of your variables on its own. Use the
+        one-variable tool and choose the display that suits your data.</li>
+      <li><b>Chart 2</b> is your scatterplot: both variables together, one point
+        for each pair of measurements. Use the two-variable tool.</li>
+    </ul>
+    <p>
+      Both charts need a label and a unit on each axis, and a vertical axis that
+      starts at zero unless you can say why it should not.
+    </p>
+    <div class="actions">
+      <a class="btn" href="tools/uni.html">One-variable tool</a>
+      <a class="btn" href="tools/bi.html">Two-variable tool</a>
+      <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
+    </div>
+  </section>
+
+  <section class="panel no-print">
+    <div class="actions">
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script type="module">
+import { getProfile } from './js/store.js';
+import { renderColumns } from './js/chart.js';
+import { mountCheckpoint } from './js/checkpoint.js';
+import { openRoom, mountFinish } from './js/room.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const ROOM = 'l4';
+
+/* TODO(content): six variants at stage 7. Two things are load-bearing and must
+   survive the swap.
+
+   Chart 4: the column asked about stops exactly halfway between two gridlines,
+   so the reading takes one halving step rather than none. Thursday is 175 on an
+   axis ruled every 50. Sunday is halfway between two gridlines as well, so the
+   answering column is not the only one that looks like that.
+
+   Charts A, B and C: one set of numbers, three axes. A is honest, B starts
+   above zero, C starts at zero with steps that are not all the same size. Which
+   letter is the honest one rotates between variants.
+
+   On the no-plaintext-answers rule: Thursday's 175 is sitting right here in the
+   source, and it is the answer to cp4.2. That is unavoidable and it is not a
+   leak. A question of the form "read this value off this chart" has its answer
+   in the data that draws the chart, always; there is no version of this artefact
+   that does not. Finding it in the source costs a girl exactly as much effort as
+   reading it off the axis, and teaches her the same thing. What the rule protects
+   is the answer *key* - which of the seven columns is asked about, and what the
+   other eleven checkpoints want - and that is still hashes only. */
+const CHART4 = {
+  bars: [
+    { label: 'Mon', value: 100 },
+    { label: 'Tue', value: 150 },
+    { label: 'Wed', value: 90 },
+    { label: 'Thu', value: 175 },
+    { label: 'Fri', value: 200 },
+    { label: 'Sat', value: 120 },
+    { label: 'Sun', value: 225 }
+  ],
+  label: 'Water used in the shower', unit: 'litres',
+  categoryLabel: 'Day of the week',
+  title: 'Chart 4 — Crew 7’s week',
+  axis: { ticks: [0, 50, 100, 150, 200, 250] }
+};
+
+const TANK = [
+  { label: 'Mar', value: 238 },
+  { label: 'Apr', value: 241 },
+  { label: 'May', value: 245 },
+  { label: 'Jun', value: 250 },
+  { label: 'Jul', value: 248 },
+  { label: 'Aug', value: 252 }
+];
+
+const SCALES = [
+  { key: 'opt_a', letter: 'A', ticks: [0, 50, 100, 150, 200, 250, 300] },
+  { key: 'opt_b', letter: 'B', ticks: [235, 240, 245, 250, 255] },
+  { key: 'opt_c', letter: 'C', ticks: [0, 100, 200, 230, 240, 250, 260] }
+];
+
+/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
+const QUESTIONS = [
+  {
+    id: 'l4.cp1',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 1 of 3',
+    stem: 'A crew timed forty showers, each to the nearest tenth of a minute. They want one display that shows how those forty times are spread. Which display should they use? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'A histogram' },
+      { key: 'opt_b', label: 'A dot plot' },
+      { key: 'opt_c', label: 'A pie chart' },
+      { key: 'opt_d', label: 'A box plot' }
+    ],
+    hints: [
+      'Two things decide this. How many measurements are there, and how many of them repeat exactly?',
+      'A crew counted how many people were in each of thirty houses. The answers were whole numbers from 1 to 6, so many repeated. A dot plot suited that: one dot per house, stacked over each number. Repeats are what make a dot plot work.',
+      'Times to the nearest tenth of a minute rarely repeat. So one option would draw forty separate dots in a row. Rule that one out. Of the three left, one shows every measurement grouped into equal intervals. The other two do not show the spread of all forty.'
+    ]
+  },
+  {
+    id: 'l4.cp2',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 2 of 3',
+    stem: 'Chart 4 shows the water used on each day of one week. Read the value for Thursday. Type the number, in litres, to the nearest 5 litres.',
+    hints: [
+      'Find Thursday along the bottom of Chart 4. Follow its column upwards to the top.',
+      'On another chart the gridlines were 20 apart, at 40, 60 and 80. A column stopped halfway between 60 and 80. Half of 20 is 10. So the column was worth 70.',
+      'Thursday’s column stops between two gridlines. The gridline below it is 150. The gridlines on Chart 4 are 50 apart. The column stops halfway between them. One addition is left.'
+    ]
+  },
+  {
+    id: 'l4.cp3',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 3 of 3',
+    stem: 'Charts A, B and C show the same six measurements. One of them shows the size of the change honestly. Which one? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'Chart A' },
+      { key: 'opt_b', label: 'Chart B' },
+      { key: 'opt_c', label: 'Chart C' },
+      { key: 'opt_d', label: 'All three, because they use the same numbers' }
+    ],
+    hints: [
+      'Look at where each vertical axis begins. Then look at the gaps between the numbers on it.',
+      'Two charts showed the same two columns, 82 and 84. The first axis ran from 81 to 85, and the taller column looked about three times the other. The second ran from 0 to 100, and the two columns looked almost the same. Both used the same numbers. Only one showed the size of the change honestly.',
+      'One of the three charts has a vertical axis that begins above zero. Rule it out. One of the charts has gaps between its numbers that are not all the same size. Rule that one out too. One chart and one other option are left. Only one of them can be right.'
+    ]
+  }
+];
+
+const tokens = {};
+
+function build(answers) {
+  document.querySelector('#room').hidden = false;
+
+  const chart4 = renderColumns({ ...CHART4, width: 660, height: 420 });
+  document.querySelector('#chart4').append(chart4.svg);
+
+  const scaling = document.querySelector('#scaling');
+  for (const scale of SCALES) {
+    const figure = document.createElement('figure');
+    figure.className = 'mini-chart';
+    const caption = document.createElement('figcaption');
+    caption.textContent = `Chart ${scale.letter}`;
+    figure.append(caption);
+    const { svg } = renderColumns({
+      bars: TANK,
+      label: 'Water in the school tank', unit: 'kilolitres',
+      categoryLabel: 'First of the month',
+      axis: { ticks: scale.ticks },
+      width: 340, height: 280
+    });
+    figure.append(svg);
+    scaling.append(figure);
+  }
+
+  const finish = document.querySelector('#finish');
+  const refreshFinish = () => mountFinish(finish, {
+    roomId: ROOM,
+    answers,
+    studentId: profile.studentId,
+    variant: profile.variant,
+    tokens,
+    nextRoom: 'l5'
+  });
+
+  const host = document.querySelector('#cp-host');
+  for (const question of QUESTIONS) {
+    mountCheckpoint(host, question, answers.checkpoints[question.id], {
+      variant: profile.variant,
+      studentId: profile.studentId,
+      onDone: ({ id, token }) => {
+        tokens[id] = token;
+        refreshFinish();
+      }
+    });
+  }
+}
+
+await openRoom({
+  roomId: ROOM,
+  lock: document.querySelector('#lock'),
+  studentId: profile.studentId,
+  variant: profile.variant,
+  onOpen: build
+});
+</script>
+</body>
+</html>

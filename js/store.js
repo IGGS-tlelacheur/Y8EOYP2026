@@ -1,6 +1,16 @@
 /* Storage. Everything a student does lives here and nowhere else - no server,
-   no account, no upload. That makes recovery the whole job of this file:
-   a cleared cache in a school lab is a certainty, not a risk.
+   no account, no upload.
+
+   The fleet is 1:1 assigned laptops, one Windows profile per girl, so this
+   storage persists unless something actively removes it. Recovery exists for
+   device swaps and for the handful who lose site data, not as the expected
+   path. docs/STORAGE_AMENDMENT.md §1.
+
+   Two things here are not reconstructible if they go: the rows a crew measured
+   by hand, and her Lesson 2 answer that Lesson 6 quotes back at her. Both are
+   mirrored into the crew's card file as they are made - see js/cardfile.js.
+   Everything else, progress and badges and vault codes alike, is a function of
+   her studentId and her own answers, so losing it costs time and not work.
 
    localStorage  state, small and synchronous
    IndexedDB     chart images, because a single 1920px PNG would eat the
@@ -19,7 +29,9 @@ export const KEYS = {
   charts: `${NS}charts`,
   card: `${NS}card`,
   data: `${NS}data`,
-  responses: `${NS}responses`
+  responses: `${NS}responses`,
+  seen: `${NS}seen`,
+  persisted: `${NS}persisted`
 };
 
 export const BADGES = ['reader', 'collector', 'plotter', 'predictor'];
@@ -98,6 +110,72 @@ export function setProfile({ studentId, display, crew, variant }) {
 
 export function isSignedIn() {
   return getProfile() !== null;
+}
+
+/* ---- persistent storage -------------------------------------------------- */
+
+/* Asks the browser to move this origin out of best-effort eviction. Chromium
+   decides on engagement heuristics rather than a prompt, so it can answer false
+   on a first visit and true a week later, which is why the last answer is kept
+   rather than the first.
+
+   Nothing may ever be gated on the result and no student may ever see it. It is
+   a diagnostic for staff.html, for the girl whose work has vanished.
+   docs/STORAGE_AMENDMENT.md §3. */
+/* Measured at 5ms on a first call, which is the only call that does any work.
+   Bounded anyway: this sits on the login path, and nothing downstream reads the
+   result, so there is no version of "the browser did not answer" that should
+   cost a girl the door. A repeat call on an already-granted origin has been seen
+   to hang indefinitely under automation. If that ever happens on the fleet, she
+   waits a second and a half and signs in regardless. */
+const PERSIST_TIMEOUT_MS = 1500;
+
+export async function requestPersistence() {
+  if (!navigator.storage?.persist) return null;
+  try {
+    const granted = await Promise.race([
+      navigator.storage.persist(),
+      new Promise((resolve) => setTimeout(() => resolve(null), PERSIST_TIMEOUT_MS))
+    ]);
+    if (granted === null) return null;
+
+    const estimate = await Promise.race([
+      navigator.storage.estimate?.().catch(() => null) ?? Promise.resolve(null),
+      new Promise((resolve) => setTimeout(() => resolve(null), PERSIST_TIMEOUT_MS))
+    ]);
+
+    const record = {
+      granted,
+      at: new Date().toISOString(),
+      quota: estimate?.quota ?? null,
+      usage: estimate?.usage ?? null
+    };
+    writeJson(KEYS.persisted, record);
+    return record;
+  } catch {
+    /* An origin that will not answer is an origin we carry on without. */
+    return null;
+  }
+}
+
+export function getPersistence() {
+  return readJson(KEYS.persisted, null);
+}
+
+/* ---- one-time prompts ---------------------------------------------------- */
+
+/* Whether a girl has already been shown something that is only worth showing
+   once. Prompting at the end of every session teaches her to click past the
+   prompt, which is worse than never prompting. docs/STORAGE_AMENDMENT.md §5. */
+export function hasSeen(flag) {
+  return Boolean(readJson(KEYS.seen, {})[flag]);
+}
+
+export function markSeen(flag) {
+  const seen = readJson(KEYS.seen, {});
+  seen[flag] = new Date().toISOString();
+  writeJson(KEYS.seen, seen);
+  return seen[flag];
 }
 
 /* ---- progress ------------------------------------------------------------ */
@@ -220,9 +298,39 @@ function request(req) {
   });
 }
 
+/* indexedDB.open can raise none of its three events at all. A second tab holding
+   an open connection across a version change leaves it "blocked" indefinitely,
+   and a wedged profile leaves it silent - observed here, with no success, no
+   error and no blocked event ever arriving.
+
+   An unsettled promise is worse than a rejected one: every caller awaiting it
+   stops for good, and a button disabled for the duration of the await never
+   comes back. So it rejects on a timer instead, and the callers deal with a
+   failure they can see. */
+const DB_OPEN_TIMEOUT_MS = 4000;
+
 function openDb() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    let settled = false;
+    const done = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      fn(value);
+    };
+
+    const timer = setTimeout(
+      () => done(reject, new Error('the browser storage did not open')),
+      DB_OPEN_TIMEOUT_MS
+    );
+
+    let req;
+    try {
+      req = indexedDB.open(DB_NAME, DB_VERSION);
+    } catch (err) {
+      return done(reject, err);
+    }
+
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(DB_STORE)) {
@@ -232,8 +340,9 @@ function openDb() {
         db.createObjectStore(HANDLE_STORE);
       }
     };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    req.onsuccess = () => done(resolve, req.result);
+    req.onerror = () => done(reject, req.error);
+    req.onblocked = () => done(reject, new Error('another tab is holding the storage open'));
   });
 }
 

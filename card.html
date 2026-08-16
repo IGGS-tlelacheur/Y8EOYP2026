@@ -613,14 +613,22 @@ document.querySelector('#save-file').addEventListener('click', async () => {
     /* Re-read before writing so a field someone else added while this tab was
        open is not wiped by our copy. Ours wins on conflict, but only per field. */
     const current = JSON.parse(await (await state.handle.getFile()).text());
-    if (current?.fields) {
-      for (const [key, entry] of Object.entries(current.fields)) {
+    if (current && typeof current === 'object') {
+      /* Everything this page does not edit is taken from the file as it stands
+         now, not as it stood when the Card was opened. `members` is the reason:
+         the rooms and the collection table write straight into it while this tab
+         sits open, and writing back our copy from ten minutes ago would silently
+         undo a crew mate's measurements. */
+      const { fields, charts, format, schema, crew, savedBy, savedByName, savedAt, ...rest } = current;
+      state.unknown = rest;
+
+      for (const [key, entry] of Object.entries(fields ?? {})) {
         const mine = state.fields[key];
         if (!mine || (entry.at && mine.at && entry.at > mine.at && entry.by !== profile?.studentId)) {
           state.fields[key] = entry;
         }
       }
-      for (const [key, entry] of Object.entries(current.charts ?? {})) {
+      for (const [key, entry] of Object.entries(charts ?? {})) {
         const mine = state.charts[key];
         if (!mine || (entry.at && mine.at && entry.at > mine.at)) state.charts[key] = entry;
       }

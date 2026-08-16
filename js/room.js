@@ -86,6 +86,18 @@ export function isOpen(roomId) {
   return Boolean(room.opened || room.bypassed);
 }
 
+function say(msg, text, kind) {
+  msg.className = `msg ${kind}`;
+  msg.textContent = '';
+  const mark = document.createElement('span');
+  mark.className = 'mark';
+  mark.textContent = kind === 'good' ? '✓' : '!';
+  const body = document.createElement('span');
+  body.textContent = text;
+  msg.append(mark, body);
+  msg.hidden = false;
+}
+
 /* Wires the lock panel. `onOpen` runs once the door is through, by code, by
    bypass, or because it was already open. */
 export async function mountLock(host, { roomId, answers, studentId, variant, onOpen }) {
@@ -95,26 +107,15 @@ export async function mountLock(host, { roomId, answers, studentId, variant, onO
     return;
   }
 
+  host.hidden = false;
   const expected = await vaultFrom(answers, OPENS_WITH[roomId], studentId, variant);
   const input = host.querySelector('[data-vault]');
   const button = host.querySelector('[data-vault-go]');
   const msg = host.querySelector('[data-vault-msg]');
 
-  function say(text, kind) {
-    msg.className = `msg ${kind}`;
-    msg.textContent = '';
-    const mark = document.createElement('span');
-    mark.className = 'mark';
-    mark.textContent = kind === 'good' ? '✓' : '!';
-    const body = document.createElement('span');
-    body.textContent = text;
-    msg.append(mark, body);
-    msg.hidden = false;
-  }
-
   async function tryCode() {
     const typed = input.value.trim();
-    if (!typed) return say('Type the code from the last room.', 'problem');
+    if (!typed) return say(msg, 'Type the code from the last room.', 'problem');
 
     if (await checkVault(typed, expected, roomId, studentId)) {
       markOpened(roomId);
@@ -132,7 +133,7 @@ export async function mountLock(host, { roomId, answers, studentId, variant, onO
       return;
     }
 
-    say('That code does not open this room. Check it against the last room, letter by letter.', 'problem');
+    say(msg, 'That code does not open this room. Check it against the last room, letter by letter.', 'problem');
   }
 
   button.addEventListener('click', tryCode);
@@ -142,6 +143,33 @@ export async function mountLock(host, { roomId, answers, studentId, variant, onO
       tryCode();
     }
   });
+}
+
+/* Fetches the answer file and works the lock, in that order, and says something
+   she can act on if either fails.
+
+   Rooms L3 to L5 keep their whole body hidden until the door is through, so an
+   exception anywhere in here would leave a girl looking at a blank page with no
+   way to tell whether the room is locked, broken, or her fault. */
+export async function openRoom({ roomId, lock, studentId, variant, onOpen }) {
+  try {
+    const response = await fetch('data/answers.json', { cache: 'no-cache' });
+    if (!response.ok) throw new Error(`answers.json returned ${response.status}`);
+    const answers = await response.json();
+    await mountLock(lock, {
+      roomId, answers, studentId, variant, onOpen: () => onOpen(answers)
+    });
+    return answers;
+  } catch (err) {
+    lock.hidden = false;
+    const button = lock.querySelector('[data-vault-go]');
+    if (button) button.disabled = true;
+    const msg = lock.querySelector('[data-vault-msg]');
+    if (msg) {
+      say(msg, 'This room did not load. Refresh the page. If it still will not open, tell your teacher and work on your Card meanwhile.', 'problem');
+    }
+    return null;
+  }
 }
 
 /* ---- the end of the room -------------------------------------------------- */

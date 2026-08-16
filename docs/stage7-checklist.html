@@ -21,7 +21,7 @@
   h1{ font-size:19pt; color:var(--brand); margin:0 0 1mm; letter-spacing:-.01em; }
   .sub{ text-transform:uppercase; letter-spacing:.16em; font-size:7.5pt;
     font-weight:700; color:var(--sage); margin-bottom:4mm; }
-  h2{ font-size:11pt; color:var(--brand); margin:5mm 0 2mm;
+  h2{ font-size:11pt; color:var(--brand); margin:4mm 0 2mm;
     border-bottom:2px solid var(--brand); padding-bottom:1.2mm; }
   h2 .when{ float:right; font-size:7.5pt; font-weight:400; letter-spacing:.1em;
     text-transform:uppercase; color:var(--sage); padding-top:2mm; }
@@ -47,7 +47,7 @@
     vertical-align:top; }
   th{ background:var(--brand-tint); font-size:8pt; text-transform:uppercase;
     letter-spacing:.08em; }
-  .foot{ margin-top:8mm; padding-top:2mm; border-top:1px solid var(--line);
+  .foot{ margin-top:5mm; padding-top:2mm; border-top:1px solid var(--line);
     font-size:8pt; text-transform:uppercase; letter-spacing:.1em; color:var(--sage);
     display:flex; justify-content:space-between; }
   .sign{ margin-top:5mm; display:flex; gap:8mm; }
@@ -69,16 +69,37 @@
 <body>
 
 <h1>What stage 7 needs from you</h1>
-<div class="sub">H₂O — Towards 2040 · Mathematics strand · 16/08/2026</div>
+<div class="sub">H₂O — Towards 2040 · Mathematics strand · reissued 16/08/2026</div>
 
 <div class="lede">
   <p style="margin:0">
-    Stage 6 is the machinery — the rooms, the checkpoints, the hint ladders. It is
-    being built now and needs none of this. <b>Stage 7 is the six data sets and the
-    answer hashes</b>, and it cannot start without the two items marked with a gold
-    box. Everything else can arrive late without stopping the build.
+    Stage 6 is done — rooms, checkpoints, hint ladders, Lessons 2 to 5.
+    <b>Stage 7 is the six data sets and the answer hashes</b>, and it cannot start
+    without the items in gold. Everything else can arrive late. <b>The laptop test at
+    the top is new</b> and is the most valuable twenty minutes you can spend.
   </p>
 </div>
+
+<h2><span class="when">Do this first</span>Twenty minutes on a school laptop</h2>
+
+<ul>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Does the storage survive a restart?</b>
+      <span>
+        Your amendment moved this ahead of everything else and it has not been run.
+        On a school laptop in Edge: load the site, run
+        <code>localStorage.setItem('h2o.probe', Date.now())</code> in the console, close
+        every Edge window, reopen and read it back. Repeat after a reboot. Check
+        <code>edge://policy</code> for anything clearing site data on exit. Steps and a
+        results table: <code>docs/SOE_NOTES.md</code>.
+        <b>If it survives, nothing changes.</b> If not, tell me before stage 7 — the
+        progress model and the badge design both have to be re-based.
+      </span>
+    </span>
+  </li>
+</ul>
 
 <h2><span class="when">Blocks stage 7</span>The two that stop everything</h2>
 
@@ -101,10 +122,9 @@
     <span class="what">
       <b>May I invent the numbers?</b>
       <span>
-        Twelve checkpoints × six variants is 72 answers, plus six recording sheets,
-        24 scatterplots and 18 scalings. If yes, I build them shaped like published
-        Melbourne Water and BoM figures, each with a source line, for you to veto.
-        If you have real figures, they win.
+        72 answers, plus six recording sheets, 24 scatterplots and 18 scalings. If yes,
+        I build them shaped like published Melbourne Water and BoM figures, each with a
+        source line, for you to veto. If you have real figures, they win.
       </span>
     </span>
   </li>
@@ -126,7 +146,8 @@
       <span><code>docs/CHECKPOINT_QUESTIONS.md</code>. One decision inside it:
         whether <code>cp2.1</code> stays a label-reading question or becomes “which
         axis does the EV belong on”. It is the one checkpoint whose hint ladder does
-        not work, and I think the question is the problem, not the hint.</span>
+        not work. Two errors of mine are corrected in that file and marked as such,
+        in <code>cp3.2</code> and <code>cp4.2</code>.</span>
     </span>
   </li>
   <li>
@@ -163,9 +184,9 @@
     <span class="box"></span>
     <span class="what">
       <b>The real roll — <code>private/roll.csv</code></b>
-      <span>One school email or student ID per line. <b>The site currently holds
-        three test students; every other girl is locked out.</b> The file is
-        git-ignored and never leaves your machine — only its hashes are committed.</span>
+      <span>One school email or student ID per line. <b>The site holds three test
+        students; every other girl is locked out.</b> Git-ignored — only hashes are
+        committed.</span>
     </span>
   </li>
   <li>
@@ -179,9 +200,8 @@
     <span class="box"></span>
     <span class="what">
       <b>Print the Card on the real printer</b>
-      <span>Two sheets should come out: page 1 your data, page 2 your claim, one
-        chart on each. It is the one thing I have never been able to check, and the
-        whole layout rests on it.</span>
+      <span>Two sheets: page 1 your data, page 2 your claim, one chart on each. The one
+        thing I cannot check, and the whole layout rests on it.</span>
     </span>
   </li>
 </ul>

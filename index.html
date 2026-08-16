@@ -108,7 +108,9 @@
 <script type="module">
 import { deriveStudentId, loadRoll, isOnRoll } from './js/vault.js';
 import { assignVariant } from './js/variants.js';
-import { getProfile, setProfile, importBundle, clearEverything, storageWorks } from './js/store.js';
+import {
+  getProfile, setProfile, importBundle, clearEverything, storageWorks, requestPersistence
+} from './js/store.js';
 
 const form = document.querySelector('#form');
 const errorBox = document.querySelector('#error');
@@ -183,6 +185,14 @@ form.addEventListener('submit', async (event) => {
     }
 
     setProfile({ studentId, display, crew, variant: assignVariant(studentId) });
+
+    /* Asked for here because it has to follow a user gesture, and signing in is
+       the only one that happens on this page. Never gated on, never shown to
+       her, and never allowed to hold up the door - a browser that refuses to
+       answer must not keep her out of the hub.
+       docs/STORAGE_AMENDMENT.md §3. */
+    await requestPersistence();
+
     window.location.href = 'hub.html';
   } catch {
     show('The list of names did not load. Refresh the page and try again.');

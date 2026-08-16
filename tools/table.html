@@ -83,6 +83,27 @@
     </p>
   </section>
 
+  <!-- Fires once, the first time a crew commits enough measurements to earn the
+       badge. The only modal prompt in the programme. -->
+  <dialog class="prompt" id="export-prompt">
+    <h2>Take a copy of this</h2>
+    <p>
+      You measured this by hand, once. It is the one thing in the whole
+      programme that cannot be worked out again if it goes.
+    </p>
+    <p>
+      Export it now as a file you keep. Put it somewhere you will find it in
+      four weeks.
+    </p>
+    <div class="actions">
+      <button class="btn" type="button" id="prompt-export" autofocus>Export my work</button>
+      <button class="btn secondary" type="button" id="prompt-close">Not now</button>
+    </div>
+    <div class="msg good" id="prompt-msg" hidden>
+      <span class="mark">✓</span><span id="prompt-msg-text"></span>
+    </div>
+  </dialog>
+
   <p class="foot">
     Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
   </p>
@@ -114,7 +135,10 @@
 </section>
 
 <script type="module">
-import { getTableData, setTableData } from '../js/store.js';
+import {
+  getTableData, setTableData, getProfile, exportToFile, hasSeen, markSeen
+} from '../js/store.js';
+import { mirrorRows, mirrorMessage } from '../js/cardfile.js';
 import { fiveNumberSummary, roundSensibly } from '../js/chart.js';
 
 /* 20 rows of 9mm keeps the sheet on one A4 page at four columns, with room to
@@ -529,11 +553,68 @@ function say(message) {
   document.querySelector('#saved').hidden = false;
 }
 
-document.querySelector('#save').addEventListener('click', () => {
+/* The Collector badge asks for ten rows, and ten rows is also the point at which
+   a table stops being a start and becomes the thing that was measured. The
+   prompt below waits for it rather than firing on the first two rows she types.
+   docs/STORAGE_AMENDMENT.md §5. */
+const COMMITTED_ROWS = 10;
+const PROMPT_FLAG = 'export-prompt';
+
+const prompt = document.querySelector('#export-prompt');
+
+document.querySelector('#prompt-close').addEventListener('click', () => prompt.close());
+
+document.querySelector('#prompt-export').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    const bytes = await exportToFile();
+    document.querySelector('#prompt-msg-text').textContent =
+      `Exported ${Math.max(1, Math.round(bytes / 1024))} KB. Keep that file.`;
+    document.querySelector('#prompt-msg').hidden = false;
+  } catch {
+    document.querySelector('#prompt-msg-text').textContent =
+      'That did not download. Try the Export button on your hub.';
+    document.querySelector('#prompt-msg').hidden = false;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.querySelector('#save').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
   const rows = filledRows();
   if (!rows.length) return say('There is nothing in the table yet.');
+
   setTableData({ columns: state.columns, rows });
-  say(`Saved ${rows.length} row${rows.length === 1 ? '' : 's'}. Your chart tools can read it now.`);
+  const counted = `Saved ${rows.length} row${rows.length === 1 ? '' : 's'}`;
+  say(`${counted}. Your chart tools can read it now.`);
+
+  /* The prompt goes up before the mirror is attempted, never after. Her rows are
+     already in localStorage by this line, so the prompt is earned; hanging it
+     off the end of a write to a file on OneDrive would let a slow or wedged disk
+     swallow the one prompt in the programme. */
+  if (rows.length >= COMMITTED_ROWS && !hasSeen(PROMPT_FLAG) && typeof prompt.showModal === 'function') {
+    markSeen(PROMPT_FLAG);
+    prompt.showModal();
+  }
+
+  /* Measured by hand and not reconstructible, so it goes into the crew's file as
+     it is made rather than at export time. Best effort, and never at the cost of
+     the button: a mirror that cannot finish must not leave Save dead. */
+  const profile = getProfile();
+  if (!profile) return;
+  button.disabled = true;
+  try {
+    const result = await mirrorRows(
+      profile.studentId,
+      { columns: state.columns, rows },
+      { display: profile.display }
+    );
+    say(`${mirrorMessage(result, { saved: counted })} Your chart tools can read it now.`);
+  } finally {
+    button.disabled = false;
+  }
 });
 
 document.querySelector('#export-csv').addEventListener('click', () => {

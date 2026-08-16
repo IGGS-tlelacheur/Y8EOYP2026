@@ -207,12 +207,35 @@ File System Access API against a handle persisted in IndexedDB.
   },
   "charts": {
     "chart1": { "dataUrl": "data:image/png;base64,…", "by": "…", "at": "…" }
+  },
+  "members": {
+    "a3f1…": {
+      "name": "Priya",
+      "at": "2026-11-20T11:32:00+11:00",
+      "rows": { "columns": ["…"], "rows": [["…"]], "at": "…" },
+      "claimB": { "checkpointId": "l2.fountains", "value": "…", "at": "…" }
+    }
   }
 }
 ```
 
 - Every field carries its own authorship. That is the crew's working record and your
   per-student contribution evidence.
+- **`members` is keyed by `studentId`**, one entry per girl. Added 16/08/2026 by
+  `docs/STORAGE_AMENDMENT.md` §4. It holds the only two things in the programme that
+  cannot be worked out again: the rows she measured by hand, and her Lesson 2 Claim B
+  answer, which Lesson 6 quotes back at her four weeks later.
+  - Written by `js/cardfile.js` from `tools/table.html` and `l2.html` **at the moment
+    they are made**, not at export time, and never through `card.html`.
+  - The amendment says "a `members[]` array keyed by `studentId`". An array keyed by a
+    string is a map, and a map is what `fields` and `charts` already are, so it is a
+    map here too.
+  - `card.html` never edits `members`, but it **must re-read it from the file
+    immediately before saving**. It holds the whole document in memory from the moment
+    the Card was opened, and writing that copy back would silently undo measurements a
+    crew mate mirrored in the meantime.
+  - Lesson 6 reads Claim B from local storage first and falls back to this. If both are
+    missing it uses neutral generic wording. It must never display an empty quote.
 - Chart images are embedded base64 so the file is self-contained and survives being
   emailed, copied or synced.
 - **Soft lock:** on open, if `savedAt` is within 20 minutes and `savedBy` is not the

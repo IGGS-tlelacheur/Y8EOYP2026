@@ -904,6 +904,126 @@ export function renderUni(spec) {
   return { svg, area, summary: null, tallest };
 }
 
+/* ---- named columns ------------------------------------------------------- */
+
+/* Ticks are laid out at equal spacing whatever numbers they carry. That is not
+   a shortcut - it is the whole point. An axis labelled 0, 100, 200, 230, 240,
+   250 gives its top six metres of nothing the same height as its bottom
+   hundred, which is one of the two ways a column graph lies. The other, an axis
+   that starts above zero, falls out of the same mechanism. Lesson 4's scaling
+   drill needs to draw both, and so will tools/mislead.html. */
+function ladderScale(ticks, pxAtFirst, pxAtLast) {
+  const last = ticks.length - 1;
+  const gap = (pxAtLast - pxAtFirst) / (last || 1);
+  return {
+    min: ticks[0],
+    max: ticks[last],
+    at: (index) => pxAtFirst + index * gap,
+    to(value) {
+      if (!(value > ticks[0])) return pxAtFirst;
+      for (let i = 0; i < last; i += 1) {
+        if (value <= ticks[i + 1]) {
+          const width = ticks[i + 1] - ticks[i];
+          return pxAtFirst + (i + (value - ticks[i]) / (width || 1)) * gap;
+        }
+      }
+      return pxAtLast;
+    }
+  };
+}
+
+/* One bar per named thing, its value already worked out: a week of daily totals,
+   not a tally. renderUni's column mode counts how often each category appears,
+   which answers a different question and cannot draw this.
+
+   `axis.ticks` takes the vertical axis away from niceScale entirely, which is
+   what the scaling drill needs. Without it the axis is the honest one. */
+export function renderColumns(spec) {
+  const {
+    width = 640,
+    height = 430,
+    bars = [],
+    label = '',
+    unit = '',
+    categoryLabel = '',
+    title = '',
+    axis = {},
+    fonts = SCREEN_FONTS,
+    background = PAPER
+  } = spec;
+
+  const values = bars.map((b) => Number(b.value)).filter(Number.isFinite);
+  const ticks = Array.isArray(axis.ticks) && axis.ticks.length >= 2
+    ? [...axis.ticks].sort((a, b) => a - b)
+    : niceScale(axis.min ?? 0, axis.max ?? Math.max(1, ...values), { startAtZero: true }).ticks;
+
+  const pad = fonts.label;
+  const margin = {
+    top: title ? fonts.title * 2.4 : pad * 1.6,
+    right: pad * 2.2,
+    bottom: fonts.title * 3.4,
+    left: fonts.title * 3.9
+  };
+  const plotLeft = margin.left;
+  const plotRight = width - margin.right;
+  const plotTop = margin.top;
+  const plotBottom = height - margin.bottom;
+  const area = { plotLeft, plotRight, plotTop, plotBottom };
+
+  const svg = svgEl('svg', {
+    xmlns: SVG_NS,
+    viewBox: `0 0 ${width} ${height}`,
+    width,
+    height,
+    'font-family': CHART_FONT,
+    role: 'img'
+  });
+  svg.append(svgEl('rect', { x: 0, y: 0, width, height, fill: background }));
+  svg.append(svgEl('title', {}, `${title || label || 'Chart'}. ${bars.length} columns.`));
+
+  if (title) {
+    svg.append(svgEl('text', {
+      x: width / 2, y: margin.top * 0.55,
+      'text-anchor': 'middle', 'font-size': fonts.title * 1.25,
+      'font-weight': '700', fill: INK
+    }, title));
+  }
+
+  const y = ladderScale(ticks, plotBottom, plotTop);
+  const band = (plotRight - plotLeft) / Math.max(1, bars.length);
+
+  drawAxes(svg, {
+    area, fonts, height, grid: 'y',
+    xTicks: bars.map((bar, i) => ({ px: plotLeft + band * (i + 0.5), label: String(bar.label) })),
+    yTicks: ticks.map((t, i) => ({ px: y.at(i), label: plainNumber(t) })),
+    xTitle: categoryLabel,
+    yTitle: axisTitle(label, unit)
+  });
+
+  bars.forEach((bar, i) => {
+    const value = Number(bar.value);
+    if (!Number.isFinite(value)) return;
+    const barWidth = band * 0.62;
+    const top = y.to(value);
+    svg.append(svgEl('rect', {
+      x: plotLeft + band * (i + 0.5) - barWidth / 2,
+      y: top,
+      width: barWidth,
+      height: Math.max(0, plotBottom - top),
+      fill: '#003DA5',
+      'data-label': String(bar.label),
+      'data-value': value
+    }));
+  });
+
+  svg.append(svgEl('rect', {
+    x: plotLeft, y: plotTop, width: plotRight - plotLeft, height: plotBottom - plotTop,
+    fill: 'none', stroke: RULE, 'stroke-width': 1
+  }));
+
+  return { svg, y, ticks, area };
+}
+
 /* ---- export -------------------------------------------------------------- */
 
 function serialise(svg) {

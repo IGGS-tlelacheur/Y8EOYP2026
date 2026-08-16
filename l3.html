@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 3 · Collecting data</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 3 · Collector</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Collecting data</h1>
+
+  <section class="panel lock" id="lock" hidden>
+    <h2>This room is locked</h2>
+    <p>Type the code you wrote down at the end of Lesson 2.</p>
+    <p><label class="lbl" for="vault">Your code from Lesson 2</label></p>
+    <div class="actions">
+      <input type="text" id="vault" data-vault autocomplete="off" spellcheck="false">
+      <button class="btn" type="button" data-vault-go>Open the room</button>
+    </div>
+    <div class="msg" data-vault-msg hidden></div>
+    <p class="note">
+      Lost the code? Open Lesson 2 again. Your answers are still there and the
+      code is worked out from them, so it comes back.
+    </p>
+  </section>
+
+  <div id="room" hidden>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      Today you plan how your crew will collect its own data. First you look at
+      another crew's recording sheet and find what is wrong with it, because
+      finding it in someone else's work is how you learn to see it in your own.
+    </p>
+    <p>
+      There are three questions to answer. Each one gives you a piece of a code,
+      and the three pieces together open Lesson 4.
+    </p>
+    <p class="note">
+      Take as long as you need. If a question will not come, press
+      <b>I need a hint</b>. The hints get more helpful each time, and the last one
+      tells you the answer. You still get your piece of the code.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Four words you need</h2>
+    <p>
+      A <b>sample</b> is the set of measurements you actually take. Your
+      <b>sample size</b> is how many measurements are in it.
+    </p>
+    <p>
+      A <b>method</b> is the exact steps you follow to take one measurement. A
+      method is <b>repeatable</b> when someone else can read it, follow it, and
+      get the same kind of number you did.
+    </p>
+    <p>
+      A <b>measurement</b> is one number written in one of your measurement
+      columns. A blank cell is a measurement nobody took.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>A crew who got it wrong</h2>
+    <p>
+      This crew wanted to know whether longer showers use more water. Here is
+      what they did.
+    </p>
+    <ul class="checks">
+      <li>Priya timed her showers on her phone. Marta counted to sixty, four times.</li>
+      <li>Priya caught the water in a 10 litre bucket. Marta read the meter in the
+        front garden, which counts every tap in the house.</li>
+      <li>They took six measurements on Monday and none after that.</li>
+    </ul>
+    <p>
+      Their numbers cannot be compared with each other. Counting to sixty is not
+      the same as a phone, and a meter that counts the whole house is not
+      measuring one shower. Six measurements from one day describe Monday, not
+      showers.
+    </p>
+    <p>
+      Three things went wrong. The <b>method</b> changed between the two of them.
+      What they measured with changed. And their <b>sample</b> was small and all
+      taken at once.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Crew 7's recording sheet</h2>
+    <p>
+      Crew 7 planned twelve rows. This is the sheet they came back with. The
+      three questions below are all about it.
+    </p>
+    <div class="crew-sheet" id="sheet"></div>
+  </section>
+
+  <section class="panel" id="checkpoints">
+    <h2>Your three questions</h2>
+    <div id="cp-host"></div>
+  </section>
+
+  <section class="panel" id="finish" hidden></section>
+
+  <section class="panel">
+    <h2>Now plan your own</h2>
+    <p>
+      Write your plan on your crew's Data Evidence Card: the question you are
+      asking, your two variables with their units, your method, your sample size,
+      and where the data came from.
+    </p>
+    <p>
+      Then build your collection table in the collection table tool and print the
+      recording sheet to take home. <b>Your badge needs at least ten rows of data
+      in that table</b>, as well as the three questions above.
+    </p>
+    <p class="note">
+      Write the method so that someone in another crew could follow it without
+      asking you a single question. That is the test.
+    </p>
+    <div class="actions">
+      <a class="btn" href="tools/table.html">Open the collection table</a>
+      <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
+    </div>
+  </section>
+
+  <section class="panel no-print">
+    <div class="actions">
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script type="module">
+import { getProfile } from './js/store.js';
+import { mountCheckpoint } from './js/checkpoint.js';
+import { openRoom, mountFinish } from './js/room.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const ROOM = 'l3';
+
+/* TODO(content): six variants of the sheet at stage 7. Whatever the numbers,
+   the shape is fixed by docs/CHECKPOINT_QUESTIONS.md and the three answers
+   depend on it: three different names, twelve rows, four blank measurement
+   cells over at least three rows, and exactly two rows whose method differs
+   from all the rest.
+
+   Rows 4 and 9 are the two odd ones, and their readings are deliberately absent
+   from Crew 7's scatterplot in Lessons 2 and 5 - the crew threw them out, which
+   is what this room is teaching. Nothing says so on the page. */
+const SHEET = {
+  columns: ['Date', 'Measured by', 'Shower length (minutes)', 'Water used (litres)', 'Notes'],
+  numeric: [false, false, true, true, false],
+  rows: [
+    ['03/08/2026', 'Anika', '6', '73', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['03/08/2026', 'Anika', '9', '104', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['04/08/2026', 'Bree', '', '78', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['04/08/2026', 'Bree', '4', '52', 'Guessed the time. No phone in the bathroom'],
+    ['05/08/2026', 'Sofia', '7', '87', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['05/08/2026', 'Anika', '3', '', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['06/08/2026', 'Sofia', '10', '108', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['06/08/2026', 'Bree', '', '61', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['07/08/2026', 'Anika', '5', '71', 'Counted songs on the radio instead of timing'],
+    ['07/08/2026', 'Sofia', '2', '36', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['08/08/2026', 'Bree', '11', '', 'Timed on a phone, water caught in the 10 L bucket'],
+    ['08/08/2026', 'Anika', '8', '90', 'Timed on a phone, water caught in the 10 L bucket']
+  ]
+};
+
+/* Every row is drawn identically. The blanks and the two odd methods are the
+   task, so nothing here may set them apart - not a class, not a title, not an
+   aria-label. */
+function drawSheet(host, sheet) {
+  const table = document.createElement('table');
+
+  const caption = document.createElement('caption');
+  caption.textContent = 'Crew 7 — shower measurements, August 2026';
+  table.append(caption);
+
+  const head = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  const corner = document.createElement('th');
+  corner.scope = 'col';
+  corner.className = 'n';
+  corner.textContent = 'Row';
+  headRow.append(corner);
+
+  sheet.columns.forEach((name, i) => {
+    const th = document.createElement('th');
+    th.scope = 'col';
+    if (sheet.numeric[i]) th.className = 'num';
+    th.textContent = name;
+    headRow.append(th);
+  });
+  head.append(headRow);
+  table.append(head);
+
+  const body = document.createElement('tbody');
+  sheet.rows.forEach((row, index) => {
+    const tr = document.createElement('tr');
+    const rowNumber = document.createElement('th');
+    rowNumber.scope = 'row';
+    rowNumber.className = 'n';
+    rowNumber.textContent = String(index + 1);
+    tr.append(rowNumber);
+
+    row.forEach((cell, i) => {
+      const td = document.createElement('td');
+      if (sheet.numeric[i]) td.className = 'num';
+      else if (i === sheet.columns.length - 1) td.className = 'notes';
+      td.textContent = cell;
+      tr.append(td);
+    });
+    body.append(tr);
+  });
+  table.append(body);
+
+  host.textContent = '';
+  host.append(table);
+}
+
+/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
+const QUESTIONS = [
+  {
+    id: 'l3.cp1',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 1 of 3',
+    stem: 'Look at the column headed “Measured by” on Crew 7’s sheet. How many different people took the measurements? Type the number.',
+    hints: [
+      'Look down the column that says who did the measuring. Read every row of it.',
+      'On another crew’s sheet the “Measured by” column read: Nadia, Tom, Nadia, Nadia, Tom. That is five rows. But only two different people did the measuring, because Nadia’s name appears three times. Count people, not rows.',
+      'Write down the first name in the column. Go down the column. Each time you meet a name you have not written, add it to your list. Ignore any name already on it. Your list is now complete. Count what is on it.'
+    ]
+  },
+  {
+    id: 'l3.cp2',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 2 of 3',
+    stem: 'A fair comparison needs both measurements taken the same way. Two rows on Crew 7’s sheet were not. Which two? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'Rows 2 and 9' },
+      { key: 'opt_b', label: 'Rows 4 and 9' },
+      { key: 'opt_c', label: 'Rows 4 and 11' },
+      { key: 'opt_d', label: 'Rows 6 and 9' }
+    ],
+    hints: [
+      'The “Notes” column says how each measurement was taken. Read it from top to bottom.',
+      'On another sheet, ten rows said “measured with the jug”. One said “guessed”. One said “asked my sister”. Those two cannot be fairly compared with the rest, or with each other, because neither used the jug.',
+      'Read the “Notes” column all the way down. Most rows describe the same method. Two rows describe something else. Note the row number of each. One option names both of them. The other three name only one.'
+    ]
+  },
+  {
+    id: 'l3.cp3',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 3 of 3',
+    stem: 'Crew 7 planned twelve rows. Some measurement cells were left blank. How many measurements are missing? Type the number.',
+    hints: [
+      'An empty cell is a measurement nobody took. Look for the empty ones.',
+      'Another sheet had eight rows and two measurement columns, so sixteen cells in all. Three of those cells were blank. Two were in the same row. That is still three missing measurements, because each blank cell is one measurement.',
+      'Go along row 1 and count the blank cells in the two measurement columns only. Do not count the “Notes” column, and do not count a whole row. Do the same for every row down to row 12. One addition is left.'
+    ]
+  }
+];
+
+const tokens = {};
+
+function build(answers) {
+  document.querySelector('#room').hidden = false;
+  drawSheet(document.querySelector('#sheet'), SHEET);
+
+  const finish = document.querySelector('#finish');
+  const refreshFinish = () => mountFinish(finish, {
+    roomId: ROOM,
+    answers,
+    studentId: profile.studentId,
+    variant: profile.variant,
+    tokens,
+    nextRoom: 'l4'
+  });
+
+  const host = document.querySelector('#cp-host');
+  for (const question of QUESTIONS) {
+    mountCheckpoint(host, question, answers.checkpoints[question.id], {
+      variant: profile.variant,
+      studentId: profile.studentId,
+      onDone: ({ id, token }) => {
+        tokens[id] = token;
+        refreshFinish();
+      }
+    });
+  }
+}
+
+await openRoom({
+  roomId: ROOM,
+  lock: document.querySelector('#lock'),
+  studentId: profile.studentId,
+  variant: profile.variant,
+  onOpen: build
+});
+</script>
+</body>
+</html>

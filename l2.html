@@ -59,7 +59,7 @@
        so a swap is a change of numbers and labels only. -->
   <section class="panel">
     <h2>Chart 1</h2>
-    <p>A crew timed their showers for a week and measured the water each one used.</p>
+    <p>Crew 7 timed their showers and measured the water each one used.</p>
     <figure class="room-chart" id="chart1"></figure>
   </section>
 
@@ -97,12 +97,6 @@
   <section class="panel" id="finish" hidden></section>
 
   <section class="panel no-print">
-    <h2>Before you close the laptop</h2>
-    <p>
-      Your code is worked out from your own answers, so it comes back if this
-      laptop is wiped. Your written answer above does not. Export your work from
-      the hub at the end of the lesson.
-    </p>
     <div class="actions">
       <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
       <a class="btn secondary" href="hub.html">Back to your hub</a>
@@ -112,6 +106,7 @@
 
 <script type="module">
 import { getProfile, recordResponse, getResponses } from './js/store.js';
+import { mirrorClaimB, mirrorMessage } from './js/cardfile.js';
 import { renderChart, svgEl } from './js/chart.js';
 import { mountCheckpoint } from './js/checkpoint.js';
 import { mountFinish, MINTS } from './js/room.js';
@@ -126,13 +121,19 @@ const answers = await (await fetch('data/answers.json', { cache: 'no-cache' })).
    now, and every variant must keep the same shape - same number of points, same
    kind of labels - so the questions below read identically for all six. */
 const CHARTS = {
+  /* Crew 7's readings. Lesson 3 critiques one of their recording sheets and
+     Lesson 5 draws a line through this same scatterplot on these same axes, so
+     the three rooms show one crew and one set of numbers. The axes are fixed
+     rather than fitted for the same reason: L5's chart should read as this
+     chart with a line added, not as a new one. */
   main: {
-    points: [[2, 31], [3, 44], [3, 39], [4, 52], [4, 47], [5, 58], [5, 63],
-             [6, 68], [6, 61], [7, 68], [7, 75], [8, 84], [8, 79], [9, 88],
-             [9, 95], [10, 101], [11, 108], [11, 99]],
+    points: [[2, 36], [3, 38], [3, 47], [4, 57], [4, 46], [5, 58], [5, 68],
+             [6, 73], [6, 63], [7, 68], [7, 87], [8, 90], [8, 85], [9, 104],
+             [9, 95], [10, 108], [11, 120], [11, 108]],
     xLabel: 'Shower length', xUnit: 'minutes',
     yLabel: 'Water used', yUnit: 'litres',
-    title: 'One crew’s showers'
+    title: 'Crew 7’s showers',
+    axis: { xMin: 0, xMax: 12, yMin: 0, yMax: 130 }
   },
   fountains: {
     points: [[12, 48], [18, 61], [23, 77], [27, 84], [31, 96], [35, 104],
@@ -300,23 +301,49 @@ for (const question of QUESTIONS) {
 
 /* Never gated, never hinted, no token. If it were gated the ladder would
    eventually hand her "strong positive" with a worked explanation, and the
-   Lesson 6 callback would be worth nothing. */
+   Lesson 6 callback would be worth nothing.
+
+   It is also one of the two things in the programme that cannot be worked out
+   again, so it is mirrored into the crew's card file as she writes it rather
+   than at export time. docs/STORAGE_AMENDMENT.md §4. */
 const fountains = document.querySelector('#fountains');
 const saved = getResponses()['l2.fountains'];
 if (saved) fountains.value = saved.value;
 
-document.querySelector('#save-fountains').addEventListener('click', () => {
-  recordResponse('l2.fountains', fountains.value.trim());
+function sayFountains(text, kind = 'good') {
   const box = document.querySelector('#fountains-msg');
-  box.className = 'msg good';
+  box.className = `msg ${kind}`;
   box.textContent = '';
   const mark = document.createElement('span');
   mark.className = 'mark';
-  mark.textContent = '✓';
+  mark.textContent = kind === 'good' ? '✓' : '!';
   const body = document.createElement('span');
-  body.textContent = 'Saved. You will see this again in Lesson 6.';
+  body.textContent = text;
   box.append(mark, body);
   box.hidden = false;
+}
+
+document.querySelector('#save-fountains').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  const value = fountains.value.trim();
+  if (!value) return sayFountains('Write your answer in the box first.', 'problem');
+
+  recordResponse('l2.fountains', value);
+  sayFountains('Saved. You will see this again in Lesson 6.');
+
+  /* Best effort, and never at the cost of the button. Her answer is already
+     saved by the line above; the mirror is the second copy. */
+  button.disabled = true;
+  try {
+    const result = await mirrorClaimB(
+      profile.studentId,
+      { checkpointId: 'l2.fountains', value },
+      { display: profile.display }
+    );
+    sayFountains(`${mirrorMessage(result)} You will see this again in Lesson 6.`);
+  } finally {
+    button.disabled = false;
+  }
 });
 </script>
 </body>

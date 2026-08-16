@@ -703,6 +703,83 @@ input[type='range'] {
   max-width: 14rem;
 }
 
+/* ---- the one modal prompt ------------------------------------------------ */
+/* There is exactly one of these in the programme: the collection table, the
+   first time a crew commits data it measured by hand. Prompting at the end of
+   every session teaches a girl to click past the prompt, which is worse than
+   never prompting at all. docs/STORAGE_AMENDMENT.md §5. */
+
+dialog.prompt {
+  border: 2px solid var(--brand);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 1.5rem;
+  max-width: 32rem;
+  width: calc(100% - 2rem);
+  font: inherit;
+}
+
+dialog.prompt::backdrop { background: rgba(6, 35, 43, 0.55); }
+dialog.prompt h2 { margin-top: 0; }
+dialog.prompt p { max-width: none; }
+dialog.prompt .actions { margin-top: 1rem; }
+
+/* ---- a supplied recording sheet ------------------------------------------ */
+/* Another crew's sheet, shown on screen to be criticised. Every row is drawn
+   identically: the blank cells and the two odd methods are the entire task, so
+   nothing here may set them apart. The stripe is positional, not content, and
+   is there so a finger can hold a row across a wide table. */
+
+.crew-sheet { overflow-x: auto; margin: 0 0 0.5rem; }
+
+.crew-sheet table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 46rem;
+  font-size: 0.9rem;
+}
+
+.crew-sheet caption {
+  text-align: left;
+  font-weight: 700;
+  color: var(--brand);
+  padding-bottom: 0.45rem;
+}
+
+.crew-sheet th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--brand);
+  padding: 0.45rem 0.6rem;
+  border-bottom: 2px solid var(--brand);
+  vertical-align: bottom;
+}
+
+.crew-sheet td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.crew-sheet tbody tr:nth-child(even) { background: var(--brand-tint); }
+
+.crew-sheet tbody th.n {
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--sage);
+  border-bottom: 1px solid var(--line);
+}
+
+.crew-sheet .n { width: 3rem; text-align: center; }
+.crew-sheet .num { text-align: right; width: 7rem; font-variant-numeric: tabular-nums; }
+.crew-sheet .notes { min-width: 17rem; }
+
 /* ---- the printed collection sheet ---------------------------------------- */
 /* Hidden on screen. It exists to be printed and written on, so it carries no
    colour fills and no thin hairlines. */

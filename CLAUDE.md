@@ -57,6 +57,19 @@ say so once, in a sentence, and then follow it anyway.
 | Film requirement | Programme deliverable, not a maths criterion. Supply exports, do not assess |
 | Charts in film | 1920×1080 export provided; whether it is used is the film crew's problem |
 
+**The File System Access API is not a backup.** The crew-owned `.h2ocard` exists
+because the Card is a shared artefact edited by twelve to fifteen students and handed
+to a film crew. That requirement holds however durable browser storage turns out to
+be. Nothing about the card, the persisted file handle, the `lastEditedBy` tracking or
+the soft lock may be scoped down on the grounds that storage is safe.
+See `docs/STORAGE_AMENDMENT.md` §6.
+
+**Never await an unbounded promise on a student's path.** `indexedDB.open` has been
+observed raising none of its three events; a file handle on a OneDrive-backed folder
+can stall. A promise that never settles leaves a disabled button disabled for the rest
+of the lesson, which is worse than an error she can see. Put storage, file-handle and
+network awaits on a timer, and re-enable controls in a `finally`.
+
 ## Conventions
 
 - **Pointer Events, never mouse events.** Every drag, every handle. Touch is the primary

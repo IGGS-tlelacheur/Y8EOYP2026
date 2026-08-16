@@ -107,14 +107,27 @@ single 1200 px PNG dataURL will eat a third of it. Store PNG blobs in an
 IndexedDB object store keyed by `chartId`; keep only the id in the card record.
 
 ### Recovery
-Non-negotiable, because a cleared cache in a school lab is a certainty, not a risk.
+Recovery exists for device swaps and for the handful of girls who lose site data.
+Verified against the SOE at stage 0. *(Amended 16/08/2026 by
+`docs/STORAGE_AMENDMENT.md` §1 and §8. The fleet is 1:1 assigned laptops with one
+Windows profile each, not shared lab machines, so a cleared cache is a rare event
+rather than the expected one.)*
 
 - **Export**: any page can dump the whole `h2o.v1.*` tree plus chart blobs to a single
   `.h2o` file (JSON, images base64). One button, on the hub.
 - **Import**: drop the file on the login page, everything restores.
 - **Print**: the Card prints at any stage of completion, complete or not.
 
-Tell students at the end of every session: export or print. Build the prompt into the page.
+**One prompt, not one per session.** The export prompt fires in `tools/table.html`,
+once, the first time a crew commits ten or more measured rows, and it is modal there.
+Prompting at the end of every session teaches a girl to click past the prompt, which is
+worse than never prompting. The export button stays permanently visible on the hub,
+unprompted. `docs/STORAGE_AMENDMENT.md` §5.
+
+**The two things that cannot be regenerated** — the rows collected by hand, and her
+Lesson 2 Claim B answer — are mirrored into the crew's `.h2ocard` as they are made, by
+`js/cardfile.js`. Everything else is a function of her `studentId` and her own answers
+and comes back on re-login. §4 of the amendment.
 
 ### Crew ownership of the Card
 
@@ -476,6 +489,7 @@ Bottom-up. The rooms are thin wrappers around the tools, so the tools come first
 
 | Stage | Build | Rough effort |
 |---|---|---|
+| **0** | **SOE storage probe — does localStorage survive a full Edge restart and a reboot on a school laptop?** See `docs/STORAGE_AMENDMENT.md` §2 and record the result in `docs/SOE_NOTES.md`. **Still outstanding at stage 6.** | 20 min |
 | 1 | `store.js`, `vault.js`, `variants.js`, login, hub shell | 1 day |
 | 2 | `chart.js` + `tools/bi.html` (hardest, do it first) | 1–2 days |
 | 3 | `tools/uni.html` | 1 day |
@@ -486,7 +500,7 @@ Bottom-up. The rooms are thin wrappers around the tools, so the tools come first
 | 8 | Rooms L1, L6, `extension.html`, `tools/mislead.html` | 1 day |
 | 9 | Decks 1 and 6 | 1 day |
 | 10 | `staff.html`, certificates, staff PDF | half day |
-| 11 | Lab test on the school SOE, print test, cache-clear test | half day |
+| 11 | Lab test on the school SOE, print test, cache-clear test (now a confirmation of stage 0, not a discovery) | half day |
 
 Roughly 10–11 days of build. Stages 1–5 are the ones that must not slip: without the
 tools there is no Lesson 4, and without the Card there is no deliverable.
@@ -556,8 +570,17 @@ tools there is no Lesson 4, and without the Card there is no deliverable.
 
 ## 12. Known weak points
 
-- **Cache clearing wipes everything.** Mitigated by export/import and print, not solved.
-  Say it out loud to students in Lesson 1 and make the export button impossible to miss.
+- **Site data loss wipes personal progress.** Collected rows and the Claim B answer are
+  mirrored to the crew card; everything else regenerates on re-login, because codes and
+  badges are a function of her `studentId` and her own answers. Expected incidence
+  across ~180 girls over five weeks is single figures — handled at the desk, not in the
+  architecture. *(Amended 16/08/2026, `docs/STORAGE_AMENDMENT.md` §7 and §8.)*
+- **Nothing on a student's path may await an unbounded promise.** Found the hard way at
+  stage 6: `indexedDB.open` can raise none of its three events, which left a Save button
+  disabled with no way back. `openDb` now rejects on a timer, the crew-file mirror is on
+  a clock, and `navigator.storage.persist()` is bounded so it can never cost a girl the
+  login. Anything added later that awaits storage, a file handle or the network needs
+  the same treatment.
 - **A determined student will read the source.** They will find hashes, not answers.
   That is sufficient. Do not spend effort making it stronger; spend it on the hint ladder.
 - **Non-specialist supervision remains the real risk**, not the technology. The crib

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 5 · Predicting</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 5 · Predictor</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Predicting</h1>
+
+  <section class="panel lock" id="lock" hidden>
+    <h2>This room is locked</h2>
+    <p>Type the code you wrote down at the end of Lesson 4.</p>
+    <p><label class="lbl" for="vault">Your code from Lesson 4</label></p>
+    <div class="actions">
+      <input type="text" id="vault" data-vault autocomplete="off" spellcheck="false">
+      <button class="btn" type="button" data-vault-go>Open the room</button>
+    </div>
+    <div class="msg" data-vault-msg hidden></div>
+    <p class="note">
+      Lost the code? Open Lesson 4 again. Your answers are still there and the
+      code is worked out from them, so it comes back.
+    </p>
+  </section>
+
+  <div id="room" hidden>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      Today you draw a line through a scatterplot and use it to say what has not
+      been measured. That is what a prediction is, and it is how anyone gets from
+      the water we use now to the water we will use in 2040.
+    </p>
+    <p>
+      There are three questions to answer. Each one gives you a piece of a code.
+    </p>
+    <p class="note">
+      Take as long as you need. If a question will not come, press
+      <b>I need a hint</b>. The hints get more helpful each time, and the last one
+      tells you the answer. You still get your piece of the code.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Four words you need</h2>
+    <p>
+      A <b>line of best fit</b> is a straight line drawn through a scatterplot.
+      It passes as close as it can to all the points. Your worksheets call this
+      the line of good fit. It is the same line.
+    </p>
+    <p>
+      The <b>gradient</b> tells you how much the RV changes for every one unit
+      the EV goes up. You work it out from two points on the line: the change in
+      the RV divided by the change in the EV.
+    </p>
+    <p>
+      <b>Interpolation</b> is reading the line inside the measurements you have.
+      <b>Extrapolation</b> is reading it beyond them.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Chart 5</h2>
+    <p>
+      This is Crew 7's scatterplot from Lesson 2, with a line of best fit drawn
+      on it. Two points that sit on the line are marked. Questions 1 and 2 ask
+      about this chart.
+    </p>
+    <figure class="room-chart" id="chart5"></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Chart 6</h2>
+    <p>
+      The same data and the same line, with the bottom axis carried on past the
+      last shower Crew 7 measured. The shaded part is where they have no
+      measurements at all. Question 3 asks about this chart.
+    </p>
+    <figure class="room-chart" id="chart6"></figure>
+  </section>
+
+  <section class="panel" id="checkpoints">
+    <h2>Your three questions</h2>
+    <div id="cp-host"></div>
+  </section>
+
+  <section class="panel" id="finish" hidden></section>
+
+  <section class="panel">
+    <h2>Now do it with your own data</h2>
+    <p>
+      Open your scatterplot in the two-variable tool, place your own line of best
+      fit, and read your own gradient off it. Then write these four things on
+      your crew's Card. Your badge needs three of them.
+    </p>
+    <ul class="checks">
+      <li><b>Our line</b> — write it as <b>y = mx + c</b>, using your gradient
+        for m.</li>
+      <li><b>What the gradient means</b> — say it as a sentence about water, not
+        about maths. “For every extra minute in the shower, the water used goes up
+        by about 9 litres.”</li>
+      <li><b>Reading inside our data (interpolation)</b> — pick a value you did
+        not measure but could have. “At 6 minutes our line gives 70 litres.”</li>
+      <li><b>Reading past our data (extrapolation)</b> — pick a value beyond
+        everything you measured, then say what it is worth. “At 15 minutes our
+        line gives 150 litres. We measured only from 2 to 11 minutes, so nothing
+        we did tests whether the line is still straight out there.”</li>
+    </ul>
+    <p>
+      That last sentence is the one that matters for 2040. A prediction without
+      it is a guess wearing a straight line.
+    </p>
+    <div class="actions">
+      <a class="btn" href="tools/bi.html">Two-variable tool</a>
+      <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
+    </div>
+  </section>
+
+  <section class="panel no-print">
+    <div class="actions">
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script type="module">
+import { getProfile } from './js/store.js';
+import { renderChart, svgEl } from './js/chart.js';
+import { mountCheckpoint } from './js/checkpoint.js';
+import { openRoom, mountFinish } from './js/room.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const ROOM = 'l5';
+
+/* TODO(content): six variants at stage 7. Crew 7's readings, the same set
+   Lesson 2 plots on the same axes, so this room reads as that chart with a line
+   added rather than as a new chart.
+
+   The line is y = 9x + 16 and it is also the least squares line of these points
+   to two decimal places, which is not a coincidence - the points were chosen to
+   make it true. Any variant that changes the numbers has to keep that, or the
+   line drawn on the chart is visibly not the best fit and the room teaches the
+   wrong thing. The two marked points are on the line, chosen so the gradient
+   comes out exact. */
+const POINTS = [[2, 36], [3, 38], [3, 47], [4, 57], [4, 46], [5, 58], [5, 68],
+                [6, 73], [6, 63], [7, 68], [7, 87], [8, 90], [8, 85], [9, 104],
+                [9, 95], [10, 108], [11, 120], [11, 108]];
+
+const LINE = { x1: 2, y1: 34, x2: 10, y2: 106 };
+const MARKED = [[2, 34], [10, 106]];
+const MEASURED = { xMin: 2, xMax: 11 };
+
+const LABELS = {
+  points: POINTS,
+  xLabel: 'Shower length', xUnit: 'minutes',
+  yLabel: 'Water used', yUnit: 'litres'
+};
+
+/* The two points the gradient is worked out from. They sit on the line rather
+   than on the data, so they are drawn here and not by chart.js - the engine
+   marks data, and these are not data. Ring plus a printed coordinate, because
+   colour alone must never carry meaning. */
+function markOnLine(svg, scales, [dx, dy], side) {
+  const cx = scales.x.to(dx);
+  const cy = scales.y.to(dy);
+  svg.append(svgEl('circle', {
+    cx, cy, r: 10, fill: 'none', stroke: '#1D3F8F', 'stroke-width': 2.2
+  }));
+  svg.append(svgEl('text', {
+    x: side === 'left' ? cx - 14 : cx + 14,
+    y: side === 'left' ? cy - 12 : cy + 22,
+    'text-anchor': side === 'left' ? 'end' : 'start',
+    'font-size': 15, 'font-weight': 700, fill: '#1D3F8F',
+    'font-family': 'system-ui, sans-serif'
+  }, `(${dx}, ${dy})`));
+}
+
+/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
+const QUESTIONS = [
+  {
+    id: 'l5.cp1',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 1 of 3',
+    stem: 'Chart 5 has a line of best fit drawn on it. Two points on that line are marked: (2, 34) and (10, 106). Find the gradient of the line. Type the number, to one decimal place.',
+    hints: [
+      'Gradient compares the change in the RV with the change in the EV.',
+      'A line passed through (1, 20) and (5, 8). The RV went from 20 down to 8, a change of −12. The EV went from 1 up to 5, a change of 4. The gradient is −12 divided by 4, which is −3. A gradient can be negative.',
+      'The RV goes from 34 to 106. That is a change of 72. The EV goes from 2 to 10. That is a change of 8. One division is left.'
+    ]
+  },
+  {
+    id: 'l5.cp2',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 2 of 3',
+    stem: 'Use the line of best fit on Chart 5. Read the line at 6 minutes. What does it give for the water used? Type the number, in litres, to the nearest 10 litres.',
+    hints: [
+      'Find 6 on the bottom axis of Chart 5. Go straight up from there.',
+      'On another chart the line was read at 3 hours. Going up from 3 met the line level with 45 on the side axis. So the line gives 45 at 3 hours. The point read does not have to be one of the measured points.',
+      'Go up from 6 until you meet the line, not a point. Now go straight across to the side axis. You land between two gridlines. One reading is left.'
+    ]
+  },
+  {
+    id: 'l5.cp3',
+    roomId: ROOM,
+    type: 'numeric',
+    title: 'Question 3 of 3',
+    stem: 'Crew 7 measured showers from 2 minutes to 11 minutes. Use the line of best fit on Chart 6 to predict the water used for a 15 minute shower. Type the number, in litres, to the nearest 10 litres.',
+    hints: [
+      'The line does not stop at the last point. It carries on. So can your reading.',
+      'A crew measured from 1 to 8 weeks and read their line at 12 weeks. Twelve is past everything they measured. They still read it the same way: up from 12, and across to the side axis. Reading it takes the same two steps. Trusting it is a different question.',
+      'Find 15 on the bottom axis, past the last point on the chart. Go up to the line, then across to the side axis. One reading is left.'
+    ]
+  }
+];
+
+const tokens = {};
+
+function build(answers) {
+  document.querySelector('#room').hidden = false;
+
+  const five = renderChart({
+    ...LABELS,
+    title: 'Chart 5 — Crew 7’s showers, with a line of best fit',
+    axis: { xMin: 0, xMax: 12, yMin: 0, yMax: 130 },
+    fit: LINE,
+    width: 660, height: 440
+  });
+  markOnLine(five.svg, five, MARKED[0], 'right');
+  markOnLine(five.svg, five, MARKED[1], 'left');
+  document.querySelector('#chart5').append(five.svg);
+
+  /* dataRange is what hatches and fades everything past the last measurement.
+     The axis is carried to 20 rather than stopped at 15 so that the reading at
+     15 falls where the fade is still light enough to read against. */
+  const six = renderChart({
+    ...LABELS,
+    title: 'Chart 6 — the same line, carried on',
+    axis: { xMin: 0, xMax: 16, yMin: 0, yMax: 200 },
+    fit: LINE,
+    dataRange: MEASURED,
+    width: 660, height: 440
+  });
+  document.querySelector('#chart6').append(six.svg);
+
+  const finish = document.querySelector('#finish');
+  const refreshFinish = () => mountFinish(finish, {
+    roomId: ROOM,
+    answers,
+    studentId: profile.studentId,
+    variant: profile.variant,
+    tokens,
+    nextRoom: null
+  });
+
+  const host = document.querySelector('#cp-host');
+  for (const question of QUESTIONS) {
+    mountCheckpoint(host, question, answers.checkpoints[question.id], {
+      variant: profile.variant,
+      studentId: profile.studentId,
+      onDone: ({ id, token }) => {
+        tokens[id] = token;
+        refreshFinish();
+      }
+    });
+  }
+}
+
+await openRoom({
+  roomId: ROOM,
+  lock: document.querySelector('#lock'),
+  studentId: profile.studentId,
+  variant: profile.variant,
+  onOpen: build
+});
+</script>
+</body>
+</html>

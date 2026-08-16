@@ -228,7 +228,12 @@ contain **one** of the two odd rows, so no pair can be dismissed at a glance.
 | `opt_a` | Rows 2 and 9 |
 | `opt_b` | Rows 4 and 9 ✅ |
 | `opt_c` | Rows 4 and 11 |
-| `opt_d` | Rows 6 and 11 |
+| `opt_d` | Rows 6 and 9 |
+
+> **Corrected 16/08/2026.** `opt_d` read *Rows 6 and 11*, which contains neither
+> odd row and so breaks the rule stated directly above it: a girl who has found
+> either one of the two can drop that option without looking. Now every wrong
+> pair contains exactly one of rows 4 and 9.
 
 **Rung 1** (15 words)
 
@@ -328,8 +333,10 @@ That is the distinction 11.02 Q17e is already teaching. All four are displays
 ### `cp4.2` — read a value off the axis · Type A
 
 **Artefact.** Chart 4, a column graph of her variant with a labelled vertical axis,
-gridlines every `[25]` units, starting at zero. The target column stops **halfway**
-between two gridlines, so the reading takes one step rather than none.
+gridlines every `[50]` units, starting at zero. The target column stops **halfway**
+between two gridlines, so the reading takes one step rather than none. A second
+column is halfway between two gridlines as well, so the one being asked about is
+not the only one on the chart that looks like that.
 
 **Stem**
 
@@ -352,8 +359,14 @@ between two gridlines, so the reading takes one step rather than none.
 **Rung 3**
 
 > Thursday's column stops between two gridlines. The gridline below it is 150.
-> The gridlines on Chart 4 are 25 apart. The column stops halfway between them.
+> The gridlines on Chart 4 are 50 apart. The column stops halfway between them.
 > One addition is left.
+
+> **Corrected 16/08/2026.** The artefact said gridlines every 25 and the rung
+> said 25 apart, which makes the answer 162.5 — but `accept[0]` is 175, and
+> "to the nearest 5 litres" cannot resolve 162.5 anyway. The gridlines are 50
+> apart. Half of 50 is 25, and 150 + 25 = 175, which is what the answer key has
+> always said and what the rung-2 parallel example already models.
 
 ---
 
@@ -424,6 +437,12 @@ it will pick it. It must never be dropped for a fourth chart.
 it, and two points **on the line** marked and labelled with their coordinates. The
 two points are chosen so the gradient is exact to one decimal place.
 
+**The line has to actually fit.** Every variant's points must be chosen so that
+the drawn line is also their least squares line, to two decimal places in the
+gradient. A line that sits visibly above or below most of the points is not a
+line of best fit, and a room that calls it one teaches the opposite of the
+lesson. Variant 1's points give m = 9.00, c = 16.03 against a drawn y = 9x + 16.
+
 **Stem**
 
 > Chart 5 has a line of best fit drawn on it. Two points on that line are marked:
@@ -487,8 +506,15 @@ chart.
 **Stem**
 
 > Crew 7 measured showers from 2 minutes to 11 minutes. Use the line of best fit
-> to predict the water used for a 15 minute shower. Type the number, in litres,
-> to the nearest 10 litres.
+> on Chart 6 to predict the water used for a 15 minute shower. Type the number,
+> in litres, to the nearest 10 litres.
+
+The room draws this on a **second chart**. Chart 5 stops at the data and is what
+`cp5.1` and `cp5.2` are read off; Chart 6 is the same points and the same line
+with the bottom axis carried past the last measurement, the region beyond it
+hatched, and the line dashed and fading across it. One chart cannot do both jobs:
+the fade that makes the point about extrapolation is heavy enough at 15 to make
+the reading a fight, unless the axis runs well past the value being asked for.
 
 **Accepted** — `accept[0] = 150`, plus `140` and `160`. Three values.
 
