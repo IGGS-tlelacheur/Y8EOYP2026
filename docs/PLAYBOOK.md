@@ -179,7 +179,8 @@ printed. Until then the certificate shows them as visible placeholders and says 
 crib notes are not finished. This is the single most important test in the project.
 
 ### Stage 11 — Lab test
-On the real hardware, on the school network, with real accounts.
+On the real hardware, on the school network, with real accounts. The runnable form of
+this stage is `docs/at-school-checklist.html`, which also carries what is left of stage 0.
 
 Cache clear mid-session — now a **confirmation of stage 0, not a discovery**. Two crew
 members editing the Card. OneDrive sync lag, including a save that stalls: confirm no

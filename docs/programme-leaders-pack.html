@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Mathematics strand · Programme leaders' pack</title>
+<style>
+  :root{
+    --brand:#003DA5; --brand-dark:#002B75; --brand-mid:#2C5BB8; --brand-tint:#E9EEF8;
+    --ink:#06232B; --sage:#7E9793; --sage-pale:#DCE6E3; --line:#B7C8C4;
+    --paper:#FBFBF9; --gold:#F2B705; --gold-dark:#B98A05;
+  }
+  @page{ size:A4; margin:14mm; }
+  *{ box-sizing:border-box; }
+  html{ background:#8b9a97; }
+  body{
+    margin:0 auto; max-width:190mm; padding:14mm; background:var(--paper);
+    color:var(--ink); font-family:'Segoe UI','Carlito',system-ui,sans-serif;
+    font-size:10pt; line-height:1.42;
+  }
+  h1{ font-size:21pt; color:var(--brand); margin:0 0 1mm; letter-spacing:-.01em; }
+  .sub{ text-transform:uppercase; letter-spacing:.16em; font-size:7.5pt;
+    font-weight:700; color:var(--sage); margin-bottom:5mm; }
+  h2{ font-size:11pt; color:var(--brand); margin:4.5mm 0 2mm;
+    border-bottom:2px solid var(--brand); padding-bottom:1.2mm; break-after:avoid; }
+  h3{ font-size:10pt; color:var(--brand-dark); margin:4mm 0 1mm; break-after:avoid; }
+  p{ margin:0 0 2.4mm; max-width:154mm; }
+  .lede{ font-size:11pt; line-height:1.45; max-width:154mm; }
+  .key{ border:1.8px solid var(--brand); background:var(--brand-tint);
+    padding:3mm 4mm; margin:3.5mm 0 4mm; break-inside:avoid; }
+  .key h3{ margin:0 0 2mm; font-size:10.5pt; color:var(--brand); }
+  .key ul{ margin:0; padding-left:5mm; }
+  .key li{ margin:0 0 1.4mm; }
+  ul, ol{ margin:0 0 3mm; padding-left:5.5mm; }
+  li{ margin:0 0 .9mm; }
+  /* Rows may not split, but a long table may. Holding a 100 mm lesson table
+     together costs a whole page of white and buys nothing. */
+  table{ border-collapse:collapse; width:100%; margin:0 0 4mm; font-size:9.5pt; }
+  tr{ break-inside:avoid; }
+  thead{ display:table-header-group; }
+  th,td{ border:1px solid var(--line); padding:1.5mm 2.2mm; text-align:left;
+    vertical-align:top; }
+  th{ background:var(--brand-tint); font-size:8pt; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--brand-dark); }
+  td.room{ font-weight:700; white-space:nowrap; }
+  td.badge{ white-space:nowrap; }
+  .ask{ border-left:4px solid var(--gold); background:#FFFBF0; padding:3mm 4mm;
+    margin:0 0 4mm; break-inside:avoid; }
+  .ask h3{ margin:0 0 1.5mm; color:var(--gold-dark); }
+  .ask ul{ margin:0; padding-left:5mm; }
+  .note{ font-size:9pt; color:#3d5560; background:#F4F6F5; padding:2.4mm 3.5mm;
+    border-left:3px solid var(--line); margin:0 0 3mm; }
+  .cols{ display:flex; gap:5mm; margin:0 0 3mm; break-inside:avoid; }
+  .cols > div{ flex:1; border:1px solid var(--line); padding:2.5mm 3mm; }
+  .cols h3{ margin:0 0 1.5mm; }
+  .cols ul{ margin:0; padding-left:4.5mm; font-size:9.5pt; }
+  .yes h3{ color:var(--brand); }
+  .no h3{ color:var(--sage); }
+  code{ font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:9.5pt;
+    word-break:break-word; }
+  .foot{ margin-top:3mm; padding-top:1.5mm; border-top:1px solid var(--line);
+    font-size:8pt; text-transform:uppercase; letter-spacing:.1em; color:var(--sage);
+    display:flex; justify-content:space-between; }
+  @media screen{ body{ margin-top:6mm; margin-bottom:6mm; box-shadow:0 2px 14px rgba(0,0,0,.28); } }
+
+  /* The page box already carries the margin; the body padding is there so it reads
+     as a sheet on screen. Both at once indents the print by 28mm. */
+  @media print{
+    html{ background:#fff; }
+    body{ padding:0; max-width:none; box-shadow:none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>The mathematics strand</h1>
+<div class="sub">H₂O — Towards 2040 · Year 8 · pack for programme leaders · 16/08/2026</div>
+
+<p class="lede">
+  Six periods of the Year 8 end-of-year programme, spent on <b>bivariate data</b> — how two
+  measurements about water move together, and what you may honestly say about the future
+  because of it. It runs as a self-directed website on the students' own laptops, and four
+  of the six lessons need no mathematics teacher in the room.
+</p>
+
+<div class="key">
+  <h3>If you read nothing else</h3>
+  <ul>
+    <li><b>It is a website, not an app.</b> Nothing to install, no account to create, no
+      licence to buy. Students open a link and sign in with their school ID.</li>
+    <li><b>No student data leaves the laptop.</b> There is no server, no database, no
+      analytics and no email address anywhere in it. See <i>Student data</i> overleaf.</li>
+    <li><b>Four lessons are supervised by whoever is free.</b> Every room comes with crib
+      notes written for an adult who does not teach mathematics, and a printed sheet.</li>
+    <li><b>Each crew produces one Data Evidence Card</b>, a shared file in the crew's own
+      Teams folder, printable at any stage of completion.</li>
+    <li><b>Six things are still needed from the programme.</b> They are listed on the last
+      page and none of them is large.</li>
+  </ul>
+</div>
+
+<h2>What students actually do</h2>
+
+<p>
+  Every crew asks its own question about water — shower length against litres used, roof
+  area against water collected — then measures it themselves at home, charts it, and makes
+  one prediction from it. The mathematics is ordinary Year 8 statistics. What is unusual is
+  that the data is theirs, so a sloppy method produces a chart that visibly does not work.
+  That is a far better argument than being told to be careful.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:28mm">Lesson</th>
+      <th>What happens</th>
+      <th style="width:24mm">Badge</th>
+    </tr>
+  </thead>
+  <tr>
+    <td class="room">1 · Getting started</td>
+    <td>Twenty minutes with the whole cohort, then a room. A newspaper claim about water is
+      put up and the cohort is invited to prove it wrong. Types of data, what a point on a
+      chart means. Each crew chooses its research question.</td>
+    <td class="badge">—</td>
+  </tr>
+  <tr>
+    <td class="room">2 · Reader</td>
+    <td>Reading charts other people made. Naming the variables and their units, saying what
+      one point means, describing a relationship. Nothing is made today.</td>
+    <td class="badge"><b>Reader</b></td>
+  </tr>
+  <tr>
+    <td class="room">3 · Collector</td>
+    <td>What makes a measurement fair. Students pull apart a supplied recording sheet that
+      has gone wrong, then plan their own and start collecting. Measuring happens between
+      lessons, at home.</td>
+    <td class="badge"><b>Collector</b></td>
+  </tr>
+  <tr>
+    <td class="room">4 · Plotter</td>
+    <td>Choosing the right chart for the data, labelling axes properly, and the same six
+      numbers drawn on three different scales — only one of which is honest. Two charts go
+      onto the crew Card.</td>
+    <td class="badge"><b>Plotter</b></td>
+  </tr>
+  <tr>
+    <td class="room">5 · Predictor</td>
+    <td>A line of best fit drawn by hand through their own points, read as a sentence about
+      water rather than about algebra, then one prediction inside the data and one beyond
+      it — with how much to trust each.</td>
+    <td class="badge"><b>Predictor</b></td>
+  </tr>
+  <tr>
+    <td class="room">6 · The whole story</td>
+    <td>Twenty minutes with the whole cohort: the Lesson 1 claim is taken apart, twice over.
+      Then each crew is shown its own Lesson 2 answer from four weeks earlier and asked what
+      it was worth. Cards are finished, swapped, checked and printed.</td>
+    <td class="badge">—</td>
+  </tr>
+</table>
+
+<p class="note">
+  Lessons 1 and 6 open and close with twenty minutes for the whole cohort; Lessons 2 to 5
+  are self-directed from start to finish.
+  <b>Why two lessons are un-badged.</b> Lessons 1 and 6 are the frame, not the assessment.
+  A student who says something honest in Lesson 6 about a mistake made in Lesson 2 has done
+  the most valuable thing in the unit, and putting a badge on it would turn it into a
+  performance.
+</p>
+
+<h2>What it produces</h2>
+
+<table>
+  <tr><th style="width:44mm">Artefact</th><th>Who owns it</th><th>Where it lives</th></tr>
+  <tr>
+    <td><b>Data Evidence Card</b></td>
+    <td>The crew — twelve to fifteen students edit one Card.</td>
+    <td>A <code>.h2ocard</code> file in the crew's Teams or OneDrive folder. Prints on two
+      sheets at any stage.</td>
+  </tr>
+  <tr>
+    <td><b>Four badges</b></td>
+    <td>The individual student.</td>
+    <td>The student's own laptop. Each badge has a criterion an adult can check off a screen
+      without knowing the mathematics.</td>
+  </tr>
+  <tr>
+    <td><b>Certificate</b></td>
+    <td>The individual student.</td>
+    <td>One landscape A4 page, on demand. It prints whatever has been earned so far, so it
+      works before the end of the programme as well as at it.</td>
+  </tr>
+  <tr>
+    <td><b>Charts for the film</b></td>
+    <td>The crew.</td>
+    <td>Every chart tool exports at 1920 × 1080. See <i>The film strand</i> below.</td>
+  </tr>
+</table>
+
+<h2>Student data — what leaves the laptop</h2>
+
+<p>
+  <b>Nothing.</b> This is worth stating plainly because it is the question that usually
+  gets asked last and should be asked first.
+</p>
+
+<div class="cols">
+  <div class="yes">
+    <h3>How it works</h3>
+    <ul>
+      <li>A static website over HTTPS. There is no server behind it that can receive
+        anything.</li>
+      <li>Students sign in with their <b>school ID and a low-stakes password</b>, checked
+        against a list that ships with the site. The ID is stored as a one-way hash, the
+        password stretched and salted per person.</li>
+      <li>Work is saved in the browser on the student's own laptop — and, for the crew Card
+        only, in a file inside the school's own Teams or OneDrive.</li>
+      <li>Progress exports to a file and imports on another laptop.</li>
+    </ul>
+  </div>
+  <div class="no">
+    <h3>What there is none of</h3>
+    <ul>
+      <li>No email addresses — not in the site, not in the roll, nowhere.</li>
+      <li>No analytics, telemetry, tracking or third-party scripts of any kind.</li>
+      <li>No database, no cloud storage account, no vendor, no cookies.</li>
+      <li>No marks or answers held centrally. The answer key is on paper, with staff.</li>
+      <li>No student names or student work in the published site or its source.</li>
+    </ul>
+  </div>
+</div>
+
+<p class="note">
+  The password is deliberately low-stakes — a word about water, not a secret. It stops two
+  students opening each other's work by guessing a school ID, and nothing sensitive sits
+  behind it. Students are told so, and told not to reuse a password that matters.
+</p>
+
+<h2>What the supervising adult has to do</h2>
+
+<p>
+  Four lessons run without a mathematics teacher. That is a design decision, not a staffing
+  compromise: every question has a four-rung hint ladder and <b>the last rung gives the
+  answer</b> — deliberately, and without penalty. A student who needs all four hints earns
+  the same badge as one who needed none.
+</p>
+
+<div class="cols">
+  <div class="yes">
+    <h3>They are given</h3>
+    <ul>
+      <li>A supervisor screen listing, for each room, what it asks for, what <i>good
+        enough</i> looks like as something visible on a screen, and one sentence to read
+        aloud to a student who is stuck.</li>
+      <li>A printed sheet with the same crib notes, the badge rules, and the answers.</li>
+      <li>Buttons to open a locked room, move a student's work to another laptop, or start
+        a laptop again.</li>
+    </ul>
+  </div>
+  <div class="no">
+    <h3>They are never asked to</h3>
+    <ul>
+      <li>Judge whether a piece of mathematics is correct, or clever.</li>
+      <li>Mark anything.</li>
+      <li>Know what a line of best fit is.</li>
+    </ul>
+  </div>
+</div>
+
+<p class="note">
+  Before the programme runs, one non-mathematician will be handed the supervisor screen with
+  no briefing and asked <i>"is this crew's work good enough?"</i> for all six rooms. Anywhere
+  they hesitate, that crib note gets rewritten. Nominations welcome.
+</p>
+
+<h2>The film strand</h2>
+
+<p>
+  Every chart tool exports a 1920 × 1080 image with a white background and axis labels set
+  at a size that survives being filmed off a screen. Crews are shown where that button is.
+  <b>Whether a chart appears in the film is not a mathematics criterion</b> and is not
+  assessed here: the strand supplies exports that make it easy and stops there, and whoever
+  owns the film rubric owns the checking. It is stated on the Card and in the Lesson 6 room
+  so that no crew reaches the edit believing otherwise.
+</p>
+
+<h2>Access, and who this is written for</h2>
+
+<ul>
+  <li><b>Touch and keyboard, equally.</b> Every drag — sorting cards, placing a line of best
+    fit — also has a keyboard route.</li>
+  <li><b>Charts never carry meaning in colour alone.</b> Shape, label or position always
+    carries it as well.</li>
+  <li><b>Everything prints, and a missed lesson needs no catch-up.</b> A student who cannot
+    get online works on paper; a student who misses a lesson works through that room in
+    their own time.</li>
+  <li><b>Plain language, defined once.</b> Every term is defined where it first appears, then
+    used consistently. No synonyms for words already taught.</li>
+</ul>
+
+<h2>Where everything is</h2>
+
+<table>
+  <tr><th style="width:52mm">Thing</th><th>Address</th></tr>
+  <tr><td>The student site</td>
+      <td><code>iggs-tlelacheur.github.io/Y8EOYP2026/</code></td></tr>
+  <tr><td>Supervisor screen</td>
+      <td><code>…/staff.html</code> — not linked from anywhere a student goes</td></tr>
+  <tr><td>Lesson 1 and 6 decks</td>
+      <td><code>…/deck-1.html</code> and <code>…/deck-6.html</code>. Speaker notes on every
+        slide; the printed deck is the script.</td></tr>
+  <tr><td>The answer key</td>
+      <td>On paper, with the supervising staff. It is deliberately not on the website.</td></tr>
+</table>
+
+<h2>What the strand needs from the programme</h2>
+
+<div class="ask">
+  <h3>Six things, none of them large</h3>
+  <ul>
+    <li><b>A Teams or OneDrive folder per crew</b>, which the crew can write to. The Data
+      Evidence Card lives there. Without it the crews have no shared artefact.</li>
+    <li><b>Crew names and how many crews.</b> The site currently offers placeholders.</li>
+    <li><b>The programme start and end dates</b>, and a name and title to sign the
+      certificates.</li>
+    <li><b>Confirmation of which four lessons have no mathematics teacher in the room.</b>
+      The build assumes Lessons 2 to 5.</li>
+    <li><b>Printing</b> — two sheets per crew Card, plus recording sheets in Lesson 3 and
+      certificates at the end.</li>
+    <li><b>One non-mathematician for fifteen minutes</b>, to test the supervisor screen as
+      described above.</li>
+  </ul>
+</div>
+
+<h2>What is still open</h2>
+
+<p>
+  Everything in this pack is built and deployed. Two things are still unresolved, and neither
+  changes what happens in a lesson. <b>Whether the fleet keeps browser storage across a
+  restart</b> is being tested on a school laptop this week; if not, progress moves onto the
+  crew file instead — a change behind the scenes only. <b>The roll</b> currently holds 110
+  students and 87 staff; if the cohort is larger, the rest are needed before the first
+  lesson, because a student who is not on the list cannot open the door.
+</p>
+
+<p class="note">
+  One thing deliberately <i>not</i> treated as a risk: the locks on the rooms are thin, and a
+  student who reads the page source could work out that a room opens another way. Accepted — a
+  student set on skipping the mathematics will do so whatever the site does, and one who is
+  stuck deserves a fourth hint more than the room deserves a stronger lock.
+</p>
+
+<div class="foot">
+  <span>Ivanhoe Girls' Grammar School · H₂O — Towards 2040 · mathematics strand</span>
+  <span>Programme leaders' pack</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · What to do at school</title>
+<style>
+  :root{
+    --brand:#003DA5; --brand-dark:#002B75; --brand-tint:#E9EEF8;
+    --ink:#06232B; --sage:#7E9793; --line:#B7C8C4; --paper:#FBFBF9;
+    --gold:#F2B705; --gold-dark:#B98A05;
+  }
+  @page{ size:A4; margin:14mm; }
+  *{ box-sizing:border-box; }
+  html{ background:#8b9a97; }
+  body{
+    margin:0 auto; max-width:190mm; padding:14mm; background:var(--paper);
+    color:var(--ink); font-family:'Segoe UI','Carlito',system-ui,sans-serif;
+    font-size:10.5pt; line-height:1.45;
+  }
+  h1{ font-size:19pt; color:var(--brand); margin:0 0 1mm; letter-spacing:-.01em; }
+  .sub{ text-transform:uppercase; letter-spacing:.16em; font-size:7.5pt;
+    font-weight:700; color:var(--sage); margin-bottom:4mm; }
+  h2{ font-size:11pt; color:var(--brand); margin:5mm 0 2mm;
+    border-bottom:2px solid var(--brand); padding-bottom:1.2mm; break-after:avoid; }
+  h2 .when{ float:right; font-size:7.5pt; font-weight:400; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--sage); padding-top:2mm; }
+  p{ margin:0 0 2.5mm; max-width:152mm; }
+  .lede{ background:var(--brand-tint); border-left:3px solid var(--brand);
+    padding:2.5mm 4mm; margin-bottom:4mm; }
+  ul{ list-style:none; margin:0 0 3mm; padding:0; }
+  li{ display:flex; gap:3mm; padding:1.6mm 0; border-bottom:1px dotted var(--line);
+    break-inside:avoid; }
+  li:last-child{ border-bottom:none; }
+  .box{ flex:none; width:5mm; height:5mm; border:1.6px solid var(--brand);
+    margin-top:.8mm; }
+  .what{ flex:1; }
+  /* Direct children only. A nested <b> is emphasis inside a sentence, and
+     blocking it drops "one sheet" onto a line of its own. */
+  .what > b{ display:block; }
+  .what > span{ color:#3d5560; font-size:9.5pt; display:block; }
+  .what .fail{ color:var(--gold-dark); }
+  .blocker .box{ border-color:var(--gold-dark); background:#FFFBF0; }
+  .note{ font-size:9pt; color:#3d5560; background:#F4F6F5; padding:2.5mm 3.5mm;
+    border-left:3px solid var(--line); margin:0 0 3mm; }
+  .stop{ border-left-color:var(--gold-dark); background:#FFFBF0; color:var(--ink); }
+  code{ font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:9.5pt;
+    word-break:break-all; }
+  .send{ border:1.6px solid var(--brand); padding:3mm 4mm; margin:4mm 0 0;
+    break-inside:avoid; }
+  .send h3{ font-size:10pt; color:var(--brand); margin:0 0 2mm; }
+  .send ol{ margin:0; padding-left:5mm; font-size:9.5pt; color:#3d5560; }
+  .send li{ display:list-item; border:none; padding:.6mm 0; }
+  .foot{ margin-top:6mm; padding-top:2mm; border-top:1px solid var(--line);
+    font-size:8pt; text-transform:uppercase; letter-spacing:.1em; color:var(--sage);
+    display:flex; justify-content:space-between; }
+  @media screen{ body{ margin-top:6mm; margin-bottom:6mm; box-shadow:0 2px 14px rgba(0,0,0,.28); } }
+
+  /* The page box already carries the margin; the body padding is there so it
+     reads as a sheet on screen. Both at once indents the print by 28mm. */
+  @media print{
+    html{ background:#fff; }
+    body{ padding:0; max-width:none; box-shadow:none; }
+    .lede, .send{ break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>What to do at school</h1>
+<div class="sub">H₂O — Towards 2040 · Mathematics strand · written 16/08/2026</div>
+
+<div class="lede">
+  <p style="margin:0">
+    Everything on this page needs something you can only get at work: a fleet laptop, the
+    school network, the printer, a colleague, or a decision. Nothing here needs me.
+    <b>The first item is the only one that can still change the design</b>, so do it
+    before the others even if you do nothing else that day.
+  </p>
+</div>
+
+<h2><span class="when">Tonight, before you go</span>Two things to bring</h2>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Print the staff sheet from this machine</b>
+      <span>
+        <code>node scripts/make-staff-sheet.mjs</code>, then print
+        <code>private/staff-sheet.html</code>. It has to be this machine:
+        <code>private/</code> is git-ignored, so a fresh clone at school has no sheet and
+        no codes. Print one copy per supervising adult plus a spare.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Print the programme leaders' pack</b>
+      <span>
+        <code>docs/programme-leaders-pack.html</code>, four sides. Print double-sided.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Do this first · 20 min</span>Does the storage survive a restart?</h2>
+
+<ul>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Run the probe on a fleet laptop, in Edge, signed in as a student would be</b>
+      <span>
+        <code>iggs-tlelacheur.github.io/Y8EOYP2026/docs/soe-probe.html</code> — press
+        <i>Write the probe</i>, then follow its four steps. It touches nothing beginning
+        <code>h2o.v1.</code>, so it is safe on a laptop with real work on it.
+      </span>
+      <span class="fail">
+        <b>Close Edge with the X or Ctrl+W, never End Task.</b> A killed browser loses
+        unflushed data and reports a failure that is not real.
+      </span>
+    </span>
+  </li>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Then reboot the laptop and read it back a second time</b>
+      <span>
+        The restart and the reboot are different tests. A policy that clears on exit shows
+        up in the first; a profile that is rebuilt at logon shows up only in the second.
+      </span>
+    </span>
+  </li>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Check <code>edge://policy</code> while you are there</b>
+      <span>
+        Search it for <code>ClearBrowsingDataOnExit</code>,
+        <code>ClearCachedImagesAndFilesOnExit</code> and anything mentioning Site Data.
+        The probe asks you for what you found. If the page is locked down, a screenshot
+        of it is enough.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Send me the block it prints</b>
+      <span>
+        The probe ends with a verdict and a paste-ready block for
+        <code>docs/SOE_NOTES.md</code>. Send it whichever way it survives.
+      </span>
+      <span class="fail">
+        <b>If it survived, nothing changes and we carry on.</b> If it did not, stop and
+        tell me before anything else on this page: the progress model moves onto the crew
+        file and the badge design moves with it. That is a decision, not a patch.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Same laptop, next 30 min</span>Does the site work on the fleet?</h2>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Sign in with a real ID and a real password</b>
+      <span>
+        <code>iggs-tlelacheur.github.io/Y8EOYP2026/</code> — use your own row from the
+        roll. The hub should greet you by display name and say
+        <b>Data set N of 6</b> at the bottom.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Get the door wrong on purpose, twice</b>
+      <span>
+        A wrong ID must say <i>not on the list</i>; a wrong password must say <i>does not
+        match</i>. Two different messages is the whole point of splitting them — if they
+        read the same, a student spends the lesson fixing the wrong half.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Do Lesson 1's card sort with a finger only</b>
+      <span>
+        Eight cards into three boxes, no mouse, no pen. Then do it again with the keyboard
+        only — Tab to a card, press 1, 2 or 3. Both routes exist on purpose and both have
+        to work on this hardware.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Drag the line of best fit in Lesson 5 with a finger</b>
+      <span>
+        The single most touch-sensitive thing in the build. Both handles, on the
+        touchscreen, with a finger rather than a stylus. If it feels fiddly at all, say
+        so — that is a real finding, not a nitpick.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Watch for a control that never comes back</b>
+      <span>
+        Anywhere a button greys out and stays greyed out is the failure mode that costs a
+        lesson. Note the page and what you had pressed.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Needs a second laptop</span>The crew Card on OneDrive</h2>
+
+<p class="note stop">
+  This is the least tested part of the build, because it cannot be tested anywhere but
+  here. The Card is a shared file in the crew's Teams folder, edited by twelve to fifteen
+  students and handed to a film crew. Nothing about that changes even if the storage probe
+  passes.
+</p>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Make a Card in a real Teams or OneDrive folder</b>
+      <span>
+        <code>card.html</code> → save → put the <code>.h2ocard</code> in a synced folder,
+        not in Downloads. Close the tab, reopen the Card, confirm it offers the same file
+        back without asking you to find it again.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Open the same Card on two laptops and type on both</b>
+      <span>
+        Expect a warning naming whoever saved last, and a <i>Save a copy</i> button. It is
+        a soft lock on purpose: the point is that two students talk to each other, not that
+        the site stops one of them.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Save while OneDrive is still syncing, and while it is offline</b>
+      <span>
+        Turn the wi-fi off mid-save if you can. Everything that touches that file is on a
+        six-second clock, so it should tell you it could not write and let you carry on.
+        A stalled save that leaves the button dead is the bug I most expect to exist.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">The printer, not a PDF</span>Print three things</h2>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>A certificate</b>
+      <span>
+        <code>certificate.html</code>, landscape, <b>one sheet</b>. It was measured at
+        202 mm against 210 mm of A4, but that was a measurement, not a print. Until the
+        dates and signature are set it prints visible placeholders, which is intended.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>A Card that is only half finished</b>
+      <span>
+        It has to print at any stage, not only at the end. Two sheets, a chart on each.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>A recording sheet from the table tool</b>
+      <span>
+        <code>tools/table.html</code>. Students take this one out of the room and write on it
+        by hand, so the lines have to be wide enough to write in.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">15 min with a colleague</span>The test that matters most</h2>
+
+<ul>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Hand <code>staff.html</code> to someone who does not teach maths</b>
+      <span>
+        Give them no briefing. Ask them one question: <i>"is this crew's work good
+        enough?"</i> for each of the six rooms, using only what is on the screen.
+      </span>
+      <span class="fail">
+        <b>Anywhere they hesitate, the crib note is not finished.</b> Tell me which room
+        and what they asked you, and I will rewrite it. Four of the six lessons are
+        supervised by someone in exactly that position, so this is worth more than any
+        other fifteen minutes on this page.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Only you can get these</span>Decisions and content</h2>
+
+<ul>
+  <li class="blocker">
+    <span class="box"></span>
+    <span class="what">
+      <b>Programme dates and a signature — <code>data/programme.json</code></b>
+      <span>
+        Four values: <code>startDate</code>, <code>endDate</code>,
+        <code>signatory</code>, <code>signatoryRole</code>. Dates as dd/mm/yyyy. Nothing
+        else is blocking the certificates.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Crew names, and how many</b>
+      <span>
+        <code>index.html</code> still offers placeholder Crew 01–12. Names are held apart
+        from identity, so a student can move crews later without losing a badge.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>A Teams or OneDrive folder per crew, with the crew able to write to it</b>
+      <span>
+        Ask whoever runs Teams for the programme. The Card lives there; without it the
+        crews have no shared artefact.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Confirm which four lessons have no maths teacher in the room</b>
+      <span>
+        The build assumes L2 to L5. If it is a different four, the crib notes stay right
+        but the deck timings do not.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Rows 199–201 of <code>private/roll.csv</code></b>
+      <span>
+        Spare passwords with no ID beside them, skipped at build time. Nothing to do
+        unless they are real people.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Hand over</span>Three conversations</h2>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>The programme leaders — give them the pack</b>
+      <span>
+        <code>docs/programme-leaders-pack.html</code>. It says what the strand is, what it
+        needs from the programme, and what happens to student data. The last one is the
+        question they will actually ask.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>The supervising staff — one printed sheet each, and the page</b>
+      <span>
+        <code>staff.html</code> is not linked from anywhere a student goes. Show them the
+        crib notes, the badge rules, and where the staff codes are. Tell them the codes
+        are on paper only and are not to be sent anywhere.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>The film strand — tell them the exports exist</b>
+      <span>
+        Every chart tool exports 1920 × 1080 with the type large enough to film. Whether a
+        chart appears in the film is their rubric, not a maths criterion.
+      </span>
+    </span>
+  </li>
+</ul>
+
+<h2><span class="when">Please do not</span>Four things</h2>
+
+<ul>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Do not email the staff sheet, or put it in Teams</b>
+      <span>It carries all seventy-two answers and the four staff codes. Paper, carried.</span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Do not use the old codes</b>
+      <span>
+        Every staff code written down before 16/08/2026 is dead. The first set reached
+        the public repository and was retired rather than re-hidden, so those four open
+        nothing now. Throw away anything you wrote them on. The live four are on the
+        staff sheet you print tonight, and nowhere else.
+      </span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Do not commit anything from <code>private/</code></b>
+      <span>It is git-ignored. That is the only thing standing between the answer key and a public site.</span>
+    </span>
+  </li>
+  <li>
+    <span class="box"></span>
+    <span class="what">
+      <b>Do not push to <code>main</code> during a lesson</b>
+      <span>A push is a deploy and there is no staging. A broken push during Lesson 3 is a broken Lesson 3 for the whole cohort.</span>
+    </span>
+  </li>
+</ul>
+
+<div class="send">
+  <h3>What to send me, in one message</h3>
+  <ol>
+    <li>The probe's verdict block — or the words <i>"the probe did not survive"</i>, which changes the build.</li>
+    <li>The four values for <code>data/programme.json</code>.</li>
+    <li>The crew names.</li>
+    <li>Every room where your non-maths colleague hesitated, and what they asked.</li>
+    <li>Anything that greyed out and stayed greyed out, with the page it was on.</li>
+  </ol>
+</div>
+
+<div class="foot">
+  <span>Ivanhoe Girls' Grammar School · mathematics strand</span>
+  <span>stage 0 and stage 11</span>
+</div>
+
+</body>
+</html>

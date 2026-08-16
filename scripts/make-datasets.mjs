@@ -13,7 +13,7 @@
 // drawn from; deriving the two separately is how a room ends up marking a
 // correct reading wrong. Nothing here is typed twice.
 //
-// Numbers are invented, on the client's instruction of 17/08/2026, shaped like
+// Numbers are invented, on the client's instruction of 16/08/2026, shaped like
 // published Melbourne Water and BoM figures. Every variant carries a source line
 // saying so, and the staff sheet says so too. Lesson 6 is a lesson about honesty
 // with data and cannot be built on quietly invented data.
@@ -102,7 +102,7 @@ const roundTo = (v, step) => Math.round(v / step) * step;
 
 /* ---- the six variants ----------------------------------------------------- */
 
-/* Order is the client's confirmed list of 17/08/2026. Index 4 - "Data set 5" on
+/* Order is the client's confirmed list of 16/08/2026. Index 4 - "Data set 5" on
    their hub - is the negative one, as required. */
 const VARIANTS = [
   {
@@ -485,7 +485,7 @@ const CLAIM_B = {
 
 /* Staff codes come from private/bypass.json, never from here.
    CLAUDE.md: no plaintext unlock codes anywhere in the repo. They were hardcoded
-   on this line until 17/08/2026 and reached the public repository, so the set
+   on this line until 16/08/2026 and reached the public repository, so the set
    that leaked has been retired rather than re-hidden - a code anyone may already
    have copied is not made secret again by deleting the line that held it. */
 const bypassPath = resolve(ROOT, 'private/bypass.json');

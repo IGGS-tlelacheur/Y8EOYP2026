@@ -35,7 +35,7 @@ Defined in the room body, before any checkpoint:
 
 ### `cp2.1` — which axis the EV belongs on · Type B
 
-**Rewritten 17/08/2026**, on your instruction. It was *read the label off the
+**Rewritten 16/08/2026**, on your instruction. It was *read the label off the
 horizontal axis*, which failed the rung-3 test: the method **is** reading the
 label, so there was no operation left to stop one step short of. This version has
 a reason behind it, which gives the ladder something to walk down.
@@ -558,9 +558,9 @@ Run per `docs/CHECKPOINT_CONTRACT.md` §7 against every stem and every rung abov
 | 2. Coach test | Pass. Crib lines still to be written for `staff.html` at stage 10. |
 | 3. Variant parity | **Cannot pass yet.** Written against variant 1 only; the other five land at stage 7. Answer types and accepted-value counts are fixed above, so parity is checkable then. |
 | 4. Direction parity | Pass. Every stem and rung read back with variant 5 substituted. `cp5.1` rung 2 is deliberately negative. |
-| 5. Rung 3 test | Pass on all twelve. `cp2.1` was the weak one and was rewritten on 17/08/2026 — see below. |
+| 5. Rung 3 test | Pass on all twelve. `cp2.1` was the weak one and was rewritten on 16/08/2026 — see below. |
 
-### `cp2.1` — resolved 17/08/2026
+### `cp2.1` — resolved 16/08/2026
 
 It used to read a label off an axis, and its rung 3 could not be written properly
 because the method *was* reading the label: there was no operation to stop one
@@ -574,7 +574,7 @@ vault code changes.
 
 ---
 
-## Marked, 17/08/2026
+## Marked, 16/08/2026
 
 You asked me to decide these rather than hold them. Here is what I changed and
 what I left, so you can overrule any of it in one line.

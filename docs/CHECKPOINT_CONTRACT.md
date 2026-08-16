@@ -132,7 +132,7 @@ whole ladder they have climbed.
 
 ### They may also just ask
 
-*(Settled 17/08/2026 — kept.)* Every checkpoint carries an **I need a hint**
+*(Settled 16/08/2026 — kept.)* Every checkpoint carries an **I need a hint**
 button beside the answer button. It fires the next rung and **counts as an
 attempt**, so four presses reach the answer exactly as four wrong answers would.
 

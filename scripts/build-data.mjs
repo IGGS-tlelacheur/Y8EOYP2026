@@ -161,7 +161,7 @@ for (const p of roster) {
     continue;
   }
   // Three- and four-digit IDs are real: staff who joined before the school moved
-  // to five digits. Confirmed 17/08/2026, so their length is not a warning.
+  // to five digits. Confirmed 16/08/2026, so their length is not a warning.
   usable.push({ id, password, role: p.role.startsWith('staff') ? 'staff' : 'student' });
 }
 
@@ -178,7 +178,7 @@ for (const p of usable) {
 }
 
 // Spare passwords with no ID beside them: 200 were generated and the leftovers
-// were never deleted. Confirmed 17/08/2026, so this is a count and not a warning.
+// were never deleted. Confirmed 16/08/2026, so this is a count and not a warning.
 if (skipped.length) {
   console.log(`  ${skipped.length} row(s) had a password but no ID and were skipped (lines ${skipped.join(', ')})`);
 }

@@ -63,7 +63,7 @@ Every page must work offline once loaded and must print sensibly.
 ### Login
 `index.html` asks for the student's **school ID** and a **password**, plus a
 **display name** and a **crew** chosen from a dropdown. There is no email field
-anywhere in the programme — removed 17/08/2026 on the client's instruction, since
+anywhere in the programme — removed 16/08/2026 on the client's instruction, since
 every student and every staff member has a school ID and not all have an address
 they can recall.
 
@@ -91,7 +91,7 @@ Three deliberate separations:
 password hash side by side, with the role beside them, sorted by `studentId` so the order
 carries nothing.
 
-**The two are checked separately** (settled 17/08/2026), which is what lets the door say
+**The two are checked separately** (settled 16/08/2026), which is what lets the door say
 something useful: *that ID is not on the list* is a different problem from *that password
 does not match*, and a student sent hunting for the wrong one of those loses the lesson. It
 also lets staff confirm an ID for the student who has forgotten theirs.

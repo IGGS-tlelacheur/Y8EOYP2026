@@ -55,7 +55,7 @@ export async function deriveStudentId(input) {
    half is a bare SHA-256 over a space of a few tens of thousands, so anyone with
    this file can work out which IDs are on the roll. That was true of the original
    design too, school IDs are not secret, and there is nothing sensitive behind
-   them - settled with the client on 17/08/2026.
+   them - settled with the client on 16/08/2026.
 
    Salting each password with their studentId is free and worth having anyway: two
    students handed the same water word get different hashes, so the file never shows

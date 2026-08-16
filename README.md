@@ -38,6 +38,14 @@ node scripts/build-data.mjs
 | `docs/BUILD_PLAN.md` | Full pedagogical and technical specification |
 | `docs/reference-data-evidence-card.html` | The printed Card the site must match |
 
+## Hand these to people
+
+| File | Who it is for |
+|---|---|
+| `docs/programme-leaders-pack.html` | The programme leaders. Four sides, printed. What the strand is, what it needs, and what happens to student data |
+| `docs/at-school-checklist.html` | Whoever is at school with a fleet laptop. Everything that cannot be done from here |
+| `private/staff-sheet.html` | The supervising adults. Generated, git-ignored, printed, never emailed |
+
 ## Structure
 
 ```
