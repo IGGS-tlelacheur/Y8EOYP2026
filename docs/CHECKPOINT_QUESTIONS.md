@@ -571,3 +571,37 @@ a decision rather than a lookup.
 
 The answer key moved with it. `opt_a` is still the correct key, so no student's
 vault code changes.
+
+---
+
+## Marked, 17/08/2026
+
+You asked me to decide these rather than hold them. Here is what I changed and
+what I left, so you can overrule any of it in one line.
+
+**Approved as written: eight of twelve.** `cp2.2`, `cp2.3`, `cp3.1`, `cp3.2`,
+`cp3.3`, `cp4.3`, `cp5.2`, `cp5.3`. They pass every acceptance test in the
+contract and they read the same in all six variants.
+
+**Four changed.**
+
+| Checkpoint | Change | Why |
+|---|---|---|
+| `cp2.1` | Rewritten as *which axis the EV belongs on* | Your call. The old one could not carry a rung 3. |
+| `cp2.1` reason | *"because {rv} depends on it"*, not *"because it is the one they chose"* | Two of the six data sets are observational — nobody chooses the rainfall. "Depends on" is true of all six and is the actual definition. The room's wording of EV and RV moved with it. |
+| `cp4.1` | Two scenarios, one per group of three variants | The answer was a histogram in all six, which is a shared answer. Three variants now meet readings to a tenth that rarely repeat, three meet whole numbers that do. Same idea, tested from both sides. |
+| `cp5.1` rung 3 | States both changes, does not do either subtraction | It used to hand over "a change of 72" for variant 3. That is the working, not a hint. |
+
+**One contract change.** §  The L3 sheet was fixed at *three different names in
+Measured by* for all six variants. Three across six variants is a shared answer,
+and a shared answer is the one thing six data sets exist to prevent. Name counts
+now vary from three to five. The reading load is unchanged.
+
+**Where the answers can still coincide.** `cp4.1` has two possible answers by
+construction and `cp3.1` has three. Both are checked by
+`scripts/check-datasets.mjs`, which fails the build if any checkpoint ever
+collapses to one answer across all six.
+
+**What I did not touch.** Every parallel example in a rung 2 — the cars, the tap,
+the jug, the thirty houses — is deliberately from a different context than her own
+data. A worked example in her own context is a worked answer.

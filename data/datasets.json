@@ -1,0 +1,3237 @@
+{
+  "version": 1,
+  "generated": "2026-08-16",
+  "claimB": {
+    "points": [
+      [
+        12,
+        48
+      ],
+      [
+        18,
+        61
+      ],
+      [
+        23,
+        77
+      ],
+      [
+        27,
+        84
+      ],
+      [
+        31,
+        96
+      ],
+      [
+        35,
+        104
+      ],
+      [
+        38,
+        118
+      ],
+      [
+        42,
+        127
+      ],
+      [
+        46,
+        133
+      ],
+      [
+        51,
+        149
+      ]
+    ],
+    "xLabel": "Ice creams sold at the canteen",
+    "xUnit": "per day",
+    "yLabel": "Water drunk from the fountains",
+    "yUnit": "litres per day",
+    "title": "Ice creams and drinking fountains",
+    "source": "Invented for this task. Lesson 6 explains why."
+  },
+  "sets": [
+    {
+      "n": 1,
+      "theme": "Rainfall and reservoir inflow",
+      "ev": "Monthly rainfall",
+      "evUnit": "millimetres",
+      "evShort": "mm",
+      "rv": "Inflow to the reservoir",
+      "rvUnit": "megalitres",
+      "rvShort": "ML",
+      "chose": "read the rainfall for each month, then measured the inflow that followed",
+      "source": "Shaped like Melbourne Water catchment figures. The numbers are invented for this task.",
+      "points": [
+        [
+          20,
+          16
+        ],
+        [
+          30,
+          22
+        ],
+        [
+          30,
+          21
+        ],
+        [
+          40,
+          28
+        ],
+        [
+          45,
+          21
+        ],
+        [
+          55,
+          31
+        ],
+        [
+          60,
+          32
+        ],
+        [
+          60,
+          30
+        ],
+        [
+          70,
+          43
+        ],
+        [
+          75,
+          45
+        ],
+        [
+          85,
+          50
+        ],
+        [
+          90,
+          47
+        ],
+        [
+          95,
+          58
+        ],
+        [
+          100,
+          56
+        ],
+        [
+          105,
+          60
+        ],
+        [
+          110,
+          56
+        ],
+        [
+          115,
+          61
+        ],
+        [
+          120,
+          65
+        ]
+      ],
+      "p": [
+        55,
+        31
+      ],
+      "line": {
+        "x1": 40,
+        "y1": 25,
+        "x2": 100,
+        "y2": 55
+      },
+      "marked": [
+        [
+          40,
+          25
+        ],
+        [
+          100,
+          55
+        ]
+      ],
+      "readAt": 70,
+      "beyondAt": 160,
+      "readRound": 5,
+      "dataRange": {
+        "xMin": 20,
+        "xMax": 120
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            23
+          ],
+          [
+            2,
+            24
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            4,
+            37
+          ],
+          [
+            5,
+            45
+          ],
+          [
+            6,
+            54
+          ],
+          [
+            7,
+            63
+          ],
+          [
+            8,
+            68
+          ],
+          [
+            9,
+            75
+          ],
+          [
+            10,
+            79
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            44
+          ],
+          [
+            2,
+            45
+          ],
+          [
+            3,
+            38
+          ],
+          [
+            4,
+            52
+          ],
+          [
+            5,
+            59
+          ],
+          [
+            6,
+            62
+          ],
+          [
+            7,
+            63
+          ],
+          [
+            8,
+            68
+          ],
+          [
+            9,
+            66
+          ],
+          [
+            10,
+            40
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            78
+          ],
+          [
+            2,
+            74
+          ],
+          [
+            3,
+            68
+          ],
+          [
+            4,
+            61
+          ],
+          [
+            5,
+            53
+          ],
+          [
+            6,
+            45
+          ],
+          [
+            7,
+            37
+          ],
+          [
+            8,
+            30
+          ],
+          [
+            9,
+            21
+          ],
+          [
+            10,
+            19
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            46
+          ],
+          [
+            2,
+            54
+          ],
+          [
+            3,
+            55
+          ],
+          [
+            4,
+            56
+          ],
+          [
+            5,
+            52
+          ],
+          [
+            6,
+            47
+          ],
+          [
+            7,
+            53
+          ],
+          [
+            8,
+            54
+          ],
+          [
+            9,
+            54
+          ],
+          [
+            10,
+            52
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 20
+          },
+          {
+            "label": "Tue",
+            "value": 30
+          },
+          {
+            "label": "Wed",
+            "value": 60
+          },
+          {
+            "label": "Thu",
+            "value": 70
+          },
+          {
+            "label": "Fri",
+            "value": 60
+          },
+          {
+            "label": "Sat",
+            "value": 40
+          },
+          {
+            "label": "Sun",
+            "value": 40
+          }
+        ],
+        "ticks": [
+          0,
+          20,
+          40,
+          60,
+          80
+        ],
+        "targetDay": "Thu"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 238
+          },
+          {
+            "label": "Apr",
+            "value": 241
+          },
+          {
+            "label": "May",
+            "value": 242
+          },
+          {
+            "label": "Jun",
+            "value": 245
+          },
+          {
+            "label": "Jul",
+            "value": 246
+          },
+          {
+            "label": "Aug",
+            "value": 248
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            235,
+            240,
+            245,
+            250
+          ],
+          "opt_b": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ],
+          "opt_c": [
+            0,
+            100,
+            200,
+            230,
+            240,
+            250,
+            260
+          ]
+        }
+      },
+      "sheet": {
+        "names": 3,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Anika",
+            "cells": [
+              "40",
+              "28"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Bree",
+            "cells": [
+              "60",
+              "32"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Sofia",
+            "cells": [
+              "",
+              "45"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Anika",
+            "cells": [
+              "96",
+              "65"
+            ],
+            "note": "Guessed the time. No phone in the bathroom"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Anika",
+            "cells": [
+              "110",
+              "56"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Bree",
+            "cells": [
+              "20",
+              ""
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Sofia",
+            "cells": [
+              "40",
+              "28"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Sofia",
+            "cells": [
+              "",
+              "32"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Bree",
+            "cells": [
+              "76",
+              "52"
+            ],
+            "note": "Counted songs on the radio instead of timing"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Anika",
+            "cells": [
+              "95",
+              "58"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Bree",
+            "cells": [
+              "110",
+              ""
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Anika",
+            "cells": [
+              "20",
+              "16"
+            ],
+            "note": "Read from the rain gauge at 9 am, same gauge each time"
+          }
+        ],
+        "oddRows": [
+          4,
+          9
+        ],
+        "blanks": 4,
+        "pairs": {
+          "opt_a": [
+            4,
+            9
+          ],
+          "opt_b": [
+            4,
+            1
+          ],
+          "opt_c": [
+            9,
+            2
+          ],
+          "opt_d": [
+            4,
+            3
+          ]
+        }
+      },
+      "display": "histogram",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "ev",
+          "opt_b": "rv",
+          "opt_c": "smaller",
+          "opt_d": "either"
+        },
+        "l2.cp2": {
+          "opt_a": "swapped",
+          "opt_b": "point",
+          "opt_c": "total",
+          "opt_d": "extreme"
+        }
+      }
+    },
+    {
+      "n": 2,
+      "theme": "Rain days and storage level",
+      "ev": "Days of rain in the month",
+      "evUnit": "days",
+      "evShort": "days",
+      "rv": "Storage level at the end of the month",
+      "rvUnit": "per cent",
+      "rvShort": "%",
+      "chose": "counted the days of rain each month, then read the storage level at the end of it",
+      "source": "Shaped like Melbourne Water storage reports. The numbers are invented for this task.",
+      "points": [
+        [
+          2,
+          42
+        ],
+        [
+          3,
+          43
+        ],
+        [
+          4,
+          46
+        ],
+        [
+          4,
+          51
+        ],
+        [
+          5,
+          49
+        ],
+        [
+          6,
+          49
+        ],
+        [
+          7,
+          55
+        ],
+        [
+          7,
+          60
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          9,
+          58
+        ],
+        [
+          10,
+          68
+        ],
+        [
+          11,
+          72
+        ],
+        [
+          11,
+          71
+        ],
+        [
+          12,
+          73
+        ],
+        [
+          13,
+          74
+        ],
+        [
+          14,
+          74
+        ],
+        [
+          15,
+          80
+        ],
+        [
+          16,
+          82
+        ]
+      ],
+      "p": [
+        5,
+        49
+      ],
+      "line": {
+        "x1": 6,
+        "y1": 53,
+        "x2": 14,
+        "y2": 77
+      },
+      "marked": [
+        [
+          6,
+          53
+        ],
+        [
+          14,
+          77
+        ]
+      ],
+      "readAt": 10,
+      "beyondAt": 20,
+      "readRound": 5,
+      "dataRange": {
+        "xMin": 2,
+        "xMax": 16
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            78
+          ],
+          [
+            2,
+            73
+          ],
+          [
+            3,
+            69
+          ],
+          [
+            4,
+            62
+          ],
+          [
+            5,
+            52
+          ],
+          [
+            6,
+            46
+          ],
+          [
+            7,
+            40
+          ],
+          [
+            8,
+            31
+          ],
+          [
+            9,
+            24
+          ],
+          [
+            10,
+            19
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            16
+          ],
+          [
+            2,
+            26
+          ],
+          [
+            3,
+            33
+          ],
+          [
+            4,
+            41
+          ],
+          [
+            5,
+            44
+          ],
+          [
+            6,
+            53
+          ],
+          [
+            7,
+            58
+          ],
+          [
+            8,
+            67
+          ],
+          [
+            9,
+            71
+          ],
+          [
+            10,
+            80
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            20
+          ],
+          [
+            2,
+            44
+          ],
+          [
+            3,
+            25
+          ],
+          [
+            4,
+            19
+          ],
+          [
+            5,
+            30
+          ],
+          [
+            6,
+            37
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            49
+          ],
+          [
+            9,
+            75
+          ],
+          [
+            10,
+            76
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            50
+          ],
+          [
+            2,
+            55
+          ],
+          [
+            3,
+            45
+          ],
+          [
+            4,
+            55
+          ],
+          [
+            5,
+            52
+          ],
+          [
+            6,
+            52
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            9,
+            45
+          ],
+          [
+            10,
+            54
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 30
+          },
+          {
+            "label": "Tue",
+            "value": 135
+          },
+          {
+            "label": "Wed",
+            "value": 30
+          },
+          {
+            "label": "Thu",
+            "value": 45
+          },
+          {
+            "label": "Fri",
+            "value": 120
+          },
+          {
+            "label": "Sat",
+            "value": 30
+          },
+          {
+            "label": "Sun",
+            "value": 150
+          }
+        ],
+        "ticks": [
+          0,
+          30,
+          60,
+          90,
+          120,
+          150
+        ],
+        "targetDay": "Tue"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 243
+          },
+          {
+            "label": "Apr",
+            "value": 247
+          },
+          {
+            "label": "May",
+            "value": 251
+          },
+          {
+            "label": "Jun",
+            "value": 252
+          },
+          {
+            "label": "Jul",
+            "value": 255
+          },
+          {
+            "label": "Aug",
+            "value": 258
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            240,
+            245,
+            250,
+            255,
+            260
+          ],
+          "opt_b": [
+            0,
+            100,
+            200,
+            240,
+            250,
+            260,
+            270
+          ],
+          "opt_c": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ]
+        }
+      },
+      "sheet": {
+        "names": 4,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Ivy",
+            "cells": [
+              "4",
+              "51"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Harriet",
+            "cells": [
+              "7",
+              ""
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Nadia",
+            "cells": [
+              "10",
+              "65"
+            ],
+            "note": "Estimated from memory a week later"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Ivy",
+            "cells": [
+              "11",
+              "71"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Prue",
+            "cells": [
+              "",
+              "74"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Harriet",
+            "cells": [
+              "2",
+              "42"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Nadia",
+            "cells": [
+              "4",
+              ""
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Harriet",
+            "cells": [
+              "7",
+              "55"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Prue",
+            "cells": [
+              "",
+              "58"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Ivy",
+            "cells": [
+              "12",
+              "78"
+            ],
+            "note": "Used a different gauge borrowed from next door"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Nadia",
+            "cells": [
+              "14",
+              "74"
+            ],
+            "note": "Counted from the weather log, checked twice"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Prue",
+            "cells": [
+              "2",
+              ""
+            ],
+            "note": "Counted from the weather log, checked twice"
+          }
+        ],
+        "oddRows": [
+          3,
+          10
+        ],
+        "blanks": 5,
+        "pairs": {
+          "opt_a": [
+            3,
+            1
+          ],
+          "opt_b": [
+            3,
+            10
+          ],
+          "opt_c": [
+            10,
+            2
+          ],
+          "opt_d": [
+            3,
+            4
+          ]
+        }
+      },
+      "display": "dot",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "rv",
+          "opt_b": "smaller",
+          "opt_c": "ev",
+          "opt_d": "either"
+        },
+        "l2.cp2": {
+          "opt_a": "point",
+          "opt_b": "swapped",
+          "opt_c": "total",
+          "opt_d": "extreme"
+        }
+      }
+    },
+    {
+      "n": 3,
+      "theme": "Shower length and water used",
+      "ev": "Shower length",
+      "evUnit": "minutes",
+      "evShort": "minutes",
+      "rv": "Water used",
+      "rvUnit": "litres",
+      "rvShort": "litres",
+      "chose": "chose how long each shower ran, then measured the water it used",
+      "source": "Measured by a Year 8 crew. The numbers are invented for this task.",
+      "points": [
+        [
+          2,
+          35
+        ],
+        [
+          3,
+          39
+        ],
+        [
+          3,
+          48
+        ],
+        [
+          4,
+          49
+        ],
+        [
+          4,
+          50
+        ],
+        [
+          5,
+          64
+        ],
+        [
+          5,
+          65
+        ],
+        [
+          6,
+          71
+        ],
+        [
+          6,
+          72
+        ],
+        [
+          7,
+          78
+        ],
+        [
+          7,
+          72
+        ],
+        [
+          8,
+          83
+        ],
+        [
+          8,
+          84
+        ],
+        [
+          9,
+          101
+        ],
+        [
+          9,
+          103
+        ],
+        [
+          10,
+          103
+        ],
+        [
+          11,
+          121
+        ],
+        [
+          11,
+          111
+        ]
+      ],
+      "p": [
+        4,
+        49
+      ],
+      "line": {
+        "x1": 2,
+        "y1": 34,
+        "x2": 10,
+        "y2": 106
+      },
+      "marked": [
+        [
+          2,
+          34
+        ],
+        [
+          10,
+          106
+        ]
+      ],
+      "readAt": 6,
+      "beyondAt": 15,
+      "readRound": 10,
+      "dataRange": {
+        "xMin": 2,
+        "xMax": 11
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            17
+          ],
+          [
+            2,
+            30
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            4,
+            38
+          ],
+          [
+            5,
+            50
+          ],
+          [
+            6,
+            57
+          ],
+          [
+            7,
+            57
+          ],
+          [
+            8,
+            70
+          ],
+          [
+            9,
+            77
+          ],
+          [
+            10,
+            79
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            85
+          ],
+          [
+            2,
+            74
+          ],
+          [
+            3,
+            67
+          ],
+          [
+            4,
+            64
+          ],
+          [
+            5,
+            50
+          ],
+          [
+            6,
+            45
+          ],
+          [
+            7,
+            41
+          ],
+          [
+            8,
+            29
+          ],
+          [
+            9,
+            27
+          ],
+          [
+            10,
+            20
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            40
+          ],
+          [
+            2,
+            15
+          ],
+          [
+            3,
+            23
+          ],
+          [
+            4,
+            36
+          ],
+          [
+            5,
+            38
+          ],
+          [
+            6,
+            27
+          ],
+          [
+            7,
+            28
+          ],
+          [
+            8,
+            48
+          ],
+          [
+            9,
+            68
+          ],
+          [
+            10,
+            49
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            45
+          ],
+          [
+            2,
+            53
+          ],
+          [
+            3,
+            47
+          ],
+          [
+            4,
+            48
+          ],
+          [
+            5,
+            52
+          ],
+          [
+            6,
+            46
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            48
+          ],
+          [
+            9,
+            49
+          ],
+          [
+            10,
+            49
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 225
+          },
+          {
+            "label": "Tue",
+            "value": 200
+          },
+          {
+            "label": "Wed",
+            "value": 100
+          },
+          {
+            "label": "Thu",
+            "value": 175
+          },
+          {
+            "label": "Fri",
+            "value": 100
+          },
+          {
+            "label": "Sat",
+            "value": 100
+          },
+          {
+            "label": "Sun",
+            "value": 100
+          }
+        ],
+        "ticks": [
+          0,
+          50,
+          100,
+          150,
+          200,
+          250
+        ],
+        "targetDay": "Thu"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 237
+          },
+          {
+            "label": "Apr",
+            "value": 239
+          },
+          {
+            "label": "May",
+            "value": 244
+          },
+          {
+            "label": "Jun",
+            "value": 244
+          },
+          {
+            "label": "Jul",
+            "value": 249
+          },
+          {
+            "label": "Aug",
+            "value": 250
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ],
+          "opt_b": [
+            235,
+            240,
+            245,
+            250,
+            255
+          ],
+          "opt_c": [
+            0,
+            100,
+            200,
+            230,
+            240,
+            250,
+            260
+          ]
+        }
+      },
+      "sheet": {
+        "names": 5,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Mei",
+            "cells": [
+              "4",
+              ""
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Bree",
+            "cells": [
+              "5",
+              "65"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Anika",
+            "cells": [
+              "7",
+              "78"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Sofia",
+            "cells": [
+              "",
+              "84"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Anika",
+            "cells": [
+              "11",
+              "110"
+            ],
+            "note": "Guessed the time. No phone in the bathroom"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Talia",
+            "cells": [
+              "2",
+              "35"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Talia",
+            "cells": [
+              "4",
+              "49"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Talia",
+            "cells": [
+              "6",
+              "72"
+            ],
+            "note": "Counted songs on the radio instead of timing"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Mei",
+            "cells": [
+              "7",
+              "78"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Sofia",
+            "cells": [
+              "8",
+              ""
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Talia",
+            "cells": [
+              "10",
+              "103"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Anika",
+            "cells": [
+              "2",
+              "35"
+            ],
+            "note": "Timed on a phone, water caught in the 10 L bucket"
+          }
+        ],
+        "oddRows": [
+          5,
+          8
+        ],
+        "blanks": 3,
+        "pairs": {
+          "opt_a": [
+            5,
+            1
+          ],
+          "opt_b": [
+            8,
+            2
+          ],
+          "opt_c": [
+            5,
+            8
+          ],
+          "opt_d": [
+            5,
+            3
+          ]
+        }
+      },
+      "display": "histogram",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "ev",
+          "opt_b": "rv",
+          "opt_c": "smaller",
+          "opt_d": "either"
+        },
+        "l2.cp2": {
+          "opt_a": "point",
+          "opt_b": "swapped",
+          "opt_c": "total",
+          "opt_d": "extreme"
+        }
+      }
+    },
+    {
+      "n": 4,
+      "theme": "Tank size and days of watering",
+      "ev": "Tank size",
+      "evUnit": "kilolitres",
+      "evShort": "kL",
+      "rv": "Days the garden can be watered",
+      "rvUnit": "days",
+      "rvShort": "days",
+      "chose": "chose ten tanks of different sizes, then counted the days each one could water a garden",
+      "source": "Shaped like rainwater tank supplier figures. The numbers are invented for this task.",
+      "points": [
+        [
+          1,
+          26
+        ],
+        [
+          1,
+          28
+        ],
+        [
+          2,
+          27
+        ],
+        [
+          2,
+          33
+        ],
+        [
+          3,
+          48
+        ],
+        [
+          3,
+          46
+        ],
+        [
+          4,
+          56
+        ],
+        [
+          4,
+          53
+        ],
+        [
+          5,
+          66
+        ],
+        [
+          5,
+          71
+        ],
+        [
+          6,
+          71
+        ],
+        [
+          6,
+          70
+        ],
+        [
+          7,
+          78
+        ],
+        [
+          7,
+          94
+        ],
+        [
+          8,
+          100
+        ],
+        [
+          9,
+          105
+        ],
+        [
+          9,
+          107
+        ],
+        [
+          10,
+          110
+        ]
+      ],
+      "p": [
+        3,
+        48
+      ],
+      "line": {
+        "x1": 2,
+        "y1": 35,
+        "x2": 8,
+        "y2": 95
+      },
+      "marked": [
+        [
+          2,
+          35
+        ],
+        [
+          8,
+          95
+        ]
+      ],
+      "readAt": 6,
+      "beyondAt": 14,
+      "readRound": 5,
+      "dataRange": {
+        "xMin": 1,
+        "xMax": 10
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            18
+          ],
+          [
+            2,
+            30
+          ],
+          [
+            3,
+            29
+          ],
+          [
+            4,
+            40
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            6,
+            54
+          ],
+          [
+            7,
+            62
+          ],
+          [
+            8,
+            68
+          ],
+          [
+            9,
+            74
+          ],
+          [
+            10,
+            83
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            21
+          ],
+          [
+            2,
+            15
+          ],
+          [
+            3,
+            40
+          ],
+          [
+            4,
+            34
+          ],
+          [
+            5,
+            45
+          ],
+          [
+            6,
+            48
+          ],
+          [
+            7,
+            45
+          ],
+          [
+            8,
+            53
+          ],
+          [
+            9,
+            65
+          ],
+          [
+            10,
+            45
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            52
+          ],
+          [
+            2,
+            54
+          ],
+          [
+            3,
+            56
+          ],
+          [
+            4,
+            54
+          ],
+          [
+            5,
+            46
+          ],
+          [
+            6,
+            47
+          ],
+          [
+            7,
+            55
+          ],
+          [
+            8,
+            51
+          ],
+          [
+            9,
+            50
+          ],
+          [
+            10,
+            56
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            78
+          ],
+          [
+            2,
+            70
+          ],
+          [
+            3,
+            63
+          ],
+          [
+            4,
+            61
+          ],
+          [
+            5,
+            52
+          ],
+          [
+            6,
+            44
+          ],
+          [
+            7,
+            43
+          ],
+          [
+            8,
+            29
+          ],
+          [
+            9,
+            21
+          ],
+          [
+            10,
+            20
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 60
+          },
+          {
+            "label": "Tue",
+            "value": 200
+          },
+          {
+            "label": "Wed",
+            "value": 180
+          },
+          {
+            "label": "Thu",
+            "value": 160
+          },
+          {
+            "label": "Fri",
+            "value": 40
+          },
+          {
+            "label": "Sat",
+            "value": 160
+          },
+          {
+            "label": "Sun",
+            "value": 160
+          }
+        ],
+        "ticks": [
+          0,
+          40,
+          80,
+          120,
+          160,
+          200
+        ],
+        "targetDay": "Wed"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 243
+          },
+          {
+            "label": "Apr",
+            "value": 244
+          },
+          {
+            "label": "May",
+            "value": 247
+          },
+          {
+            "label": "Jun",
+            "value": 252
+          },
+          {
+            "label": "Jul",
+            "value": 252
+          },
+          {
+            "label": "Aug",
+            "value": 256
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            240,
+            245,
+            250,
+            255,
+            260
+          ],
+          "opt_b": [
+            0,
+            100,
+            200,
+            240,
+            250,
+            260,
+            270
+          ],
+          "opt_c": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ]
+        }
+      },
+      "sheet": {
+        "names": 3,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Immy",
+            "cells": [
+              "2",
+              "33"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Clara",
+            "cells": [
+              "",
+              "63"
+            ],
+            "note": "Read the label instead of measuring the tank"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Devi",
+            "cells": [
+              "5",
+              "71"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Clara",
+            "cells": [
+              "7",
+              "78"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Immy",
+            "cells": [
+              "9",
+              "105"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Immy",
+            "cells": [
+              "1",
+              ""
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Devi",
+            "cells": [
+              "2",
+              "33"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Immy",
+            "cells": [
+              "4",
+              ""
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Devi",
+            "cells": [
+              "5",
+              "71"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Immy",
+            "cells": [
+              "7",
+              "78"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Devi",
+            "cells": [
+              "10",
+              "112"
+            ],
+            "note": "Asked the neighbour rather than checking"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Devi",
+            "cells": [
+              "",
+              "26"
+            ],
+            "note": "Measured the tank with the dipstick, same dipstick each time"
+          }
+        ],
+        "oddRows": [
+          2,
+          11
+        ],
+        "blanks": 4,
+        "pairs": {
+          "opt_a": [
+            2,
+            1
+          ],
+          "opt_b": [
+            11,
+            3
+          ],
+          "opt_c": [
+            2,
+            4
+          ],
+          "opt_d": [
+            2,
+            11
+          ]
+        }
+      },
+      "display": "dot",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "rv",
+          "opt_b": "ev",
+          "opt_c": "smaller",
+          "opt_d": "either"
+        },
+        "l2.cp2": {
+          "opt_a": "swapped",
+          "opt_b": "total",
+          "opt_c": "point",
+          "opt_d": "extreme"
+        }
+      }
+    },
+    {
+      "n": 5,
+      "theme": "Household size and water used per person",
+      "ev": "People in the house",
+      "evUnit": "people",
+      "evShort": "people",
+      "rv": "Water used per person each day",
+      "rvUnit": "litres",
+      "rvShort": "litres",
+      "chose": "chose houses of different sizes, then measured the water each person used in a day",
+      "source": "Shaped like Melbourne Water per-person usage figures. The numbers are invented for this task.",
+      "points": [
+        [
+          1,
+          203
+        ],
+        [
+          1,
+          214
+        ],
+        [
+          2,
+          197
+        ],
+        [
+          2,
+          204
+        ],
+        [
+          3,
+          178
+        ],
+        [
+          3,
+          181
+        ],
+        [
+          4,
+          154
+        ],
+        [
+          4,
+          173
+        ],
+        [
+          5,
+          143
+        ],
+        [
+          5,
+          156
+        ],
+        [
+          6,
+          138
+        ],
+        [
+          6,
+          131
+        ],
+        [
+          7,
+          106
+        ],
+        [
+          7,
+          118
+        ],
+        [
+          8,
+          112
+        ],
+        [
+          8,
+          109
+        ],
+        [
+          8,
+          115
+        ],
+        [
+          7,
+          113
+        ]
+      ],
+      "p": [
+        3,
+        178
+      ],
+      "line": {
+        "x1": 2,
+        "y1": 195,
+        "x2": 6,
+        "y2": 135
+      },
+      "marked": [
+        [
+          2,
+          195
+        ],
+        [
+          6,
+          135
+        ]
+      ],
+      "readAt": 4,
+      "beyondAt": 11,
+      "readRound": 5,
+      "dataRange": {
+        "xMin": 1,
+        "xMax": 8
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            79
+          ],
+          [
+            2,
+            75
+          ],
+          [
+            3,
+            71
+          ],
+          [
+            4,
+            62
+          ],
+          [
+            5,
+            49
+          ],
+          [
+            6,
+            46
+          ],
+          [
+            7,
+            40
+          ],
+          [
+            8,
+            31
+          ],
+          [
+            9,
+            24
+          ],
+          [
+            10,
+            20
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            18
+          ],
+          [
+            2,
+            28
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            4,
+            41
+          ],
+          [
+            5,
+            49
+          ],
+          [
+            6,
+            50
+          ],
+          [
+            7,
+            62
+          ],
+          [
+            8,
+            65
+          ],
+          [
+            9,
+            77
+          ],
+          [
+            10,
+            80
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            38
+          ],
+          [
+            2,
+            44
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            4,
+            56
+          ],
+          [
+            5,
+            57
+          ],
+          [
+            6,
+            62
+          ],
+          [
+            7,
+            56
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            9,
+            47
+          ],
+          [
+            10,
+            72
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            47
+          ],
+          [
+            2,
+            56
+          ],
+          [
+            3,
+            47
+          ],
+          [
+            4,
+            45
+          ],
+          [
+            5,
+            51
+          ],
+          [
+            6,
+            47
+          ],
+          [
+            7,
+            56
+          ],
+          [
+            8,
+            56
+          ],
+          [
+            9,
+            44
+          ],
+          [
+            10,
+            47
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 120
+          },
+          {
+            "label": "Tue",
+            "value": 80
+          },
+          {
+            "label": "Wed",
+            "value": 110
+          },
+          {
+            "label": "Thu",
+            "value": 120
+          },
+          {
+            "label": "Fri",
+            "value": 110
+          },
+          {
+            "label": "Sat",
+            "value": 60
+          },
+          {
+            "label": "Sun",
+            "value": 120
+          }
+        ],
+        "ticks": [
+          0,
+          20,
+          40,
+          60,
+          80,
+          100,
+          120
+        ],
+        "targetDay": "Fri"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 243
+          },
+          {
+            "label": "Apr",
+            "value": 244
+          },
+          {
+            "label": "May",
+            "value": 247
+          },
+          {
+            "label": "Jun",
+            "value": 250
+          },
+          {
+            "label": "Jul",
+            "value": 253
+          },
+          {
+            "label": "Aug",
+            "value": 255
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            240,
+            245,
+            250,
+            255,
+            260
+          ],
+          "opt_b": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ],
+          "opt_c": [
+            0,
+            100,
+            200,
+            240,
+            250,
+            260,
+            260
+          ]
+        }
+      },
+      "sheet": {
+        "names": 4,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Juno",
+            "cells": [
+              "2",
+              "204"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Marta",
+            "cells": [
+              "4",
+              "154"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Elke",
+            "cells": [
+              "5",
+              ""
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Elke",
+            "cells": [
+              "7",
+              "106"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Marta",
+            "cells": [
+              "",
+              "109"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Marta",
+            "cells": [
+              "2",
+              "210"
+            ],
+            "note": "Counted only the people who were home that night"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Marta",
+            "cells": [
+              "2",
+              "204"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Elke",
+            "cells": [
+              "4",
+              "154"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Pia",
+            "cells": [
+              "6",
+              ""
+            ],
+            "note": "Used last month s bill instead of measuring"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Marta",
+            "cells": [
+              "",
+              "106"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Juno",
+            "cells": [
+              "8",
+              ""
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Elke",
+            "cells": [
+              "",
+              "203"
+            ],
+            "note": "Counted the people at dinner, water read off the meter"
+          }
+        ],
+        "oddRows": [
+          6,
+          9
+        ],
+        "blanks": 6,
+        "pairs": {
+          "opt_a": [
+            6,
+            9
+          ],
+          "opt_b": [
+            6,
+            1
+          ],
+          "opt_c": [
+            9,
+            2
+          ],
+          "opt_d": [
+            6,
+            3
+          ]
+        }
+      },
+      "display": "histogram",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "rv",
+          "opt_b": "smaller",
+          "opt_c": "either",
+          "opt_d": "ev"
+        },
+        "l2.cp2": {
+          "opt_a": "swapped",
+          "opt_b": "point",
+          "opt_c": "total",
+          "opt_d": "extreme"
+        }
+      }
+    },
+    {
+      "n": 6,
+      "theme": "Roof area and water collected",
+      "ev": "Roof area",
+      "evUnit": "square metres",
+      "evShort": "m²",
+      "rv": "Water collected in one storm",
+      "rvUnit": "litres",
+      "rvShort": "litres",
+      "chose": "chose roofs of different sizes, then measured the water each one collected in a storm",
+      "source": "Shaped like published roof-runoff figures. The numbers are invented for this task.",
+      "points": [
+        [
+          10,
+          115
+        ],
+        [
+          15,
+          112
+        ],
+        [
+          20,
+          184
+        ],
+        [
+          25,
+          212
+        ],
+        [
+          30,
+          287
+        ],
+        [
+          35,
+          245
+        ],
+        [
+          40,
+          366
+        ],
+        [
+          45,
+          370
+        ],
+        [
+          50,
+          451
+        ],
+        [
+          55,
+          454
+        ],
+        [
+          60,
+          529
+        ],
+        [
+          65,
+          503
+        ],
+        [
+          70,
+          596
+        ],
+        [
+          75,
+          601
+        ],
+        [
+          80,
+          692
+        ],
+        [
+          85,
+          696
+        ],
+        [
+          90,
+          761
+        ],
+        [
+          100,
+          785
+        ]
+      ],
+      "p": [
+        25,
+        212
+      ],
+      "line": {
+        "x1": 20,
+        "y1": 180,
+        "x2": 80,
+        "y2": 660
+      },
+      "marked": [
+        [
+          20,
+          180
+        ],
+        [
+          80,
+          660
+        ]
+      ],
+      "readAt": 50,
+      "beyondAt": 120,
+      "readRound": 10,
+      "dataRange": {
+        "xMin": 10,
+        "xMax": 100
+      },
+      "four": {
+        "opt_a": [
+          [
+            1,
+            19
+          ],
+          [
+            2,
+            24
+          ],
+          [
+            3,
+            37
+          ],
+          [
+            4,
+            36
+          ],
+          [
+            5,
+            48
+          ],
+          [
+            6,
+            53
+          ],
+          [
+            7,
+            58
+          ],
+          [
+            8,
+            69
+          ],
+          [
+            9,
+            79
+          ],
+          [
+            10,
+            81
+          ]
+        ],
+        "opt_b": [
+          [
+            1,
+            20
+          ],
+          [
+            2,
+            20
+          ],
+          [
+            3,
+            53
+          ],
+          [
+            4,
+            51
+          ],
+          [
+            5,
+            19
+          ],
+          [
+            6,
+            44
+          ],
+          [
+            7,
+            67
+          ],
+          [
+            8,
+            30
+          ],
+          [
+            9,
+            61
+          ],
+          [
+            10,
+            75
+          ]
+        ],
+        "opt_c": [
+          [
+            1,
+            79
+          ],
+          [
+            2,
+            75
+          ],
+          [
+            3,
+            67
+          ],
+          [
+            4,
+            60
+          ],
+          [
+            5,
+            54
+          ],
+          [
+            6,
+            43
+          ],
+          [
+            7,
+            43
+          ],
+          [
+            8,
+            28
+          ],
+          [
+            9,
+            23
+          ],
+          [
+            10,
+            16
+          ]
+        ],
+        "opt_d": [
+          [
+            1,
+            46
+          ],
+          [
+            2,
+            52
+          ],
+          [
+            3,
+            52
+          ],
+          [
+            4,
+            48
+          ],
+          [
+            5,
+            45
+          ],
+          [
+            6,
+            51
+          ],
+          [
+            7,
+            50
+          ],
+          [
+            8,
+            56
+          ],
+          [
+            9,
+            49
+          ],
+          [
+            10,
+            51
+          ]
+        ]
+      },
+      "week": {
+        "bars": [
+          {
+            "label": "Mon",
+            "value": 200
+          },
+          {
+            "label": "Tue",
+            "value": 225
+          },
+          {
+            "label": "Wed",
+            "value": 50
+          },
+          {
+            "label": "Thu",
+            "value": 50
+          },
+          {
+            "label": "Fri",
+            "value": 250
+          },
+          {
+            "label": "Sat",
+            "value": 275
+          },
+          {
+            "label": "Sun",
+            "value": 250
+          }
+        ],
+        "ticks": [
+          0,
+          50,
+          100,
+          150,
+          200,
+          250,
+          300
+        ],
+        "targetDay": "Tue"
+      },
+      "scales": {
+        "values": [
+          {
+            "label": "Mar",
+            "value": 240
+          },
+          {
+            "label": "Apr",
+            "value": 244
+          },
+          {
+            "label": "May",
+            "value": 248
+          },
+          {
+            "label": "Jun",
+            "value": 252
+          },
+          {
+            "label": "Jul",
+            "value": 251
+          },
+          {
+            "label": "Aug",
+            "value": 254
+          }
+        ],
+        "axes": {
+          "opt_a": [
+            0,
+            50,
+            100,
+            150,
+            200,
+            250,
+            300
+          ],
+          "opt_b": [
+            235,
+            240,
+            245,
+            250,
+            255,
+            260
+          ],
+          "opt_c": [
+            0,
+            100,
+            200,
+            240,
+            250,
+            260,
+            260
+          ]
+        }
+      },
+      "sheet": {
+        "names": 5,
+        "rows": [
+          {
+            "date": "02/08/2026",
+            "by": "Noor",
+            "cells": [
+              "",
+              "212"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "02/08/2026",
+            "by": "Lena",
+            "cells": [
+              "40",
+              "366"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Noor",
+            "cells": [
+              "55",
+              "454"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "03/08/2026",
+            "by": "Vida",
+            "cells": [
+              "71",
+              "603"
+            ],
+            "note": "Paced the roof out instead of measuring it"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Vida",
+            "cells": [
+              "85",
+              "696"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "04/08/2026",
+            "by": "Bonnie",
+            "cells": [
+              "10",
+              "115"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Etta",
+            "cells": [
+              "26",
+              ""
+            ],
+            "note": "Estimated the water from the splash marks"
+          },
+          {
+            "date": "05/08/2026",
+            "by": "Vida",
+            "cells": [
+              "40",
+              "366"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Lena",
+            "cells": [
+              "55",
+              "454"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "06/08/2026",
+            "by": "Vida",
+            "cells": [
+              "70",
+              "596"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Vida",
+            "cells": [
+              "",
+              "696"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          },
+          {
+            "date": "07/08/2026",
+            "by": "Lena",
+            "cells": [
+              "10",
+              "115"
+            ],
+            "note": "Measured the roof with a tape, water caught in the drum"
+          }
+        ],
+        "oddRows": [
+          4,
+          7
+        ],
+        "blanks": 3,
+        "pairs": {
+          "opt_a": [
+            4,
+            1
+          ],
+          "opt_b": [
+            4,
+            7
+          ],
+          "opt_c": [
+            7,
+            2
+          ],
+          "opt_d": [
+            4,
+            3
+          ]
+        }
+      },
+      "display": "dot",
+      "roles": {
+        "l2.cp1": {
+          "opt_a": "ev",
+          "opt_b": "rv",
+          "opt_c": "smaller",
+          "opt_d": "either"
+        },
+        "l2.cp2": {
+          "opt_a": "swapped",
+          "opt_b": "total",
+          "opt_c": "extreme",
+          "opt_d": "point"
+        }
+      }
+    }
+  ]
+}

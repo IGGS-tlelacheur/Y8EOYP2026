@@ -75,21 +75,13 @@
 
   <section class="panel">
     <h2>Chart 5</h2>
-    <p>
-      This is Crew 7's scatterplot from Lesson 2, with a line of best fit drawn
-      on it. Two points that sit on the line are marked. Questions 1 and 2 ask
-      about this chart.
-    </p>
+    <p id="chart5-intro"></p>
     <figure class="room-chart" id="chart5"></figure>
   </section>
 
   <section class="panel">
     <h2>Chart 6</h2>
-    <p>
-      The same data and the same line, with the bottom axis carried on past the
-      last shower Crew 7 measured. The shaded part is where they have no
-      measurements at all. Question 3 asks about this chart.
-    </p>
+    <p id="chart6-intro"></p>
     <figure class="room-chart" id="chart6"></figure>
   </section>
 
@@ -111,14 +103,12 @@
       <li><b>Our line</b> — write it as <b>y = mx + c</b>, using your gradient
         for m.</li>
       <li><b>What the gradient means</b> — say it as a sentence about water, not
-        about maths. “For every extra minute in the shower, the water used goes up
-        by about 9 litres.”</li>
+        about maths. <span class="hand" id="example-gradient"></span></li>
       <li><b>Reading inside our data (interpolation)</b> — pick a value you did
-        not measure but could have. “At 6 minutes our line gives 70 litres.”</li>
+        not measure but could have. <span class="hand" id="example-interp"></span></li>
       <li><b>Reading past our data (extrapolation)</b> — pick a value beyond
-        everything you measured, then say what it is worth. “At 15 minutes our
-        line gives 150 litres. We measured only from 2 to 11 minutes, so nothing
-        we did tests whether the line is still straight out there.”</li>
+        everything you measured, then say what it is worth.
+        <span class="hand" id="example-extrap"></span></li>
     </ul>
     <p>
       That last sentence is the one that matters for 2040. A prediction without
@@ -142,6 +132,7 @@
 <script type="module">
 import { getProfile } from './js/store.js';
 import { renderChart, svgEl } from './js/chart.js';
+import { loadDatasets, setFor, tokensFor, fill } from './js/dataset.js';
 import { mountCheckpoint } from './js/checkpoint.js';
 import { openRoom, mountFinish } from './js/room.js';
 
@@ -150,34 +141,10 @@ if (!profile) window.location.replace('index.html');
 
 const ROOM = 'l5';
 
-/* TODO(content): six variants at stage 7. Crew 7's readings, the same set
-   Lesson 2 plots on the same axes, so this room reads as that chart with a line
-   added rather than as a new chart.
-
-   The line is y = 9x + 16 and it is also the least squares line of these points
-   to two decimal places, which is not a coincidence - the points were chosen to
-   make it true. Any variant that changes the numbers has to keep that, or the
-   line drawn on the chart is visibly not the best fit and the room teaches the
-   wrong thing. The two marked points are on the line, chosen so the gradient
-   comes out exact. */
-const POINTS = [[2, 36], [3, 38], [3, 47], [4, 57], [4, 46], [5, 58], [5, 68],
-                [6, 73], [6, 63], [7, 68], [7, 87], [8, 90], [8, 85], [9, 104],
-                [9, 95], [10, 108], [11, 120], [11, 108]];
-
-const LINE = { x1: 2, y1: 34, x2: 10, y2: 106 };
-const MARKED = [[2, 34], [10, 106]];
-const MEASURED = { xMin: 2, xMax: 11 };
-
-const LABELS = {
-  points: POINTS,
-  xLabel: 'Shower length', xUnit: 'minutes',
-  yLabel: 'Water used', yUnit: 'litres'
-};
-
-/* The two points the gradient is worked out from. They sit on the line rather
-   than on the data, so they are drawn here and not by chart.js - the engine
-   marks data, and these are not data. Ring plus a printed coordinate, because
-   colour alone must never carry meaning. */
+/* The two points the gradient is worked out from sit on the line rather than on
+   the data, so they are drawn here and not by chart.js - the engine marks data,
+   and these are not data. Ring plus a printed coordinate, because colour alone
+   must never carry meaning. */
 function markOnLine(svg, scales, [dx, dy], side) {
   const cx = scales.x.to(dx);
   const cy = scales.y.to(dy);
@@ -200,11 +167,11 @@ const QUESTIONS = [
     roomId: ROOM,
     type: 'numeric',
     title: 'Question 1 of 3',
-    stem: 'Chart 5 has a line of best fit drawn on it. Two points on that line are marked: (2, 34) and (10, 106). Find the gradient of the line. Type the number, to one decimal place.',
+    stem: 'Chart 5 has a line of best fit drawn on it. Two points on that line are marked: ({ax}, {ay}) and ({bx}, {by}). Find the gradient of the line. Type the number, to one decimal place.',
     hints: [
       'Gradient compares the change in the RV with the change in the EV.',
       'A line passed through (1, 20) and (5, 8). The RV went from 20 down to 8, a change of −12. The EV went from 1 up to 5, a change of 4. The gradient is −12 divided by 4, which is −3. A gradient can be negative.',
-      'The RV goes from 34 to 106. That is a change of 72. The EV goes from 2 to 10. That is a change of 8. One division is left.'
+      'The RV goes from {ay} to {by}. The EV goes from {ax} to {bx}. Work out each change, then one division is left.'
     ]
   },
   {
@@ -212,11 +179,11 @@ const QUESTIONS = [
     roomId: ROOM,
     type: 'numeric',
     title: 'Question 2 of 3',
-    stem: 'Use the line of best fit on Chart 5. Read the line at 6 minutes. What does it give for the water used? Type the number, in litres, to the nearest 10 litres.',
+    stem: 'Use the line of best fit on Chart 5. Read the line at {readAt} {evShort}. What does it give for the {rv}? Type the number, in {rvUnit}, to the nearest {readRound}.',
     hints: [
-      'Find 6 on the bottom axis of Chart 5. Go straight up from there.',
+      'Find {readAt} on the bottom axis of Chart 5. Go straight up from there.',
       'On another chart the line was read at 3 hours. Going up from 3 met the line level with 45 on the side axis. So the line gives 45 at 3 hours. The point read does not have to be one of the measured points.',
-      'Go up from 6 until you meet the line, not a point. Now go straight across to the side axis. You land between two gridlines. One reading is left.'
+      'Go up from {readAt} until you meet the line, not a point. Now go straight across to the side axis. You land between two gridlines. One reading is left.'
     ]
   },
   {
@@ -224,40 +191,77 @@ const QUESTIONS = [
     roomId: ROOM,
     type: 'numeric',
     title: 'Question 3 of 3',
-    stem: 'Crew 7 measured showers from 2 minutes to 11 minutes. Use the line of best fit on Chart 6 to predict the water used for a 15 minute shower. Type the number, in litres, to the nearest 10 litres.',
+    stem: 'Crew 7 measured from {dataMin} to {dataMax} {evShort}. Use the line of best fit on Chart 6 to predict the {rv} at {beyondAt} {evShort}. Type the number, in {rvUnit}, to the nearest {readRound}.',
     hints: [
       'The line does not stop at the last point. It carries on. So can your reading.',
       'A crew measured from 1 to 8 weeks and read their line at 12 weeks. Twelve is past everything they measured. They still read it the same way: up from 12, and across to the side axis. Reading it takes the same two steps. Trusting it is a different question.',
-      'Find 15 on the bottom axis, past the last point on the chart. Go up to the line, then across to the side axis. One reading is left.'
+      'Find {beyondAt} on the bottom axis, past the last point on the chart. Go up to the line, then across to the side axis. One reading is left.'
     ]
   }
 ];
 
-const tokens = {};
+const tokensStore = {};
 
 function build(answers) {
   document.querySelector('#room').hidden = false;
 
+  const data = window.__h2oData;
+  const set = setFor(data, profile.variant);
+  const tokens = tokensFor(set);
+
+  const xs = set.points.map((p) => p[0]);
+  const ys = set.points.map((p) => p[1]);
+  const step = (v) => Math.pow(10, Math.floor(Math.log10(v || 1)));
+  const roundUp = (v) => Math.ceil(v / (step(v) / 2)) * (step(v) / 2);
+
+  const labels = {
+    points: set.points,
+    xLabel: set.ev, xUnit: set.evUnit,
+    yLabel: set.rv, yUnit: set.rvUnit
+  };
+
+  document.querySelector('#chart5-intro').textContent =
+    'This is Crew 7’s scatterplot from Lesson 2, with a line of best fit drawn on '
+    + 'it. Two points that sit on the line are marked. Questions 1 and 2 ask about '
+    + 'this chart.';
+  document.querySelector('#chart6-intro').textContent =
+    'The same data and the same line, with the bottom axis carried on past the '
+    + `last reading Crew 7 took. The shaded part is where they have no `
+    + 'measurements at all. Question 3 asks about this chart.';
+
   const five = renderChart({
-    ...LABELS,
-    title: 'Chart 5 — Crew 7’s showers, with a line of best fit',
-    axis: { xMin: 0, xMax: 12, yMin: 0, yMax: 130 },
-    fit: LINE,
+    ...labels,
+    title: 'Chart 5 — with a line of best fit',
+    axis: {
+      xMin: 0, xMax: roundUp(Math.max(...xs)),
+      yMin: 0, yMax: roundUp(Math.max(...ys) * 1.05),
+      /* A gridline exactly where question 2 tells her to look. */
+      xTicks: [set.readAt]
+    },
+    fit: set.line,
     width: 660, height: 440
   });
-  markOnLine(five.svg, five, MARKED[0], 'right');
-  markOnLine(five.svg, five, MARKED[1], 'left');
+  markOnLine(five.svg, five, set.marked[0], 'right');
+  markOnLine(five.svg, five, set.marked[1], 'left');
   document.querySelector('#chart5').append(five.svg);
 
   /* dataRange is what hatches and fades everything past the last measurement.
-     The axis is carried to 20 rather than stopped at 15 so that the reading at
-     15 falls where the fade is still light enough to read against. */
+     The axis is carried well past the value she is asked to read, so the fade is
+     still light enough there to read the line against. */
+  const gradient = (set.line.y2 - set.line.y1) / (set.line.x2 - set.line.x1);
+  const c = set.line.y1 - gradient * set.line.x1;
+  const outerX = roundUp(set.beyondAt * 1.25);
   const six = renderChart({
-    ...LABELS,
+    ...labels,
     title: 'Chart 6 — the same line, carried on',
-    axis: { xMin: 0, xMax: 16, yMin: 0, yMax: 200 },
-    fit: LINE,
-    dataRange: MEASURED,
+    axis: {
+      xMin: 0, xMax: outerX,
+      yMin: 0, yMax: roundUp(Math.max(Math.max(...ys), gradient * outerX + c) * 1.05),
+      /* And one where question 3 does, out past the last measurement. */
+      xTicks: [set.dataRange.xMax, set.beyondAt]
+    },
+    fit: set.line,
+    dataRange: set.dataRange,
     width: 660, height: 440
   });
   document.querySelector('#chart6').append(six.svg);
@@ -268,22 +272,42 @@ function build(answers) {
     answers,
     studentId: profile.studentId,
     variant: profile.variant,
-    tokens,
+    tokens: tokensStore,
     nextRoom: null
   });
 
   const host = document.querySelector('#cp-host');
   for (const question of QUESTIONS) {
-    mountCheckpoint(host, question, answers.checkpoints[question.id], {
+    mountCheckpoint(host, {
+      ...question,
+      stem: fill(question.stem, tokens),
+      hints: question.hints.map((h) => fill(h, tokens))
+    }, answers.checkpoints[question.id], {
       variant: profile.variant,
       studentId: profile.studentId,
       onDone: ({ id, token }) => {
-        tokens[id] = token;
+        tokensStore[id] = token;
         refreshFinish();
       }
     });
   }
+
+  /* The worked sentences on the Card use her own numbers, not variant 3's. */
+  const g = Number(gradient.toFixed(1));
+  document.querySelector('#example-gradient').textContent =
+    `For every extra ${tokens.evShort.replace(/s$/, '')} of ${tokens.ev}, the `
+    + `${tokens.rv} ${g < 0 ? 'goes down' : 'goes up'} by about ${Math.abs(g)} ${tokens.rvShort}.`;
+  document.querySelector('#example-interp').textContent =
+    `At ${set.readAt} ${tokens.evShort} our line gives about `
+    + `${Math.round((gradient * set.readAt + c) / set.readRound) * set.readRound} ${tokens.rvShort}.`;
+  document.querySelector('#example-extrap').textContent =
+    `At ${set.beyondAt} ${tokens.evShort} our line gives about `
+    + `${Math.round((gradient * set.beyondAt + c) / set.readRound) * set.readRound} ${tokens.rvShort}. `
+    + `We measured only from ${set.dataRange.xMin} to ${set.dataRange.xMax}, so nothing we `
+    + 'did tests whether the line is still straight out there.';
 }
+
+window.__h2oData = await loadDatasets();
 
 await openRoom({
   roomId: ROOM,

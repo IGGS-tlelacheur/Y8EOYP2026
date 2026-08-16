@@ -112,13 +112,18 @@ confirm the ladder escalates and rung four gives the answer. Confirm the badge w
 the hub updates, and the Card tick appears.
 
 ### Stage 7 — Data
-`data/datasets.json`, `data/answers.json`, `data/roll.json`, `scripts/build-data.mjs`
+`data/datasets.json`, `data/answers.json`, `scripts/make-datasets.mjs`,
+`scripts/check-datasets.mjs`, `js/dataset.js`
 
-Six variants of every checkpoint. Hashes generated at author time, never by hand.
+Six variants of every checkpoint, generated with the answers from one source so the
+two cannot disagree. The rooms hold one authored stem each and fill it from her set.
 
-**Verify:** `node scripts/build-data.mjs --check` passes. Spot-check one variant's
-answers by hand. Confirm two different students get different tokens for the same
-checkpoint, and that sharing a code between them fails.
+```
+node scripts/make-datasets.mjs && node scripts/check-datasets.mjs && node scripts/build-data.mjs
+```
+
+**Verify:** all three pass, and walk all six variants in a browser — every checkpoint
+correct, no `{token}` left unfilled on screen, six different final codes.
 
 ### Stage 8 — L1, L6, extension, misleading-chart tool
 `l1.html`, `l6.html`, `extension.html`, `tools/mislead.html`

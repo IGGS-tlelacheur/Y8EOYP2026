@@ -96,33 +96,64 @@ committed**. See `data/README.md`.
 ## 3. `data/datasets.json`
 
 Six variants of every dataset used in a checkpoint or task. Same structure, same
-difficulty, different numbers.
+difficulty, different numbers. Public — it holds no answers.
+
+**Generated, not hand-written** (changed 17/08/2026). `scripts/make-datasets.mjs`
+emits this file *and* `private/answers.json` from one set of definitions. The answer
+to "read Thursday off Chart 4" is a property of the bars that chart is drawn from;
+deriving the two separately is how a room ends up marking a correct reading wrong.
+Rerun the generator rather than editing either file by hand.
 
 ```json
 {
   "version": 1,
-  "sets": {
-    "l2.cp1": {
-      "prompt": "TODO(content)",
-      "variants": [
-        {
-          "title": "Rainfall and reservoir inflow",
-          "xLabel": "Monthly rainfall",
-          "xUnit": "mm",
-          "yLabel": "Inflow to reservoir",
-          "yUnit": "GL",
-          "source": "Melbourne Water",
-          "rows": [[42, 1.8], [67, 3.1]]
-        }
-      ]
+  "generated": "2026-08-17",
+  "claimB": { "points": [[12, 48]], "xLabel": "…", "source": "…" },
+  "sets": [
+    {
+      "n": 1,
+      "theme": "Rainfall and reservoir inflow",
+      "ev": "Monthly rainfall", "evUnit": "millimetres", "evShort": "mm",
+      "rv": "Inflow to the reservoir", "rvUnit": "megalitres", "rvShort": "ML",
+      "chose": "read the rainfall for each month, then measured the inflow that followed",
+      "source": "…The numbers are invented for this task.",
+      "points": [[20, 15]],
+      "p": [70, 43],
+      "line": { "x1": 40, "y1": 25, "x2": 100, "y2": 55 },
+      "marked": [[40, 25], [100, 55]],
+      "readAt": 70, "beyondAt": 160, "readRound": 5,
+      "dataRange": { "xMin": 20, "xMax": 120 },
+      "four":   { "opt_a": [[1, 19]] },
+      "week":   { "bars": [{ "label": "Mon", "value": 40 }], "ticks": [0, 20], "targetDay": "Thu" },
+      "scales": { "values": [{ "label": "Mar", "value": 238 }], "axes": { "opt_a": [0, 50] } },
+      "sheet":  { "names": 3, "rows": [], "oddRows": [4, 9], "blanks": 4, "pairs": { "opt_a": [4, 9] } },
+      "display": "histogram",
+      "roles":  { "l2.cp1": { "opt_a": "ev", "opt_b": "rv" } }
     }
-  }
+  ]
 }
 ```
 
-`variants` always has exactly six entries, indexed 0–5, matching `variant`.
+`sets` always has exactly six entries, indexed 0–5, matching `variant`. Index 4 —
+"Data set 5" on her hub — is the negative relationship, as settled with the client.
 
 Units are mandatory on every axis. A dataset without units is a bug, not a style choice.
+
+**`roles` is the option ordering**, so the correct answer is not always in the same
+slot. Publishing it gives nothing away: she can read all four options on screen
+anyway, and knowing which is right still means doing the maths. The answer stays a
+hash in `answers.json`.
+
+**Question wording lives in the room, not here.** One authored stem per checkpoint,
+with `{ev}`, `{readAt}`, `{targetDay}` and the rest substituted from the set by
+`js/dataset.js`. Six copies of a stem would drift apart the first time one of them
+was corrected.
+
+**Checked by `scripts/check-datasets.mjs`**, which fails if any checkpoint answers the
+same in all six variants, if a marked point P is an extreme, if the column cp4.2 asks
+about does not stop halfway between two gridlines, if the chart cp4.3 calls honest is
+not zero-based with even steps, or if the drawn line of best fit is not the least
+squares line of its own points.
 
 ---
 

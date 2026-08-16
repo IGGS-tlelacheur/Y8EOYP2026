@@ -355,12 +355,27 @@ export function renderChart(spec) {
     }
   }
 
+  /* Extra gridlines the caller has asked for, on top of the ones niceScale
+     chose. Lesson 5 uses this to put a line at the value a question tells her to
+     read from - "find 70 on the bottom axis" is a poor instruction when the axis
+     is ruled at 0, 50, 100, 150, and finding 70 is not the skill being tested.
+
+     Labels and gridlines only. The scale itself is untouched, so an added tick
+     cannot distort the plot, and the y axis is deliberately left alone: a
+     gridline drawn at the answer would hand it over. */
+  const withExtras = (nice, wanted) => {
+    if (!Array.isArray(wanted) || wanted.length === 0) return nice.ticks;
+    return [...new Set([...nice.ticks, ...wanted])]
+      .filter((t) => t >= nice.min && t <= nice.max)
+      .sort((a, b) => a - b);
+  };
+
   drawAxes(svg, {
     area: { plotLeft, plotRight, plotTop, plotBottom },
     fonts,
     height,
-    xTicks: xNice.ticks.map((t) => ({ px: x.to(t), label: tickLabel(t, xNice.step) })),
-    yTicks: yNice.ticks.map((t) => ({ px: y.to(t), label: tickLabel(t, yNice.step) })),
+    xTicks: withExtras(xNice, axis.xTicks).map((t) => ({ px: x.to(t), label: tickLabel(t, xNice.step) })),
+    yTicks: withExtras(yNice, axis.yTicks).map((t) => ({ px: y.to(t), label: tickLabel(t, yNice.step) })),
     xTitle: axisTitle(xLabel, xUnit),
     yTitle: axisTitle(yLabel, yUnit)
   });

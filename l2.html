@@ -39,14 +39,13 @@
     <h2>Two words you need</h2>
     <p>
       <b>Bivariate data</b> is two measurements taken from the same thing at the
-      same time. One shower gives you its length and the water it used. That is
-      one piece of bivariate data, and it becomes one point on a chart.
+      same time. <span id="bivariate-example"></span>
     </p>
     <p>
-      The <b>explanatory variable (EV)</b> is the one you choose or change. The
-      <b>response variable (RV)</b> is the one you measure. Your worksheets
-      sometimes call these the independent and dependent variable. They mean the
-      same thing.
+      The <b>explanatory variable (EV)</b> is the one you choose, change, or that
+      comes first. The <b>response variable (RV)</b> is the one you measure — it
+      is the one that <b>depends on</b> the EV. Your worksheets sometimes call
+      these the independent and dependent variable. They mean the same thing.
     </p>
     <p>
       The EV always goes on the horizontal axis, along the bottom. The RV goes on
@@ -54,12 +53,9 @@
     </p>
   </section>
 
-  <!-- TODO(content): stage 7 replaces CHARTS below with the six variant data
-       sets. The room draws them with js/chart.js, the same engine the tools use,
-       so a swap is a change of numbers and labels only. -->
   <section class="panel">
     <h2>Chart 1</h2>
-    <p>Crew 7 timed their showers and measured the water each one used.</p>
+    <p id="chart1-intro"></p>
     <figure class="room-chart" id="chart1"></figure>
   </section>
 
@@ -108,49 +104,54 @@
 import { getProfile, recordResponse, getResponses } from './js/store.js';
 import { mirrorClaimB, mirrorMessage } from './js/cardfile.js';
 import { renderChart, svgEl } from './js/chart.js';
+import { loadDatasets, setFor, tokensFor, fill, optionsFor } from './js/dataset.js';
 import { mountCheckpoint } from './js/checkpoint.js';
-import { mountFinish, MINTS } from './js/room.js';
+import { mountFinish } from './js/room.js';
+
+const lowerFirst = (t) => (t ? t.charAt(0).toLowerCase() + t.slice(1) : t);
+
+/* Round the axes outwards to human numbers and pin them, so Lesson 5 can reuse
+   exactly these and read as the same chart with a line added. */
+function niceAxis(s) {
+  const xs = s.points.map((p) => p[0]);
+  const ys = s.points.map((p) => p[1]);
+  const step = (v) => Math.pow(10, Math.floor(Math.log10(v || 1)));
+  const roundUp = (v) => Math.ceil(v / (step(v) / 2)) * (step(v) / 2);
+  return { xMin: 0, xMax: roundUp(Math.max(...xs)), yMin: 0, yMax: roundUp(Math.max(...ys) * 1.05) };
+}
 
 const profile = getProfile();
 if (!profile) window.location.replace('index.html');
 
 const ROOM = 'l2';
 const answers = await (await fetch('data/answers.json', { cache: 'no-cache' })).json();
+const data = await loadDatasets();
+const set = setFor(data, profile.variant);
+const tokens = tokensFor(set);
 
-/* TODO(content): six variants of each of these at stage 7. Variant 1 only for
-   now, and every variant must keep the same shape - same number of points, same
-   kind of labels - so the questions below read identically for all six. */
-const CHARTS = {
-  /* Crew 7's readings. Lesson 3 critiques one of their recording sheets and
-     Lesson 5 draws a line through this same scatterplot on these same axes, so
-     the three rooms show one crew and one set of numbers. The axes are fixed
-     rather than fitted for the same reason: L5's chart should read as this
-     chart with a line added, not as a new one. */
-  main: {
-    points: [[2, 36], [3, 38], [3, 47], [4, 57], [4, 46], [5, 58], [5, 68],
-             [6, 73], [6, 63], [7, 68], [7, 87], [8, 90], [8, 85], [9, 104],
-             [9, 95], [10, 108], [11, 120], [11, 108]],
-    xLabel: 'Shower length', xUnit: 'minutes',
-    yLabel: 'Water used', yUnit: 'litres',
-    title: 'Crew 7’s showers',
-    axis: { xMin: 0, xMax: 12, yMin: 0, yMax: 130 }
-  },
-  fountains: {
-    points: [[12, 48], [18, 61], [23, 77], [27, 84], [31, 96], [35, 104],
-             [38, 118], [42, 127], [46, 133], [51, 149]],
-    xLabel: 'Ice creams sold at the canteen', xUnit: 'per day',
-    yLabel: 'Water drunk from the fountains', yUnit: 'litres per day',
-    title: 'Ice creams and drinking fountains'
+/* Her own axes, fixed rather than fitted, and reused unchanged by Lesson 5 so
+   that chart reads as this one with a line added rather than as a new chart. */
+const axis = niceAxis(set);
+
+function drawScatter(host, spec, { mark = null, width = 660, height = 430 } = {}) {
+  const { svg } = renderChart({ ...spec, width, height });
+  host.textContent = '';
+  host.append(svg);
+  if (mark && !markPoint(svg, mark, 'P')) {
+    /* The marked point is not in the data. That is a content error and the
+       question about it cannot be answered, so say so rather than show a chart
+       with nothing circled on it. */
+    const note = document.createElement('p');
+    note.className = 'note';
+    note.textContent = 'This chart is not marked correctly. Tell your teacher.';
+    host.append(note);
   }
-};
+  return svg;
+}
 
-/* Point P is marked for cp2.2. It must never be an extreme on either axis, or
-   the "longest shower" distractor becomes true. */
-const P = [7, 68];
-
-/* The marker is drawn here rather than in chart.js: only this room needs a
-   labelled point, and the engine stays an engine. Ring plus letter, because
-   colour alone must never carry meaning. */
+/* Ring plus letter, because colour alone must never carry meaning. Drawn here
+   rather than in chart.js: only this room needs a labelled point, and the engine
+   stays an engine. */
 function markPoint(svg, [px, py], letter) {
   const dot = svg.querySelector(`circle[data-x="${px}"][data-y="${py}"]`);
   if (!dot) return false;
@@ -166,35 +167,29 @@ function markPoint(svg, [px, py], letter) {
   return true;
 }
 
-function drawChart(host, spec, { mark = null, letter = 'P', width = 620, height = 400 } = {}) {
-  const { svg } = renderChart({ ...spec, width, height });
-  host.textContent = '';
-  host.append(svg);
-  if (mark && !markPoint(svg, mark, letter)) {
-    /* The marked point is not in the data. That is a content error, and the
-       question about it cannot be answered, so say so rather than show a chart
-       with nothing circled on it. */
-    const note = document.createElement('p');
-    note.className = 'note';
-    note.textContent = 'This chart is not marked correctly. Tell your teacher.';
-    host.append(note);
-  }
-  return svg;
-}
+document.querySelector('#chart1-intro').textContent = `Crew 7 ${set.chose}.`;
+document.querySelector('#bivariate-example').textContent =
+  `Each reading gives you a ${tokens.ev} and a ${tokens.rv}. That is one piece of `
+  + 'bivariate data, and it becomes one point on a chart.';
 
-drawChart(document.querySelector('#chart1'), CHARTS.main, { mark: P });
-drawChart(document.querySelector('#chart-fountains'), CHARTS.fountains);
+drawScatter(document.querySelector('#chart1'), {
+  points: set.points,
+  xLabel: set.ev, xUnit: set.evUnit,
+  yLabel: set.rv, yUnit: set.rvUnit,
+  title: `Crew 7’s ${lowerFirst(set.theme)}`,
+  axis
+}, { mark: set.p });
+
+drawScatter(document.querySelector('#chart-fountains'), {
+  points: data.claimB.points,
+  xLabel: data.claimB.xLabel, xUnit: data.claimB.xUnit,
+  yLabel: data.claimB.yLabel, yUnit: data.claimB.yUnit,
+  title: data.claimB.title
+});
 
 /* The four charts for question 3, on identical axes so only the points differ. */
-const FOUR = {
-  opt_a: [[1, 22], [2, 31], [3, 30], [4, 44], [5, 41], [6, 55], [7, 62], [8, 60], [9, 74], [10, 79]],
-  opt_b: [[1, 78], [2, 71], [3, 74], [4, 62], [5, 58], [6, 52], [7, 41], [8, 38], [9, 27], [10, 22]],
-  opt_c: [[1, 34], [2, 61], [3, 28], [4, 52], [5, 71], [6, 39], [7, 66], [8, 44], [9, 74], [10, 55]],
-  opt_d: [[1, 50], [2, 44], [3, 57], [4, 47], [5, 53], [6, 45], [7, 56], [8, 49], [9, 52], [10, 48]]
-};
-
 const fourHost = document.querySelector('#four-charts');
-for (const [key, points] of Object.entries(FOUR)) {
+for (const [key, points] of Object.entries(set.four)) {
   const figure = document.createElement('figure');
   figure.className = 'mini-chart';
   const caption = document.createElement('figcaption');
@@ -202,35 +197,39 @@ for (const [key, points] of Object.entries(FOUR)) {
   figure.append(caption);
   const holder = document.createElement('div');
   figure.append(holder);
-  drawChart(holder, {
+  const { svg } = renderChart({
     points,
-    xLabel: 'Shower length', xUnit: 'minutes',
-    yLabel: 'Water used', yUnit: 'litres',
-    axis: { xMin: 0, xMax: 11, yMin: 0, yMax: 85 }
-  }, { width: 340, height: 250 });
+    xLabel: set.ev, xUnit: set.evUnit,
+    yLabel: set.rv, yUnit: set.rvUnit,
+    axis: { xMin: 0, xMax: 11, yMin: 0, yMax: 95 },
+    width: 340, height: 250
+  });
+  holder.append(svg);
   fourHost.append(figure);
 }
 
 /* ---- the three checkpoints ----------------------------------------------- */
 
-/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
+/* One authored stem per checkpoint, filled from her data set. Six copies of the
+   wording would drift apart the first time one of them was corrected.
+   Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
 const QUESTIONS = [
   {
     id: 'l2.cp1',
     roomId: ROOM,
     type: 'choice',
     title: 'Question 1 of 3',
-    stem: 'Crew 7 chose how long each shower ran, then measured the water it used. They are drawing Chart 1. Which variable belongs on the horizontal axis, and why? Choose one.',
-    options: [
-      { key: 'opt_a', label: 'Shower length, because it is the one they chose' },
-      { key: 'opt_b', label: 'Water used, because it is the one they measured' },
-      { key: 'opt_c', label: 'Shower length, because minutes are smaller numbers than litres' },
-      { key: 'opt_d', label: 'Either one, as long as both axes are labelled' }
-    ],
+    stem: 'Crew 7 {chose}. They are drawing Chart 1. Which variable belongs on the horizontal axis, and why? Choose one.',
+    byRole: {
+      ev: '{EV}, because {rv} depends on it',
+      rv: '{RV}, because it is the one they measured',
+      smaller: '{EV}, because its numbers are smaller',
+      either: 'Either one, as long as both axes are labelled'
+    },
     hints: [
-      'One of the two variables was chosen by the crew. The other was measured afterwards, once the shower had run.',
-      'A crew set a tap to 1, 2, 3 and 4 turns open and measured the water that came out each time. They chose the number of turns. The water was the answer they got back. Turns went along the bottom, water went up the side.',
-      'The EV is the one you choose or change, and it goes along the bottom. Decide which of Crew 7’s two variables they chose rather than measured. Two options name that one. Only one of those two gives the real reason.'
+      'One of the two variables depends on the other. Read again what Crew 7 did first.',
+      'A crew set a tap to 1, 2, 3 and 4 turns open and measured the water that came out each time. The water depended on the turns, not the other way round. Turns went along the bottom, water went up the side.',
+      'The EV goes along the bottom, and the EV is the one the other depends on. Decide which of the two came first for Crew 7. Two options name that one. Only one of those two gives the real reason.'
     ]
   },
   {
@@ -239,12 +238,12 @@ const QUESTIONS = [
     type: 'choice',
     title: 'Question 2 of 3',
     stem: 'On Chart 1 one point is circled and marked P. What does P tell you? Choose one.',
-    options: [
-      { key: 'opt_a', label: 'One shower that lasted 7 minutes and used 68 litres' },
-      { key: 'opt_b', label: 'One shower that lasted 68 minutes and used 7 litres' },
-      { key: 'opt_c', label: 'Seven showers that used 68 litres altogether' },
-      { key: 'opt_d', label: 'The longest shower the crew recorded' }
-    ],
+    byRole: {
+      point: 'One reading of {px} {evShort} and {py} {rvShort}',
+      swapped: 'One reading of {py} {evShort} and {px} {rvShort}',
+      total: '{px} readings adding up to {py} {rvShort} altogether',
+      extreme: 'The largest reading Crew 7 recorded'
+    },
     hints: [
       'Point P sits above one number on the bottom axis. It sits level with one on the side axis.',
       'On a chart of cars, point Q sits above 4 on the bottom axis. It is level with 12 on the side axis. The bottom axis is “Age, in years”. The side axis is “Price, in thousands of dollars”. So Q is one car, 4 years old, costing 12 thousand dollars. One point is one car, not a total.',
@@ -257,12 +256,9 @@ const QUESTIONS = [
     type: 'choice',
     title: 'Question 3 of 3',
     stem: 'Four crews plotted the same two variables. One crew’s chart shows a strong negative relationship. Which chart is theirs? Choose one.',
-    options: [
-      { key: 'opt_a', label: 'Chart A' },
-      { key: 'opt_b', label: 'Chart B' },
-      { key: 'opt_c', label: 'Chart C' },
-      { key: 'opt_d', label: 'Chart D' }
-    ],
+    byRole: {
+      opt_a: 'Chart A', opt_b: 'Chart B', opt_c: 'Chart C', opt_d: 'Chart D'
+    },
     hints: [
       'Read each chart from left to right. Ask which way the points travel, and how tidily.',
       'On four other charts, one showed a weak positive relationship. Its points travelled upwards from left to right, so the direction was positive. They were scattered widely rather than sitting near a line, so the strength was weak. Direction and strength are two separate questions about the same chart.',
@@ -271,7 +267,7 @@ const QUESTIONS = [
   }
 ];
 
-const tokens = {};
+const tokensStore = {};
 const host = document.querySelector('#cp-host');
 const finish = document.querySelector('#finish');
 
@@ -281,17 +277,22 @@ async function refreshFinish() {
     answers,
     studentId: profile.studentId,
     variant: profile.variant,
-    tokens,
+    tokens: tokensStore,
     nextRoom: 'l3'
   });
 }
 
 for (const question of QUESTIONS) {
-  mountCheckpoint(host, question, answers.checkpoints[question.id], {
+  mountCheckpoint(host, {
+    ...question,
+    stem: fill(question.stem, tokens),
+    hints: question.hints.map((h) => fill(h, tokens)),
+    options: optionsFor(set, question.id, question.byRole, tokens)
+  }, answers.checkpoints[question.id], {
     variant: profile.variant,
     studentId: profile.studentId,
     onDone: ({ id, token }) => {
-      tokens[id] = token;
+      tokensStore[id] = token;
       refreshFinish();
     }
   });

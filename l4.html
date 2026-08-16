@@ -87,10 +87,7 @@
 
   <section class="panel">
     <h2>Chart 4</h2>
-    <p>
-      This is the water Crew 7's household used in the shower on each day of one
-      week. Question 2 asks about it.
-    </p>
+    <p id="chart4-intro"></p>
     <figure class="room-chart" id="chart4"></figure>
   </section>
 
@@ -149,6 +146,7 @@
 <script type="module">
 import { getProfile } from './js/store.js';
 import { renderColumns } from './js/chart.js';
+import { loadDatasets, setFor, tokensFor, fill } from './js/dataset.js';
 import { mountCheckpoint } from './js/checkpoint.js';
 import { openRoom, mountFinish } from './js/room.js';
 
@@ -157,134 +155,119 @@ if (!profile) window.location.replace('index.html');
 
 const ROOM = 'l4';
 
-/* TODO(content): six variants at stage 7. Two things are load-bearing and must
-   survive the swap.
+/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first.
 
-   Chart 4: the column asked about stops exactly halfway between two gridlines,
-   so the reading takes one halving step rather than none. Thursday is 175 on an
-   axis ruled every 50. Sunday is halfway between two gridlines as well, so the
-   answering column is not the only one that looks like that.
-
-   Charts A, B and C: one set of numbers, three axes. A is honest, B starts
-   above zero, C starts at zero with steps that are not all the same size. Which
-   letter is the honest one rotates between variants.
-
-   On the no-plaintext-answers rule: Thursday's 175 is sitting right here in the
-   source, and it is the answer to cp4.2. That is unavoidable and it is not a
-   leak. A question of the form "read this value off this chart" has its answer
-   in the data that draws the chart, always; there is no version of this artefact
-   that does not. Finding it in the source costs a girl exactly as much effort as
-   reading it off the axis, and teaches her the same thing. What the rule protects
-   is the answer *key* - which of the seven columns is asked about, and what the
-   other eleven checkpoints want - and that is still hashes only. */
-const CHART4 = {
-  bars: [
-    { label: 'Mon', value: 100 },
-    { label: 'Tue', value: 150 },
-    { label: 'Wed', value: 90 },
-    { label: 'Thu', value: 175 },
-    { label: 'Fri', value: 200 },
-    { label: 'Sat', value: 120 },
-    { label: 'Sun', value: 225 }
-  ],
-  label: 'Water used in the shower', unit: 'litres',
-  categoryLabel: 'Day of the week',
-  title: 'Chart 4 — Crew 7’s week',
-  axis: { ticks: [0, 50, 100, 150, 200, 250] }
-};
-
-const TANK = [
-  { label: 'Mar', value: 238 },
-  { label: 'Apr', value: 241 },
-  { label: 'May', value: 245 },
-  { label: 'Jun', value: 250 },
-  { label: 'Jul', value: 248 },
-  { label: 'Aug', value: 252 }
-];
-
-const SCALES = [
-  { key: 'opt_a', letter: 'A', ticks: [0, 50, 100, 150, 200, 250, 300] },
-  { key: 'opt_b', letter: 'B', ticks: [235, 240, 245, 250, 255] },
-  { key: 'opt_c', letter: 'C', ticks: [0, 100, 200, 230, 240, 250, 260] }
-];
-
-/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
-const QUESTIONS = [
-  {
-    id: 'l4.cp1',
-    roomId: ROOM,
-    type: 'choice',
-    title: 'Question 1 of 3',
-    stem: 'A crew timed forty showers, each to the nearest tenth of a minute. They want one display that shows how those forty times are spread. Which display should they use? Choose one.',
-    options: [
-      { key: 'opt_a', label: 'A histogram' },
-      { key: 'opt_b', label: 'A dot plot' },
-      { key: 'opt_c', label: 'A pie chart' },
-      { key: 'opt_d', label: 'A box plot' }
-    ],
+   cp4.1 asks the same idea from two directions depending on her data set: three
+   variants meet measurements to a tenth, where almost nothing repeats and only a
+   histogram shows the spread; three meet whole numbers that repeat, where a dot
+   plot does. The stem changes with the set; the four options do not. */
+const SCENARIO = {
+  histogram: {
+    stem: 'A crew took forty readings of {ev}, each to the nearest tenth of a {evShort}. They want one display that shows how those forty readings are spread. Which display should they use? Choose one.',
     hints: [
       'Two things decide this. How many measurements are there, and how many of them repeat exactly?',
       'A crew counted how many people were in each of thirty houses. The answers were whole numbers from 1 to 6, so many repeated. A dot plot suited that: one dot per house, stacked over each number. Repeats are what make a dot plot work.',
-      'Times to the nearest tenth of a minute rarely repeat. So one option would draw forty separate dots in a row. Rule that one out. Of the three left, one shows every measurement grouped into equal intervals. The other two do not show the spread of all forty.'
+      'Readings to the nearest tenth rarely repeat. So one option would draw forty separate dots in a row. Rule that one out. Of the three left, one shows every measurement grouped into equal intervals. The other two do not show the spread of all forty.'
     ]
   },
-  {
-    id: 'l4.cp2',
-    roomId: ROOM,
-    type: 'numeric',
-    title: 'Question 2 of 3',
-    stem: 'Chart 4 shows the water used on each day of one week. Read the value for Thursday. Type the number, in litres, to the nearest 5 litres.',
+  dot: {
+    stem: 'A crew took thirty readings of {ev}, each a whole number, and many of them came out the same. They want one display that shows how those thirty readings are spread. Which display should they use? Choose one.',
     hints: [
-      'Find Thursday along the bottom of Chart 4. Follow its column upwards to the top.',
-      'On another chart the gridlines were 20 apart, at 40, 60 and 80. A column stopped halfway between 60 and 80. Half of 20 is 10. So the column was worth 70.',
-      'Thursday’s column stops between two gridlines. The gridline below it is 150. The gridlines on Chart 4 are 50 apart. The column stops halfway between them. One addition is left.'
-    ]
-  },
-  {
-    id: 'l4.cp3',
-    roomId: ROOM,
-    type: 'choice',
-    title: 'Question 3 of 3',
-    stem: 'Charts A, B and C show the same six measurements. One of them shows the size of the change honestly. Which one? Choose one.',
-    options: [
-      { key: 'opt_a', label: 'Chart A' },
-      { key: 'opt_b', label: 'Chart B' },
-      { key: 'opt_c', label: 'Chart C' },
-      { key: 'opt_d', label: 'All three, because they use the same numbers' }
-    ],
-    hints: [
-      'Look at where each vertical axis begins. Then look at the gaps between the numbers on it.',
-      'Two charts showed the same two columns, 82 and 84. The first axis ran from 81 to 85, and the taller column looked about three times the other. The second ran from 0 to 100, and the two columns looked almost the same. Both used the same numbers. Only one showed the size of the change honestly.',
-      'One of the three charts has a vertical axis that begins above zero. Rule it out. One of the charts has gaps between its numbers that are not all the same size. Rule that one out too. One chart and one other option are left. Only one of them can be right.'
+      'Two things decide this. How many measurements are there, and how many of them repeat exactly?',
+      'A crew timed forty showers to the nearest tenth of a minute. Almost none repeated, so a dot plot would have been forty single dots in a row and shown nothing. They grouped them into equal intervals instead. Repeats are what make a dot plot work.',
+      'Thirty whole numbers with plenty of repeats will stack. One option stacks one mark per reading above the number it landed on, and shows every reading. Of the others, one groups the readings and hides the individual ones, and two do not show the spread at all.'
     ]
   }
-];
+};
 
-const tokens = {};
+const tokensStore = {};
 
 function build(answers) {
   document.querySelector('#room').hidden = false;
 
-  const chart4 = renderColumns({ ...CHART4, width: 660, height: 420 });
+  const data = window.__h2oData;
+  const set = setFor(data, profile.variant);
+  const tokens = tokensFor(set);
+
+  document.querySelector('#chart4-intro').textContent =
+    `This is the ${tokens.rv} Crew 7 recorded on each day of one week. `
+    + 'Question 2 asks about it.';
+
+  const chart4 = renderColumns({
+    bars: set.week.bars,
+    label: set.rv, unit: set.rvUnit,
+    categoryLabel: 'Day of the week',
+    title: `Chart 4 — Crew 7’s week`,
+    axis: { ticks: set.week.ticks },
+    width: 660, height: 420
+  });
   document.querySelector('#chart4').append(chart4.svg);
 
   const scaling = document.querySelector('#scaling');
-  for (const scale of SCALES) {
+  for (const [key, ticks] of Object.entries(set.scales.axes)) {
     const figure = document.createElement('figure');
     figure.className = 'mini-chart';
     const caption = document.createElement('figcaption');
-    caption.textContent = `Chart ${scale.letter}`;
+    caption.textContent = `Chart ${key.slice(-1).toUpperCase()}`;
     figure.append(caption);
     const { svg } = renderColumns({
-      bars: TANK,
+      bars: set.scales.values,
       label: 'Water in the school tank', unit: 'kilolitres',
       categoryLabel: 'First of the month',
-      axis: { ticks: scale.ticks },
+      axis: { ticks },
       width: 340, height: 280
     });
     figure.append(svg);
     scaling.append(figure);
   }
+
+  const scenario = SCENARIO[set.display];
+  const QUESTIONS = [
+    {
+      id: 'l4.cp1',
+      roomId: ROOM,
+      type: 'choice',
+      title: 'Question 1 of 3',
+      stem: scenario.stem,
+      options: [
+        { key: 'opt_a', label: 'A histogram' },
+        { key: 'opt_b', label: 'A dot plot' },
+        { key: 'opt_c', label: 'A pie chart' },
+        { key: 'opt_d', label: 'A box plot' }
+      ],
+      hints: scenario.hints
+    },
+    {
+      id: 'l4.cp2',
+      roomId: ROOM,
+      type: 'numeric',
+      title: 'Question 2 of 3',
+      stem: 'Chart 4 shows the {rv} on each day of one week. Read the value for {targetDay}. Type the number, in {rvUnit}, to the nearest 5.',
+      hints: [
+        'Find {targetDay} along the bottom of Chart 4. Follow its column upwards to the top.',
+        'On another chart the gridlines were 20 apart, at 40, 60 and 80. A column stopped halfway between 60 and 80. Half of 20 is 10. So the column was worth 70.',
+        '{targetDay}’s column stops between two gridlines. The gridline below it is {gridBelow}. The gridlines on Chart 4 are {gridGap} apart. The column stops halfway between them. One addition is left.'
+      ]
+    },
+    {
+      id: 'l4.cp3',
+      roomId: ROOM,
+      type: 'choice',
+      title: 'Question 3 of 3',
+      stem: 'Charts A, B and C show the same six measurements. One of them shows the size of the change honestly. Which one? Choose one.',
+      options: [
+        { key: 'opt_a', label: 'Chart A' },
+        { key: 'opt_b', label: 'Chart B' },
+        { key: 'opt_c', label: 'Chart C' },
+        { key: 'opt_d', label: 'All three, because they use the same numbers' }
+      ],
+      hints: [
+        'Look at where each vertical axis begins. Then look at the gaps between the numbers on it.',
+        'Two charts showed the same two columns, 82 and 84. The first axis ran from 81 to 85, and the taller column looked about three times the other. The second ran from 0 to 100, and the two columns looked almost the same. Both used the same numbers. Only one showed the size of the change honestly.',
+        'One of the three charts has a vertical axis that begins above zero. Rule it out. One of the charts has gaps between its numbers that are not all the same size. Rule that one out too. One chart and one other option are left. Only one of them can be right.'
+      ]
+    }
+  ];
 
   const finish = document.querySelector('#finish');
   const refreshFinish = () => mountFinish(finish, {
@@ -292,22 +275,28 @@ function build(answers) {
     answers,
     studentId: profile.studentId,
     variant: profile.variant,
-    tokens,
+    tokens: tokensStore,
     nextRoom: 'l5'
   });
 
   const host = document.querySelector('#cp-host');
   for (const question of QUESTIONS) {
-    mountCheckpoint(host, question, answers.checkpoints[question.id], {
+    mountCheckpoint(host, {
+      ...question,
+      stem: fill(question.stem, tokens),
+      hints: question.hints.map((h) => fill(h, tokens))
+    }, answers.checkpoints[question.id], {
       variant: profile.variant,
       studentId: profile.studentId,
       onDone: ({ id, token }) => {
-        tokens[id] = token;
+        tokensStore[id] = token;
         refreshFinish();
       }
     });
   }
 }
+
+window.__h2oData = await loadDatasets();
 
 await openRoom({
   roomId: ROOM,

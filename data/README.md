@@ -25,5 +25,16 @@ Verify the committed files match their sources (this runs before any merge to `m
 node scripts/build-data.mjs --check
 ```
 
-`datasets.json` is hand-written content and IS committed. It holds no answers, only the
-six variants of each dataset. Format in `docs/DATA_CONTRACTS.md`.
+`datasets.json` IS committed and holds no answers, only the six variants of each
+dataset. It is **generated**, together with `private/answers.json`, from one set of
+definitions:
+
+```
+node scripts/make-datasets.mjs     rebuild both from the definitions
+node scripts/check-datasets.mjs    verify the data agrees with the key
+node scripts/build-data.mjs        hash the key into data/answers.json
+```
+
+Run all three in that order after any content change. Do not hand-edit either output:
+the whole point is that the number a chart draws and the number the key accepts come
+from the same line of source. Format in `docs/DATA_CONTRACTS.md`.

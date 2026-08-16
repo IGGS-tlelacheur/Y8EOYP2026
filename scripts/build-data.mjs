@@ -177,8 +177,10 @@ for (const p of usable) {
   seen.set(p.id, true);
 }
 
+// Spare passwords with no ID beside them: 200 were generated and the leftovers
+// were never deleted. Confirmed 17/08/2026, so this is a count and not a warning.
 if (skipped.length) {
-  console.warn(`note: ${skipped.length} row(s) skipped for a blank ID or password: lines ${skipped.join(', ')}`);
+  console.log(`  ${skipped.length} row(s) had a password but no ID and were skipped (lines ${skipped.join(', ')})`);
 }
 
 // `i` is her studentId, the same value the browser derives from her ID alone and

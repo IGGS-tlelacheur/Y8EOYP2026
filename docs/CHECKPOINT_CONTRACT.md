@@ -132,10 +132,9 @@ whole ladder she has climbed.
 
 ### She may also just ask
 
-*(Proposed amendment, built 16/08/2026, reject it and I will take it out.)* Every
-checkpoint carries an **I need a hint** button beside the answer button. It fires
-the next rung and **counts as an attempt**, so four presses reach the answer
-exactly as four wrong answers would.
+*(Settled 17/08/2026 — kept.)* Every checkpoint carries an **I need a hint**
+button beside the answer button. It fires the next rung and **counts as an
+attempt**, so four presses reach the answer exactly as four wrong answers would.
 
 Without it the only route to a hint is a wrong answer, which teaches a girl to
 guess at a question she knows she cannot do — a bad habit to build, and a worse
