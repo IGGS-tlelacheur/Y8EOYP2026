@@ -23,7 +23,7 @@ import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
 
-/* Deterministic, so a rebuild does not silently reshuffle a girl's dataset.
+/* Deterministic, so a rebuild does not silently reshuffle a student's dataset.
    Seeded per variant and per artefact. */
 function rng(seed) {
   let a = seed >>> 0;
@@ -103,7 +103,7 @@ const roundTo = (v, step) => Math.round(v / step) * step;
 /* ---- the six variants ----------------------------------------------------- */
 
 /* Order is the client's confirmed list of 17/08/2026. Index 4 - "Data set 5" on
-   her hub - is the negative one, as required. */
+   their hub - is the negative one, as required. */
 const VARIANTS = [
   {
     theme: 'Rainfall and reservoir inflow',
@@ -173,8 +173,8 @@ const VARIANTS = [
 const KEYS = ['opt_a', 'opt_b', 'opt_c', 'opt_d'];
 
 /* Which of the four plots in cp2.3 is the strong negative one, and which of the
-   three scalings in cp4.3 is honest, both move between variants. A girl who is
-   told "it was C" by the crew at the next table learns nothing that helps her. */
+   three scalings in cp4.3 is honest, both move between variants. A student who is
+   told "it was C" by the crew at the next table learns nothing that helps them. */
 const FOUR_ANSWER = ['opt_c', 'opt_a', 'opt_b', 'opt_d', 'opt_a', 'opt_c'];
 const SCALE_ANSWER = ['opt_b', 'opt_c', 'opt_a', 'opt_c', 'opt_b', 'opt_a'];
 
@@ -215,7 +215,7 @@ VARIANTS.forEach((v, i) => {
   const at = (x) => v.m * x + v.c;
 
   /* Two points ON the line for the gradient question. Both land on whole numbers
-     by construction, so she is reading coordinates and not estimating them. */
+     by construction, so they are reading coordinates and not estimating them. */
   const marked = [[v.markA, at(v.markA)], [v.markB, at(v.markB)]];
   if (!Number.isInteger(marked[0][1]) || !Number.isInteger(marked[1][1])) {
     throw new Error(`variant ${i + 1}: marked points are not whole numbers`);
@@ -223,8 +223,8 @@ VARIANTS.forEach((v, i) => {
 
   /* P is a real data point, mid-range on both axes so that "the largest" and
      "the longest" are both false of it, and never at an x that another question
-     asks her to read - a circled point sitting exactly where Lesson 5 says "go
-     up from here" invites her to read the point instead of the line. */
+     asks them to read - a circled point sitting exactly where Lesson 5 says "go
+     up from here" invites them to read the point instead of the line. */
   const ys = points.map((q) => q[1]).sort((a, b) => a - b);
   const xsSorted = points.map((q) => q[0]).sort((a, b) => a - b);
   const busyX = new Set([v.readAt, v.beyondAt, v.markA, v.markB]);
@@ -360,7 +360,7 @@ VARIANTS.forEach((v, i) => {
   const pMeaning = ['opt_b', 'opt_a', 'opt_a', 'opt_c', 'opt_b', 'opt_d'][i];
 
   /* Which slot holds which kind of option, so the correct one is not always in
-     the same place. Publishing this order gives nothing away: she can read all
+     the same place. Publishing this order gives nothing away: they can read all
      four on screen anyway, and knowing which is right still means doing the
      maths. The answer itself stays a hash. */
   const place = (correctKey, roles) => {

@@ -9,8 +9,8 @@ All hashing is SHA-256 via `crypto.subtle.digest`, hex-encoded lowercase.
 
 ## 1. Identity
 
-Two fields at the door: her **school ID** and a **password**. The ID decides who she
-is; the password only opens the door.
+Two fields at the door: their **school ID** and a **password**. The ID decides who they
+are; the password only opens the door.
 
 ```js
 normaliseId(input)        → trim → lowercase → strip everything not [a-z0-9]
@@ -23,10 +23,10 @@ variant   = parseInt(studentId.slice(0, 8), 16) % 6
 ```
 
 **`studentId` is derived from the ID alone, never the password.** A password that is
-changed or retyped in a different case must not change her dataset variant or any vault
-code she has already written down.
+changed or retyped in a different case must not change their dataset variant or any vault
+code they have already written down.
 
-The password is checked **separately**, against her own entry:
+The password is checked **separately**, against their own entry:
 
 ```js
 passwordHash = PBKDF2-SHA256(normalisePassword(pw),
@@ -36,20 +36,20 @@ passwordHash = PBKDF2-SHA256(normalisePassword(pw),
 Login is two steps, and each has its own message:
 
 1. Is `studentId` on the roll? If not — *"That ID is not on the list."*
-2. Does `passwordHash` match her entry? If not — *"That password does not match that ID."*
+2. Does `passwordHash` match their entry? If not — *"That password does not match that ID."*
 
 **Split rather than combined, settled 17/08/2026.** Hashing `id + ':' + password`
 together would hide which IDs are on the roll, but it also makes the roll unable to
-answer *is this person here?* — so a girl who mistypes her ID is sent hunting for a
-password that was never the problem, and staff cannot confirm an ID for the girl who has
-forgotten hers.
+answer *is this person here?* — so a student who mistypes their ID is sent hunting for a
+password that was never the problem, and staff cannot confirm an ID for the student who has
+forgotten theirs.
 
 The cost, stated plainly: `i` is a bare SHA-256 over an ID space of a few tens of
 thousands, so anyone holding this file can work out which IDs are on the roll. School IDs
 are not secret, nothing sensitive sits behind them, and the original design published the
 same thing. Accepted by the client.
 
-**Each password is salted with her own `studentId`** as well as the file salt. That is
+**Each password is salted with their own `studentId`** as well as the file salt. That is
 free, and it means two people handed the same water word get different hashes, so the
 file never reveals that a password is shared.
 
@@ -75,9 +75,9 @@ The cohort allowlist. Hashes only. Safe to publish.
 }
 ```
 
-- `i` — her `studentId`, `sha256(normaliseId(id))`. The same value the browser derives
-  from her ID alone and the same one every vault token is built on.
-- `p` — her stretched password hash, salted with `salt + ':' + i`.
+- `i` — their `studentId`, `sha256(normaliseId(id))`. The same value the browser derives
+  from their ID alone and the same one every vault token is built on.
+- `p` — their stretched password hash, salted with `salt + ':' + i`.
 - `r` — `student` or `staff`. Staff and students share one roll.
 - **Sorted by `i`**, so the published order says nothing about class lists.
 - **The salt must never be regenerated** once the roll is live: doing so invalidates
@@ -135,12 +135,12 @@ Rerun the generator rather than editing either file by hand.
 ```
 
 `sets` always has exactly six entries, indexed 0–5, matching `variant`. Index 4 —
-"Data set 5" on her hub — is the negative relationship, as settled with the client.
+"Data set 5" on their hub — is the negative relationship, as settled with the client.
 
 Units are mandatory on every axis. A dataset without units is a bug, not a style choice.
 
 **`roles` is the option ordering**, so the correct answer is not always in the same
-slot. Publishing it gives nothing away: she can read all four options on screen
+slot. Publishing it gives nothing away: they can read all four options on screen
 anyway, and knowing which is right still means doing the maths. The answer stays a
 hash in `answers.json`.
 
@@ -185,7 +185,7 @@ Hashes only. Never plaintext, in any branch, at any time.
   values and exist only to be matched against.
 - Every variant of a checkpoint must accept the same *number* of values, or the six data
   sets are not the same question. `build-data.mjs` refuses to build otherwise.
-- `round`: decimal places, numeric only. The client rounds her input the same way before
+- `round`: decimal places, numeric only. The client rounds their input the same way before
   hashing. State the rounding rule in the question stem.
 - `search`: `{ min, max, step }`, **required on every numeric checkpoint**. It is the band
   hint 4 walks to recover the answer, because a hash does not invert. Publishing it is
@@ -214,13 +214,13 @@ token = sha256(variants[i][0] + studentId + checkpointId)
 ```
 
 Ambiguous glyphs are excluded deliberately: no `I`, `O`, `0`, `1`, `S`, `5`. A student
-reading a code off her own screen and typing it into the next room should not lose ten
+reading a code off their own screen and typing it into the next room should not lose ten
 minutes to a letter that looks like a digit. Thirty is not a power of two, so the
 characters are taken by modulo rather than by masking bits.
 
-**The seed is always `variants[i][0]`, never the value she actually typed.** A checkpoint
+**The seed is always `variants[i][0]`, never the value they actually typed.** A checkpoint
 that accepts five values would otherwise mint five tokens and five vault codes, four of
-which open nothing — two girls both right, one locked out.
+which open nothing — two students both right, one locked out.
 
 ```js
 vault = token1 + '-' + token2 + '-' + token3
@@ -244,13 +244,13 @@ stored anywhere.**
 'h2o.v1.responses'= { schema:1, items:{ 'l2.fountains': { value, at } } }
 ```
 
-`h2o.v1.responses` holds her answers to items that are **never gated and never marked** —
+`h2o.v1.responses` holds their answers to items that are **never gated and never marked** —
 the ice creams and drinking fountains reading in L2 above all. It is kept apart from
 `progress` so that an ungated item can never be counted as a checkpoint.
 
 `response` stores the student's own submitted answer text. **Lesson 6 reads
-`progress.rooms.l2.checkpoints.cpN.response` to quote her back at herself.** If it is
-absent, L6 must degrade to the generic wording and must not invent an answer she never
+`progress.rooms.l2.checkpoints.cpN.response` to quote them back at themselves.** If it is
+absent, L6 must degrade to the generic wording and must not invent an answer they never
 gave.
 
 ### IndexedDB — `h2o-charts`
@@ -297,10 +297,10 @@ File System Access API against a handle persisted in IndexedDB.
 
 - Every field carries its own authorship. That is the crew's working record and your
   per-student contribution evidence.
-- **`members` is keyed by `studentId`**, one entry per girl. Added 16/08/2026 by
+- **`members` is keyed by `studentId`**, one entry per student. Added 16/08/2026 by
   `docs/STORAGE_AMENDMENT.md` §4. It holds the only two things in the programme that
-  cannot be worked out again: the rows she measured by hand, and her Lesson 2 Claim B
-  answer, which Lesson 6 quotes back at her four weeks later.
+  cannot be worked out again: the rows they measured by hand, and their Lesson 2 Claim B
+  answer, which Lesson 6 quotes back at them four weeks later.
   - Written by `js/cardfile.js` from `tools/table.html` and `l2.html` **at the moment
     they are made**, not at export time, and never through `card.html`.
   - The amendment says "a `members[]` array keyed by `studentId`". An array keyed by a

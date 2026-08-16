@@ -4,7 +4,7 @@
    The gate is deliberately thin. A student who reads the source finds hashes,
    and CLAUDE.md settles that this is sufficient - effort goes into the hint
    ladder instead. What this file must get right is the opposite case: never
-   locking out a girl who has done the work. */
+   locking out a student who has done the work. */
 
 import {
   checkVault, checkBypass, vaultFrom, formatVault
@@ -78,7 +78,7 @@ export function deliverableFor(badge) {
 /* ---- the gate ------------------------------------------------------------- */
 
 /* Returns true when the room is open. A room with no code before it is always
-   open, and so is one already unlocked or bypassed - a girl who cleared the door
+   open, and so is one already unlocked or bypassed - a student who cleared the door
    on Tuesday does not type the code again on Thursday. */
 export function isOpen(roomId) {
   if (!OPENS_WITH[roomId]) return true;
@@ -146,11 +146,11 @@ export async function mountLock(host, { roomId, answers, studentId, variant, onO
 }
 
 /* Fetches the answer file and works the lock, in that order, and says something
-   she can act on if either fails.
+   they can act on if either fails.
 
    Rooms L3 to L5 keep their whole body hidden until the door is through, so an
-   exception anywhere in here would leave a girl looking at a blank page with no
-   way to tell whether the room is locked, broken, or her fault. */
+   exception anywhere in here would leave a student looking at a blank page with no
+   way to tell whether the room is locked, broken, or their fault. */
 export async function openRoom({ roomId, lock, studentId, variant, onOpen }) {
   try {
     const response = await fetch('data/answers.json', { cache: 'no-cache' });

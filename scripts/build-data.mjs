@@ -10,7 +10,7 @@
 // Sources (git-ignored, see data/README.md):
 //   private/roll.csv       ID,Staff_Student,Password with a header row. One line
 //                          per person, students and staff alike. The ID drives
-//                          her dataset variant and every vault code; the password
+//                          their dataset variant and every vault code; the password
 //                          only opens the door.
 //   private/answers.json   plaintext answer key, shape documented below
 //
@@ -55,7 +55,7 @@ function normalisePassword(input) {
 }
 
 // Must match derivePasswordHash() in js/vault.js. PBKDF2-SHA256 over the
-// password alone, salted with the published salt and her own studentId.
+// password alone, salted with the published salt and their own studentId.
 function passwordHash(studentId, password, salt, iterations) {
   return pbkdf2Sync(normalisePassword(password), `${salt}:${studentId}`, iterations, 32, 'sha256')
     .toString('hex');
@@ -183,7 +183,7 @@ if (skipped.length) {
   console.log(`  ${skipped.length} row(s) had a password but no ID and were skipped (lines ${skipped.join(', ')})`);
 }
 
-// `i` is her studentId, the same value the browser derives from her ID alone and
+// `i` is their studentId, the same value the browser derives from their ID alone and
 // the same one every vault token is built on. Sorted by it, so the published
 // order carries nothing about class lists.
 const people = usable

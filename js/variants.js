@@ -1,5 +1,5 @@
 /* Which of the six dataset variants a student gets.
-   Derived from her studentId, so it is the same on any laptop, on any day, and
+   Derived from their studentId, so it is the same on any laptop, on any day, and
    after any number of cleared caches. Nothing about it is random or stored. */
 
 export const VARIANT_COUNT = 6;
@@ -13,7 +13,7 @@ export function assignVariant(studentId) {
 
 /* Pulls one student's slice out of a datasets.json entry. Throws rather than
    falling back to variant 0: a missing variant is a data bug, and silently
-   handing six girls the same numbers would hide it until the vault codes clash. */
+   handing six students the same numbers would hide it until the vault codes clash. */
 export function variantOf(set, variant) {
   const chosen = set?.variants?.[variant];
   if (!chosen) throw new Error(`no variant ${variant} in dataset`);

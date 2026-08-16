@@ -1,6 +1,6 @@
 /* Checkpoints and hint ladders.
 
-   One checkpoint is: a question about her own variant, an answer of one of three
+   One checkpoint is: a question about their own variant, an answer of one of three
    shapes, and a four-rung ladder that fires on wrong attempts. Rules are fixed by
    docs/CHECKPOINT_CONTRACT.md and the questions themselves live in the room, not
    here - this file knows how a checkpoint behaves, never what it asks.
@@ -13,7 +13,7 @@ import {
 import { recordCheckpoint, getRoom } from './store.js';
 
 /* Rungs fire at 1, 2, 3 and 4 wrong attempts, and stay on screen once fired:
-   rung 2 does not replace rung 1. She can see the whole ladder she has climbed,
+   rung 2 does not replace rung 1. They can see the whole ladder they have climbed,
    which is also the only way rung 3 makes sense - it refers back to rung 2. */
 const RUNGS = 4;
 
@@ -22,7 +22,7 @@ const RUNGS = 4;
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  /* textContent, never innerHTML. Some of these strings are hers. */
+  /* textContent, never innerHTML. Some of these strings are theirs. */
   if (text !== undefined) node.textContent = text;
   return node;
 }
@@ -80,7 +80,7 @@ function rungNode(n, text) {
      { id, roomId, type, stem, options?, answerNote }
    `record` is the matching entry from data/answers.json.
 
-   onDone fires once, the first time she gets it right or reaches rung four. */
+   onDone fires once, the first time they get it right or reach rung four. */
 export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }) {
   const room = getRoom(cp.roomId);
   const prior = room.checkpoints?.[cp.id];
@@ -103,8 +103,8 @@ export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }
   submit.type = 'button';
 
   /* Asking for help should not require pretending to answer. The contract fires
-     rungs on wrong attempts, which leaves a girl who is stuck with guessing as
-     her only route to a hint - a bad thing to teach and a worse thing to leave
+     rungs on wrong attempts, which leaves a student who is stuck with guessing as
+     their only route to a hint - a bad thing to teach and a worse thing to leave
      in a room with no teacher in it. Asking costs exactly what a wrong answer
      costs, so the ladder still ends at rung four either way.
      Proposed amendment to CHECKPOINT_CONTRACT.md §4. */
@@ -153,8 +153,8 @@ export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }
     onDone?.({ id: cp.id, token, assisted });
   }
 
-  /* Rung four does not scold and does not explain. It says the answer, gives her
-     the token, and lets her move. The badge is not withheld - `assisted` is
+  /* Rung four does not scold and does not explain. It says the answer, gives them
+     the token, and lets them move. The badge is not withheld - `assisted` is
      recorded for staff, and the room never uses the word. */
   async function openRungFour() {
     const answer = cp.type === 'numeric'
@@ -162,7 +162,7 @@ export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }
       : await revealFromOptions(record, variant, cp.options.map((o) => o.key));
 
     if (answer === null) {
-      /* The page and the data disagree - a build error, not her mistake. */
+      /* The page and the data disagree - a build error, not their mistake. */
       say('This one is not working. Tell your teacher, then move on to the next question.', 'problem');
       return;
     }
@@ -241,8 +241,8 @@ export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }
   submit.addEventListener('click', attempt);
   help.addEventListener('click', askForHint);
 
-  /* Enter submits a typed answer, because she will press it whether or not we
-     planned for her to. */
+  /* Enter submits a typed answer, because they will press it whether or not we
+     planned for them to. */
   if (input.field) {
     input.field.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
@@ -252,8 +252,8 @@ export function mountCheckpoint(host, cp, record, { variant, studentId, onDone }
     });
   }
 
-  /* Coming back to a room she has already finished: show it done rather than
-     inviting her to answer it again. Her token is regenerated, never stored. */
+  /* Coming back to a room they have already finished: show it done rather than
+     inviting them to answer it again. Their token is regenerated, never stored. */
   if (settled) {
     say('You finished this one.', 'good');
     (async () => {

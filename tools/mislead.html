@@ -108,7 +108,7 @@ import { renderColumns } from '../js/chart.js';
 
 /* Six readings that barely move. The whole exercise depends on the honest story
    being dull: if the real change were dramatic there would be nothing to
-   exaggerate, and she would never feel the gap between the two charts. */
+   exaggerate, and they would never feel the gap between the two charts. */
 const READINGS = [
   { label: 'Mar', value: 238 },
   { label: 'Apr', value: 241 },
@@ -163,7 +163,7 @@ function draw(host, ticks, rows, caption) {
 
 /* How much taller the tallest column looks than the shortest, in pixels. This is
    the number that makes the point: the readings differ by six per cent whatever
-   she does, and this can be made to say five hundred. */
+   they do, and this can be made to say five hundred. */
 function apparentRatio(ticks, rows) {
   const lo = ticks[0];
   const hi = ticks[ticks.length - 1];

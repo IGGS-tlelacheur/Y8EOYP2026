@@ -191,7 +191,7 @@ form.addEventListener('submit', async (event) => {
 
     const roll = await loadRoll('data/roll.json');
 
-    /* The ID is checked on its own first, so a girl who has mistyped it is told
+    /* The ID is checked on its own first, so a student who has mistyped it is told
        so instead of being sent to hunt for a password that was never the
        problem. That costs us the fact that the roll can be enumerated, which the
        client has accepted: school IDs are not secret and nothing sensitive sits
@@ -214,8 +214,8 @@ form.addEventListener('submit', async (event) => {
 
     /* Asked for here because it has to follow a user gesture, and signing in is
        the only one that happens on this page. Never gated on, never shown to
-       her, and never allowed to hold up the door - a browser that refuses to
-       answer must not keep her out of the hub.
+       them, and never allowed to hold up the door - a browser that refuses to
+       answer must not keep them out of the hub.
        docs/STORAGE_AMENDMENT.md §3. */
     await requestPersistence();
 
@@ -228,8 +228,8 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
-/* A password she cannot see is a password she cannot fix a typo in, and this one
-   is a word about water, not a secret worth hiding from the girl next to her. */
+/* A password they cannot see is a password they cannot fix a typo in, and this one
+   is a word about water, not a secret worth hiding from the student next to them. */
 const passwordField = document.querySelector('#password');
 document.querySelector('#show-password').addEventListener('click', (event) => {
   const button = event.currentTarget;

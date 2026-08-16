@@ -182,7 +182,7 @@ import {
 } from '../js/chart.js';
 import { getProfile, getTableData, putChart } from '../js/store.js';
 
-/* The Card's worked example A, so the numbers here are ones the girls have
+/* The Card's worked example A, so the numbers here are ones the students have
    already met on paper rather than something new to decode.
    TODO(content): reconstructed from the plotted points in
    docs/reference-data-evidence-card.html, because the Card ships as a picture
@@ -268,7 +268,7 @@ document.querySelector('#use-table').addEventListener('click', () => {
     return say('There is nothing in your collection table yet. Build it first, then come back.', 'problem');
   }
   /* An empty cell has to be dropped before Number() sees it. Number('') is 0
-     and 0 is a perfectly finite number, so a measurement she never took would
+     and 0 is a perfectly finite number, so a measurement they never took would
      otherwise arrive as a real zero and drag the fit line down with it. */
   const complete = data.rows.filter((row) =>
     [0, 1].every((i) => String(row[i] ?? '').trim() !== '')
@@ -431,9 +431,9 @@ function showPrediction() {
   document.querySelector('#predict-why').hidden = !beyond;
 
   if (beyond) {
-    /* How far past her own evidence, said in her units and her numbers. She can
-       check this arithmetic herself, which a confidence interval would not let
-       her do. */
+    /* How far past their own evidence, said in their units and their numbers. They can
+       check this arithmetic themselves, which a confidence interval would not let
+       them do. */
     const past = state.predictX > range.xMax
       ? state.predictX - range.xMax
       : range.xMin - state.predictX;
@@ -443,7 +443,7 @@ function showPrediction() {
     document.querySelector('#predict-reach').textContent =
       `You measured up to ${roundSensibly(edge)}${unit}. This is ${roundSensibly(past)}${unit} past that.`;
 
-    /* Past the width of her own data the guess is doing more work than the
+    /* Past the width of their own data the guess is doing more work than the
        evidence is, and the label says so. */
     const span = range.xMax - range.xMin;
     const stretched = span > 0 && past > span;
@@ -512,7 +512,7 @@ function render() {
     chart = renderChart(spec());
     wrap.replaceChildren(chart.svg);
 
-    /* Focus is lost when the SVG is replaced, which would strand a girl driving
+    /* Focus is lost when the SVG is replaced, which would strand a student driving
        the handles from the keyboard mid-nudge. */
     if (focusedHandle) {
       chart.svg.querySelector(`[data-handle="${focusedHandle}"]`)?.focus();
@@ -540,7 +540,7 @@ wrap.addEventListener('pointerdown', (event) => {
 });
 
 /* Handles stay inside the axes. Dragged off the edge a handle stops being
-   drawn, and a girl cannot grab back something she cannot see. */
+   drawn, and a student cannot grab back something they cannot see. */
 function clampToAxes(point) {
   if (!chart) return point;
   return {

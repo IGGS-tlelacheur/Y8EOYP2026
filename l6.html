@@ -161,10 +161,10 @@ const { svg } = renderChart({
 });
 document.querySelector('#chart-fountains').append(svg);
 
-/* ---- her own answer, quoted back ----------------------------------------- */
+/* ---- their own answer, quoted back ----------------------------------------- */
 
 /* localStorage first, then the crew's card file, then nothing at all. The room
-   must never print an empty quotation mark: a girl who is shown "In Lesson 2 you
+   must never print an empty quotation mark: a student who is shown "In Lesson 2 you
    said ''" has been accused of saying nothing, and the moment this room exists
    for is gone. docs/STORAGE_AMENDMENT.md §4. */
 async function recallClaimB() {
@@ -181,7 +181,7 @@ async function recallClaimB() {
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  /* textContent, never innerHTML. This one is hers. */
+  /* textContent, never innerHTML. This one is theirs. */
   if (text !== undefined) node.textContent = text;
   return node;
 }
@@ -201,7 +201,7 @@ if (said) {
     + 'water drunk from the fountains goes up too. Strong, and positive.'));
 }
 
-/* ---- her answer to the ban question -------------------------------------- */
+/* ---- their answer to the ban question -------------------------------------- */
 
 const ban = document.querySelector('#ban');
 const savedBan = getResponses()['l6.ban'];
@@ -226,7 +226,7 @@ document.querySelector('#save-ban').addEventListener('click', () => {
 
 /* TODO(content): the client has these to write. These are mine, drafted so the
    room is usable, and every one of them is an opening rather than an opinion -
-   a starter that finishes its own sentence does the thinking for her. */
+   a starter that finishes its own sentence does the thinking for them. */
 const STARTERS = [
   'We asked whether … and we measured it by …',
   'Our chart shows a … relationship, which means that as … goes up, … tends to …',

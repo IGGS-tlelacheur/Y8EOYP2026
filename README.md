@@ -58,7 +58,7 @@ scripts/              author-time only, never runs in a browser
 ## Non-negotiables
 
 No framework. No build step. No runtime dependencies. No backend. Nothing about a
-student leaves her laptop. No plaintext answers or unlock codes anywhere in the repo.
+student leaves their laptop. No plaintext answers or unlock codes anywhere in the repo.
 
 Full reasoning in `CLAUDE.md`.
 

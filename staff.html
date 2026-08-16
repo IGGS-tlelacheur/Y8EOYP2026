@@ -24,15 +24,15 @@
   <div class="msg" id="who"></div>
 
   <p class="note no-print">
-    This page is not secret and not locked. It is simply not linked from anywhere a
-    student goes. It holds no answers — those are on the printed sheet.
+    This page is not secret and not locked. Nothing links to it from anywhere a
+    student goes, and it holds no answers — those are on the printed sheet.
   </p>
 
   <section class="panel">
     <h2>What each room is asking for</h2>
     <p>
       You do not need to know the mathematics to answer “is this good enough?”.
-      Everything below is something you can see on her screen.
+      Everything below is something you can see on the student's screen.
     </p>
     <div id="cribs"></div>
   </section>
@@ -55,13 +55,13 @@
     <h2>This laptop</h2>
     <div id="student"></div>
     <div class="actions">
-      <a class="btn secondary" href="certificate.html">Her certificate</a>
+      <a class="btn secondary" href="certificate.html">This certificate</a>
       <button class="btn secondary" type="button" id="refresh">Read it again</button>
     </div>
   </section>
 
   <section class="panel no-print">
-    <h2>Open a room for her</h2>
+    <h2>Open a room for a student</h2>
     <p>
       Use the staff code for that room, from the printed sheet. It opens the room
       without a student code and is recorded, so you can see later that it was used.
@@ -86,14 +86,14 @@
   </section>
 
   <section class="panel no-print">
-    <h2>Move her work, or start it again</h2>
+    <h2>Move this student's work, or start it again</h2>
     <p>
-      Her badges, her codes and her data set all come back on their own when she
-      signs in — they are worked out from her ID. Only her typed sentences and her
-      collection table need the file.
+      Badges, codes and the data set all come back on their own at the next sign-in —
+      they are worked out from the student's ID. Only typed sentences and the collection
+      table need the file.
     </p>
     <div class="actions">
-      <button class="btn" type="button" id="export">Export her work</button>
+      <button class="btn" type="button" id="export">Export this work</button>
       <label class="btn secondary" for="import" style="cursor:pointer;">Import a .h2o file</label>
       <input type="file" id="import" accept=".h2o,application/json" hidden>
     </div>
@@ -110,13 +110,13 @@
         <option value="l4">Lesson 4</option>
         <option value="l5">Lesson 5</option>
       </select>
-      <button class="btn secondary" type="button" id="reset-all">Sign her out and wipe this laptop</button>
+      <button class="btn secondary" type="button" id="reset-all">Sign them out and wipe this laptop</button>
     </div>
     <div class="msg" id="reset-msg" hidden></div>
   </section>
 
   <section class="panel no-print">
-    <h2>If her work has vanished</h2>
+    <h2>If a student's work has vanished</h2>
     <p class="note">
       What this browser says about its own storage. Useful only when something has
       already gone wrong.
@@ -165,11 +165,11 @@ if (!profile) {
 } else if (profile.role === 'staff') {
   who.className = 'msg good';
   who.append(el('span', 'mark', '✓'), el('span', null,
-    `Signed in as ${profile.display}, staff. Sign in as the student to use the buttons on her work.`));
+    `Signed in as ${profile.display}, staff. Sign in as the student to use the buttons on their work.`));
 } else {
   who.className = 'msg';
   who.append(el('span', 'mark', '!'), el('span', null,
-    `Signed in as ${profile.display}, ${profile.crew}, data set ${profile.variant + 1} of 6. Everything below acts on her work on this laptop.`));
+    `Signed in as ${profile.display}, ${profile.crew}, data set ${profile.variant + 1} of 6. Everything below acts on their work on this laptop.`));
 }
 
 /* ---- crib notes ----------------------------------------------------------- */
@@ -197,7 +197,7 @@ for (const crib of CRIBS) {
   box.append(list);
 
   const said = el('p', 'crib-say');
-  said.append(el('b', null, 'If she is stuck, say: '), document.createTextNode(crib.sayThis));
+  said.append(el('b', null, 'If they are stuck, say: '), document.createTextNode(crib.sayThis));
   box.append(said);
 
   const dont = el('p', 'crib-dont');
@@ -288,7 +288,7 @@ document.querySelector('#bypass-go').addEventListener('click', async (event) => 
     const answers = await (await fetch('data/answers.json', { cache: 'no-cache' })).json();
     const opened = await staffOpen(room, code, answers);
     if (opened) {
-      say('#bypass-msg', `${room.toUpperCase()} is open on this laptop. She can go straight in.`, 'good');
+      say('#bypass-msg', `${room.toUpperCase()} is open on this laptop. They can go straight in.`, 'good');
       paintStudent();
     } else {
       say('#bypass-msg', 'That code does not match that room. Check you have the right line on the sheet.', 'problem');
@@ -307,7 +307,7 @@ document.querySelector('#export').addEventListener('click', async (event) => {
   button.disabled = true;
   try {
     const bytes = await exportToFile();
-    say('#move-msg', `Exported ${Math.max(1, Math.round(bytes / 1024))} KB. Put it on her drive or a stick.`, 'good');
+    say('#move-msg', `Exported ${Math.max(1, Math.round(bytes / 1024))} KB. Put it on their drive or a stick.`, 'good');
   } catch {
     say('#move-msg', 'That did not download. Try again, or use the hub.', 'problem');
   } finally {
@@ -358,13 +358,13 @@ arm(document.querySelector('#reset-room'), 'Press again to reset that room', asy
   delete progress.rooms[room];
   window.localStorage.setItem('h2o.v1.progress',
     JSON.stringify({ schema: 1, rooms: progress.rooms }));
-  say('#reset-msg', `${room.toUpperCase()} reset. Her badge for it stays — badges are not taken back.`, 'good');
+  say('#reset-msg', `${room.toUpperCase()} reset. Their badge for it stays — badges are not taken back.`, 'good');
   paintStudent();
 });
 
 arm(document.querySelector('#reset-all'), 'Press again to wipe this laptop', async () => {
   await clearEverything();
-  say('#reset-msg', 'Wiped. She will need to sign in again, and her codes and badges will come back.', 'good');
+  say('#reset-msg', 'Wiped. They will need to sign in again, and their codes and badges will come back.', 'good');
   paintStudent();
 });
 

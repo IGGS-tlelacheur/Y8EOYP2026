@@ -1,6 +1,6 @@
-/* Her data set, and the words that go with it.
+/* Their data set, and the words that go with it.
 
-   data/datasets.json holds six of everything. This file picks her one and turns
+   data/datasets.json holds six of everything. This file picks the right one and turns
    it into the tokens a room substitutes into its question wording, so that one
    authored stem serves all six variants rather than six stems drifting apart.
 
@@ -14,7 +14,7 @@ export async function loadDatasets(url = 'data/datasets.json') {
 }
 
 /* Throws rather than falling back to set 1. A missing variant is a data bug, and
-   quietly handing six girls the same numbers would hide it until their vault
+   quietly handing six students the same numbers would hide it until their vault
    codes clashed. */
 export function setFor(data, variant) {
   const chosen = data?.sets?.[variant];

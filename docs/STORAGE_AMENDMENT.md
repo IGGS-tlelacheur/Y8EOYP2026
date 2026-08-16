@@ -63,15 +63,15 @@ result. Its only effect is to move the origin out of best-effort eviction under 
 pressure. **Never gate anything on the result** and never surface it to a student.
 
 Surface it on `staff.html` only, alongside a `navigator.storage.estimate()` readout,
-as a diagnostic for the girl whose work has vanished.
+as a diagnostic for the student whose work has vanished.
 
 ---
 
 ## 4. The two things that must not be lost
 
 Everything else in `h2o.v1.*` is reconstructible. Vault codes are a function of
-`studentId` and the canonical answer, so a girl who logs in again on any device and
-redoes a checkpoint gets the identical token. Losing progress costs her time, not
+`studentId` and the canonical answer, so a student who logs in again on any device and
+redoes a checkpoint gets the identical token. Losing progress costs them time, not
 work.
 
 Two items are not reconstructible:
@@ -79,7 +79,7 @@ Two items are not reconstructible:
 | Item | Why | Where it must also live |
 |---|---|---|
 | **L3 collected data rows** | Gathered by hand, once. Cannot be regenerated. | Crew `.h2ocard` |
-| **The L2 Claim B answer** (canteen ice cream vs drinking fountain use) | Quoted back at her in L6. Four weeks of shelf life. The moment fails if it is gone. | Crew `.h2ocard` |
+| **The L2 Claim B answer** (canteen ice cream vs drinking fountain use) | Quoted back at them in L6. Four weeks of shelf life. The moment fails if it is gone. | Crew `.h2ocard` |
 
 Mirror both into the `.h2ocard` at the moment they are produced, not at export time.
 
@@ -141,7 +141,7 @@ at the desk, not in the architecture.
 
 - §3 *Recovery*: strike "Non-negotiable, because a cleared cache in a school lab is a
   certainty, not a risk." Replace with "Recovery exists for device swaps and for the
-  handful of girls who lose site data. Verified against the SOE at stage 0."
+  handful of students who lose site data. Verified against the SOE at stage 0."
 - §3: strike "Tell students at the end of every session: export or print." Replace per
   §5 above.
 - §12 *Known weak points*: replace "Cache clearing wipes everything" with "Site data

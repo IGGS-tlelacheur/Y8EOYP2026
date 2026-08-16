@@ -158,19 +158,15 @@ const html = `<!DOCTYPE html>
 <div class="sub">${esc(programme.programme)} · ${esc(programme.strand)} · generated ${new Date().toISOString().slice(0, 10)}</div>
 
 <div class="stop">
-  <b>Paper only.</b> This sheet holds the staff codes and every answer. It is
-  generated outside the repository on purpose and is not on the website — anything
-  plaintext on a public site is one guessed address away from being circulated.
-  Print it, keep it with you, and do not email it.
-  <br><br>
   <b>The numbers in this programme are invented.</b> They are shaped like published
   Melbourne Water and BoM figures, and every data set carries a source line saying
-  so. Only the measurements the girls take themselves are real, and Lesson 6 says
+  so. Only the measurements the students take themselves are real, and Lesson 6 says
   that out loud on its last slide.
 </div>
 
 <h2>Staff codes</h2>
-<p>One per room, the same for every student. They open a room without her code, and the site records that one was used.</p>
+<p>One per room, the same for every student. A staff code opens a room without the
+  student's own code, and the site records that one was used.</p>
 <table class="codes">
   <tr><th style="width:52mm">Room</th><th>Code</th></tr>
   ${Object.entries(key.rooms).map(([room, r]) =>
@@ -197,7 +193,7 @@ ${CRIBS.map((c) => `
     <p><b>To finish:</b> ${esc(c.deliverable)}</p>
     <b style="font-size:8pt;text-transform:uppercase;letter-spacing:.1em;color:var(--brand);">Good enough when</b>
     <ul>${c.goodEnough.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>
-    <div class="say"><b>If she is stuck, say:</b> ${esc(c.sayThis)}</div>
+    <div class="say"><b>If they are stuck, say:</b> ${esc(c.sayThis)}</div>
     <p class="dont"><b>Do not worry about:</b> ${esc(c.dontWorry)}</p>
   </div>`).join('')}
 
@@ -209,13 +205,13 @@ ${CRIBS.map((c) => `
 <div class="page-break"></div>
 <h2>The answers</h2>
 <p>
-  Each girl gets one data set of six, worked out from her school ID. The hub tells
-  her which — it says <b>Data set N of 6</b> at the bottom of the page. Find that
+  Each student gets one data set of six, worked out from their school ID. The hub tells
+  them which — it says <b>Data set N of 6</b> at the bottom of the page. Find that
   number first, then read the table for it.
 </p>
 <p style="font-size:9pt;color:#3d5560;">
   Numeric answers show the value the site treats as canonical, and any others it
-  also accepts. A girl who is one step out on a reading is marked correct.
+  also accepts. A student who is one step out on a reading is marked correct.
 </p>
 ${variantTables}
 

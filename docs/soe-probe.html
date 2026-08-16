@@ -214,7 +214,7 @@
 /* Deliberately self-contained. A diagnostic that imports the code it is testing
    tells you about itself; this one has to be able to say "the site's storage is
    gone" while still working. It touches h2o.probe only, never h2o.v1.*, so it
-   can be run on a laptop with a girl's real work on it. */
+   can be run on a laptop with a student's real work on it. */
 
 const LS_KEY = 'h2o.probe';
 const DB_NAME = 'h2o-probe';
@@ -326,8 +326,8 @@ function bytes(n) {
 }
 
 /* Four characters from an alphabet with no letters that can be misread on a
-   handwritten note, because the whole point is that she can tell afterwards
-   whether the value she is looking at is the one she wrote. */
+   handwritten note, because the whole point is that they can tell afterwards
+   whether the value they are looking at is the one they wrote. */
 const ALPHABET = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789';
 
 function makeCode() {

@@ -162,8 +162,8 @@ const KINDS = [
   { id: 'box', name: 'Box plot', blurb: 'The five numbers' }
 ];
 
-/* Bin widths she can choose between, as multiples of the suggested one. A free
-   number box lets her type 0.0001 and hang the browser building 90,000 bars. */
+/* Bin widths they can choose between, as multiples of the suggested one. A free
+   number box lets them type 0.0001 and hang the browser building 90,000 bars. */
 const BIN_STEPS = [0.2, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8];
 
 const state = {
@@ -313,7 +313,7 @@ function renderPicker() {
   }
 }
 
-/* Warn, do not block. A pie of the wrong thing is a lesson if she can see it. */
+/* Warn, do not block. A pie of the wrong thing is a lesson if they can see it. */
 function suitability() {
   const box = document.querySelector('#suit-msg');
   const text = document.querySelector('#suit-text');

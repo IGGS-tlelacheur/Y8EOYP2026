@@ -5,7 +5,7 @@
 
 const encoder = new TextEncoder();
 
-/* No I, O, 0, 1, S or 5. A girl reading a code off her own screen and typing it
+/* No I, O, 0, 1, S or 5. A student reading a code off their own screen and typing it
    into the next room should not lose ten minutes to a letter that looks like a
    digit. Fixed by docs/CHECKPOINT_CONTRACT.md §1; thirty characters, so the two
    are taken by modulo rather than by masking five bits. */
@@ -18,7 +18,7 @@ export async function sha256Hex(text) {
     .join('');
 }
 
-/* The school ID as she types it. Digits only in practice, but letters are kept
+/* The school ID as they type it. Digits only in practice, but letters are kept
    in case a staff ID ever carries one; spaces and hyphens go, so an ID typed in
    two halves still lands on one string. Applied identically in
    scripts/build-data.mjs - if the two drift, nobody can log in.
@@ -29,27 +29,27 @@ export function normaliseId(input) {
   return String(input ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-/* Case and stray spaces forgiven. She is thirteen, the password is a word about
-   water, and being locked out by a capital letter teaches her nothing. */
+/* Case and stray spaces forgiven. The student is thirteen, the password is a word
+   about water, and being locked out by a capital letter teaches them nothing. */
 export function normalisePassword(input) {
   return String(input ?? '').trim().toLowerCase().replace(/\s+/g, '');
 }
 
-/* Her ID alone, hashed. This drives her dataset variant and every vault token,
+/* Their ID alone, hashed. This drives their dataset variant and every vault token,
    so it must not depend on the password: changing a password would otherwise
-   change every code she has already written down. */
+   change every code they have already written down. */
 export async function deriveStudentId(input) {
   const normalised = normaliseId(input);
   if (normalised.length < 2) return null;
   return sha256Hex(normalised);
 }
 
-/* The password, stretched, salted with her own studentId.
+/* The password, stretched, salted with their own studentId.
 
    The ID and the password are checked separately, so the roll can answer "is
    this person here?" without being told a password. That is what makes a useful
-   message at the door possible, and what lets staff confirm an ID for the girl
-   who has forgotten hers.
+   message at the door possible, and what lets staff confirm an ID for the student
+   who has forgotten theirs.
 
    The cost of splitting them is stated plainly in docs/DATA_CONTRACTS.md: the ID
    half is a bare SHA-256 over a space of a few tens of thousands, so anyone with
@@ -57,8 +57,8 @@ export async function deriveStudentId(input) {
    design too, school IDs are not secret, and there is nothing sensitive behind
    them - settled with the client on 17/08/2026.
 
-   Salting each password with her studentId is free and worth having anyway: two
-   girls handed the same water word get different hashes, so the file never shows
+   Salting each password with their studentId is free and worth having anyway: two
+   students handed the same water word get different hashes, so the file never shows
    that a password is shared. */
 export async function derivePasswordHash(studentId, password, { salt, iterations }) {
   const material = await crypto.subtle.importKey(
@@ -109,7 +109,7 @@ export async function checkPassword(studentId, password, roll) {
    nothing validates and the failure looks like a wrong answer. */
 export function canonicalise(answer, type, round) {
   if (type === 'numeric') {
-    /* She was asked for a number and told the unit, so half of them will type
+    /* They were asked for a number and told the unit, so half of them will type
        the unit anyway: "175 litres", "175L", "175 l". Strip everything that is
        not part of the number. A comma is a thousands separator here, not a
        decimal point - this is an Australian classroom. */
@@ -137,8 +137,8 @@ export function canonicalise(answer, type, round) {
    token in both places and still puts no plaintext anywhere.
 
    The hash passed in must always be accept[0], never whichever accepted value
-   she happened to type. A checkpoint may accept five values; five hashes would
-   mint five tokens and five vault codes, four of which open nothing. Two girls
+   they happened to type. A checkpoint may accept five values; five hashes would
+   mint five tokens and five vault codes, four of which open nothing. Two students
    both right, one locked out of the next room. See acceptedHash below. */
 export async function deriveToken(answerHash, studentId, checkpointId) {
   const hex = await sha256Hex(answerHash + studentId + checkpointId);
@@ -171,8 +171,8 @@ export async function deriveVault(answerHashes, studentId, checkpointIds) {
 }
 
 /* The same thing straight off answers.json, which is how every room actually
-   wants it. Always accept[0], so a girl who used a tolerated value gets the same
-   code as a girl who hit it exactly. */
+   wants it. Always accept[0], so a student who used a tolerated value gets the same
+   code as a student who hit it exactly. */
 export function vaultFrom(answers, checkpointIds, studentId, variant) {
   const hashes = checkpointIds.map((id) => acceptedHash(answers.checkpoints[id], variant));
   return deriveVault(hashes, studentId, checkpointIds);

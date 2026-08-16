@@ -39,9 +39,9 @@ hashes exist client-side. Every accepted value is hashed individually by
   order-significant and `build-data.mjs` preserves it. *(Amended 16/08/2026: the
   token is seeded from the stored answer hash, so five accepted values would
   otherwise mint five different tokens and four different vault codes — three of
-  them wrong. Two girls both correct, one locked out of the next room, and only
+  them wrong. Two students both correct, one locked out of the next room, and only
   visible when someone types 6.4 instead of 6.5. The token now always seeds from
-  `accept[0]`, whichever accepted value she actually typed.)*
+  `accept[0]`, whichever accepted value they actually typed.)*
 
 ### Token alphabet
 
@@ -69,7 +69,7 @@ rephrase it.
   appears**, in brackets, in plain words.
 - Units written in words on first appearance in a room, then abbreviated.
   *litres (L)*, then *L*.
-- No rhetorical framing, no "have a think about", no exclamation marks. She is
+- No rhetorical framing, no "have a think about", no exclamation marks. They are
   working, not being entertained.
 - The stem states the **answer format** explicitly: *"Type the number."*
   *"Choose one."* *"Pick one word from the list."*
@@ -78,7 +78,7 @@ rephrase it.
 
 ## 3. Question rules
 
-- Every checkpoint refers only to **her own variant dataset**, or to a supplied
+- Every checkpoint refers only to **their own variant dataset**, or to a supplied
   artefact that exists in all six variants.
 - **Direction-agnostic wording.** At least one variant (household size against
   per-person use) is a *negative* relationship. No stem, distractor or hint may
@@ -99,9 +99,9 @@ generated.
 
 | Rung | Contains | Must not contain |
 |---|---|---|
-| **1** | A nudge at *where to look*. ≤ 20 words. | Any maths. Any number from her dataset. Any hint at direction. |
-| **2** | A fully worked parallel example, same structure, **different numbers**. | Any number appearing in her own dataset. |
-| **3** | The method applied to *her own numbers*, step by step, **stopping one step short of the answer**. | The final value. The final selection. |
+| **1** | A nudge at *where to look*. ≤ 20 words. | Any maths. Any number from their dataset. Any hint at direction. |
+| **2** | A fully worked parallel example, same structure, **different numbers**. | Any number appearing in their own dataset. |
+| **3** | The method applied to *their own numbers*, step by step, **stopping one step short of the answer**. | The final value. The final selection. |
 | **4** | The answer. Not authored — recovered at run time. Awards the token and records `assisted:true`. | Any apology or commentary. |
 
 **How rung 4 knows the answer.** `answers.json` holds hashes, and a hash cannot be
@@ -124,24 +124,24 @@ This does not weaken anything. Rung 4 hands over the answer by design, and
 this is sufficient.
 
 Rung 3 is the rung that matters and the one that will be written lazily. It must
-leave exactly one operation for her to perform. If she can read rung 3 and type the
+leave exactly one operation for them to perform. If they can read rung 3 and type the
 answer without doing anything, rung 3 has failed and is really rung 4.
 
-Rungs are **cumulative on screen** — rung 2 does not replace rung 1. She can see the
-whole ladder she has climbed.
+Rungs are **cumulative on screen** — rung 2 does not replace rung 1. They can see the
+whole ladder they have climbed.
 
-### She may also just ask
+### They may also just ask
 
 *(Settled 17/08/2026 — kept.)* Every checkpoint carries an **I need a hint**
 button beside the answer button. It fires the next rung and **counts as an
 attempt**, so four presses reach the answer exactly as four wrong answers would.
 
-Without it the only route to a hint is a wrong answer, which teaches a girl to
-guess at a question she knows she cannot do — a bad habit to build, and a worse
+Without it the only route to a hint is a wrong answer, which teaches a student to
+guess at a question they know they cannot do — a bad habit to build, and a worse
 one to build in a room with no teacher in it to notice. Asking for help should
 not require pretending to answer.
 
-`assisted:true` does not withhold the badge. It is recorded for you, not against her,
+`assisted:true` does not withhold the badge. It is recorded for you, not against them,
 and the room never uses the word.
 
 ---
@@ -158,7 +158,7 @@ Twelve gated checkpoints. Three per room, all Type A/B/C, all hashable.
 | `cp2.2` | What a single identified point represents | B |
 | `cp2.3` | Match a described relationship to one of four plots | B |
 
-**L3 — Collector** (critique of a supplied bad protocol; *not* her own plan)
+**L3 — Collector** (critique of a supplied bad protocol; *not* their own plan)
 
 | ID | Asks | Type |
 |---|---|---|
@@ -193,7 +193,7 @@ never judges quality, and a Learning Coach can confirm it from the screen.
 | Badge | Checkpoints | Deliverable also required |
 |---|---|---|
 | **Reader** | 3/3 in L2 | none |
-| **Collector** | 3/3 in L3 | ≥ 10 rows in her table (`h2o.v1.data`) |
+| **Collector** | 3/3 in L3 | ≥ 10 rows in their table (`h2o.v1.data`) |
 | **Plotter** | 3/3 in L4 | both chart slots filled on the Card |
 | **Predictor** | 3/3 in L5 | equation, interpolation and extrapolation non-empty on the Card |
 
@@ -213,7 +213,7 @@ builds the room.
 1. **The Claim B reading item in L2.** Recorded to `h2o.v1.responses`, never gated,
    never hinted. If it gates, the ladder eventually supplies *"strong positive"* with
    a worked explanation and the Lesson 6 quote-back is worth nothing.
-2. **Her own charts, her own table, her own line of best fit.** Card deliverables.
+2. **Their own charts, their own table, their own line of best fit.** Card deliverables.
 3. **The Collector rubric self-check and the crew cross-check.** Recorded on the Card.
 4. **Every sentence answer** — gradient in real units, the 2040 claim, why we might
    be wrong. Card, always.
@@ -254,7 +254,7 @@ vault code appears in any committed file.
 ## 9. House vocabulary
 
 Taken from the Mathspace worksheets in `docs/reference_material/`, which is what
-these girls have already been taught. `CLAUDE.md` forbids introducing a synonym for
+these students have already been taught. `CLAUDE.md` forbids introducing a synonym for
 a term already taught, so **these are the words, and no others.**
 
 | Use | Not |
@@ -275,7 +275,7 @@ a term already taught, so **these are the words, and no others.**
 
 **Both of the top two rows overrule the worksheets** *(settled 16/08/2026)*. Each
 therefore gets one bridging sentence, on first use in the first room that needs it,
-and never again — because a girl who met the other word last term needs to be told
+and never again — because a student who met the other word last term needs to be told
 once that it is the same thing, and `CLAUDE.md` requires every term defined on
 first use.
 
@@ -285,7 +285,7 @@ first use.
 2. **Explanatory and response variable.** Chapter 14 uses both this pair and
    independent/dependent, but only ever uses explanatory/response in its
    **categorical** sections — the numerical bivariate sections, which is all this
-   programme touches, say independent/dependent. So for these girls EV and RV are
+   programme touches, say independent/dependent. So for these students EV and RV are
    effectively new. L2 bridges once, and defines both: *"The explanatory variable
    is the one you choose or change. The response variable is the one you measure.
    Your worksheets sometimes call these the independent and dependent variable."*
@@ -304,7 +304,7 @@ The stem-and-leaf plot is dropped entirely *(settled 16/08/2026)*. It is taught 
 
 The worksheets tier every exercise **Explorer / Adventurer / Trailblazer**. A
 checkpoint gates a room, so **every checkpoint is pitched at Explorer** — the tier
-every girl is expected to complete. Adventurer and Trailblazer material belongs in
+every student is expected to complete. Adventurer and Trailblazer material belongs in
 `extension.html`, which is never required.
 
 ### Formats already met

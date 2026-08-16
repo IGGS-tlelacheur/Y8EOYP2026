@@ -30,7 +30,7 @@ onwards depends on it, and if the charting engine is wrong, it is wrong six time
 ### Stage 0 — Does the storage survive?
 Twenty minutes on a school SOE laptop, in Edge. Open `docs/soe-probe.html` on the
 deployed origin and follow the four steps on it; it writes to `h2o.probe` only, so it
-is safe to run on a laptop with a girl's real work on it.
+is safe to run on a laptop with a student's real work on it.
 
 Results table: `docs/SOE_NOTES.md`. Rationale: `docs/STORAGE_AMENDMENT.md` §2.
 
@@ -116,7 +116,7 @@ the hub updates, and the Card tick appears.
 `scripts/check-datasets.mjs`, `js/dataset.js`
 
 Six variants of every checkpoint, generated with the answers from one source so the
-two cannot disagree. The rooms hold one authored stem each and fill it from her set.
+two cannot disagree. The rooms hold one authored stem each and fill it from their set.
 
 ```
 node scripts/make-datasets.mjs && node scripts/check-datasets.mjs && node scripts/build-data.mjs
@@ -130,10 +130,10 @@ correct, no `{token}` left unfilled on screen, six different final codes.
 
 Includes the two spurious claims: Claim A stated in the L1 deck, Claim B planted in L2
 as an ordinary reading task and returned in L6 with the student's own earlier answer
-quoted back at her. That quoting is a real feature — L6 reads her stored L2 response.
+quoted back at them. That quoting is a real feature — L6 reads their stored L2 response.
 
 **Verify:** confirm L6 retrieves the actual stored L2 answer and does not fabricate one.
-If no answer is stored, it must degrade gracefully and not accuse her of something she
+If no answer is stored, it must degrade gracefully and not accuse them of something they
 did not say.
 
 ### Stage 9 — Decks
@@ -183,7 +183,7 @@ On the real hardware, on the school network, with real accounts.
 
 Cache clear mid-session — now a **confirmation of stage 0, not a discovery**. Two crew
 members editing the Card. OneDrive sync lag, including a save that stalls: confirm no
-button is left disabled. A student who mistypes her ID. A crew with no data using the
+button is left disabled. A student who mistypes their ID. A crew with no data using the
 borrowed dataset. Print from the actual printer.
 
 ---

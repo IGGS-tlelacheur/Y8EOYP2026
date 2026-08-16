@@ -40,7 +40,7 @@ horizontal axis*, which failed the rung-3 test: the method **is** reading the
 label, so there was no operation left to stop one step short of. This version has
 a reason behind it, which gives the ladder something to walk down.
 
-**Artefact.** Chart 1: a supplied scatterplot of her variant, ten to fourteen
+**Artefact.** Chart 1: a supplied scatterplot of their variant, ten to fourteen
 points, both axes labelled with a unit, no line drawn.
 
 **Stem**
@@ -60,7 +60,7 @@ points, both axes labelled with a unit, no line drawn.
 
 Every option carries a reason, so the right answer cannot be picked off the
 variable name alone. `opt_c` names the correct variable for a wrong reason and is
-the one to watch: a girl who picks it has the rule but not the idea. `opt_b`
+the one to watch: a student who picks it has the rule but not the idea. `opt_b`
 has the EV and RV the wrong way round. `opt_d` is the "it doesn't matter"
 misconception.
 
@@ -174,7 +174,7 @@ look exactly like the practice items around it.
 
 ## Room L3 — Collector
 
-Checkpoints critique a **supplied** sheet, never her own plan. Her own plan is Card
+Checkpoints critique a **supplied** sheet, never their own plan. Their own plan is Card
 work and is never gated.
 
 **Artefact — “Crew 7's recording sheet”.** One printed sheet per variant, same
@@ -240,7 +240,7 @@ contain **one** of the two odd rows, so no pair can be dismissed at a glance.
 | `opt_d` | Rows 6 and 9 |
 
 > **Corrected 16/08/2026.** `opt_d` read *Rows 6 and 11*, which contains neither
-> odd row and so breaks the rule stated directly above it: a girl who has found
+> odd row and so breaks the rule stated directly above it: a student who has found
 > either one of the two can drop that option without looking. Now every wrong
 > pair contains exactly one of rows 4 and 9.
 
@@ -341,7 +341,7 @@ That is the distinction 11.02 Q17e is already teaching. All four are displays
 
 ### `cp4.2` — read a value off the axis · Type A
 
-**Artefact.** Chart 4, a column graph of her variant with a labelled vertical axis,
+**Artefact.** Chart 4, a column graph of their variant with a labelled vertical axis,
 gridlines every `[50]` units, starting at zero. The target column stops **halfway**
 between two gridlines, so the reading takes one step rather than none. A second
 column is halfway between two gridlines as well, so the one being asked about is
@@ -400,7 +400,7 @@ between variants.
 | `opt_c` | Chart C |
 | `opt_d` | All three, because they use the same numbers |
 
-`opt_d` is the misconception this checkpoint exists to catch, and a girl who holds
+`opt_d` is the misconception this checkpoint exists to catch, and a student who holds
 it will pick it. It must never be dropped for a fourth chart.
 
 **Rung 1** (16 words)
@@ -442,7 +442,7 @@ it will pick it. It must never be dropped for a fourth chart.
 
 ### `cp5.1` — the gradient of the line · Type A
 
-**Artefact.** Chart 5: her variant's scatterplot with a line of best fit drawn on
+**Artefact.** Chart 5: their variant's scatterplot with a line of best fit drawn on
 it, and two points **on the line** marked and labelled with their coordinates. The
 two points are chosen so the gradient is exact to one decimal place.
 
@@ -458,7 +458,7 @@ lesson. Variant 1's points give m = 9.00, c = 16.03 against a drawn y = 9x + 16.
 > (2, 34) and (10, 106). Find the gradient of the line. Type the number, to one
 > decimal place.
 
-**Accepted** — `accept[0] = 9`. One value. A girl typing `9.0` is canonicalised to
+**Accepted** — `accept[0] = 9`. One value. A student typing `9.0` is canonicalised to
 the same string, so it costs no accepted slot.
 
 **Rung 1** (13 words)
@@ -527,7 +527,7 @@ the reading a fight, unless the axis runs well past the value being asked for.
 
 **Accepted** — `accept[0] = 150`, plus `140` and `160`. Three values.
 
-The Card's *Reading past our data (extrapolation)* field is where she writes what
+The Card's *Reading past our data (extrapolation)* field is where they write what
 this prediction is worth. That is Card work and is never gated.
 
 **Rung 1** (16 words)
@@ -566,7 +566,7 @@ It used to read a label off an axis, and its rung 3 could not be written properl
 because the method *was* reading the label: there was no operation to stop one
 step short of. Your call was to make it the harder question — which axis the EV
 belongs on — and it is rewritten above. Rung 3 now narrows to the two options
-naming the right variable and leaves her to choose between two reasons, which is
+naming the right variable and leaves them to choose between two reasons, which is
 a decision rather than a lookup.
 
 The answer key moved with it. `opt_a` is still the correct key, so no student's
@@ -603,5 +603,5 @@ construction and `cp3.1` has three. Both are checked by
 collapses to one answer across all six.
 
 **What I did not touch.** Every parallel example in a rung 2 — the cars, the tap,
-the jug, the thirty houses — is deliberately from a different context than her own
-data. A worked example in her own context is a worked answer.
+the jug, the thirty houses — is deliberately from a different context than their own
+data. A worked example in their own context is a worked answer.

@@ -31,7 +31,7 @@
   --gold-dark: #B98A05;
 
   /* The Data Evidence Card's own teals. The Card is already printed and the
-     girls meet it before the site, so its palette stays exactly as it is and
+     students meet it before the site, so its palette stays exactly as it is and
      card.html will use these at stage 5. Nothing else should. */
   --card-teal: #3E6570;
   --card-teal-mid: #4A6A70;
@@ -338,9 +338,9 @@ a.room:hover { border-color: var(--brand); background: var(--sage-pale); }
   align-items: start;
 }
 
-/* The chart rides down the page with her. Every control in the right-hand
+/* The chart rides down the page with the student. Every control in the right-hand
    column - naming the axes, tilting the line, reading a prediction - only makes
-   sense while she can see what it did, and on a 768px laptop the lower steps
+   sense while they can see what it did, and on a 768px laptop the lower steps
    would otherwise sit a full screen below the chart. */
 .chart-col {
   position: sticky;
@@ -640,8 +640,8 @@ input[type='range'] {
 
 .ladder { margin-top: 0.75rem; display: grid; gap: 0.6rem; }
 
-/* Cumulative: rung 2 does not replace rung 1, so she can see the whole ladder
-   she has climbed. Rung 3 refers back to rung 2 and needs it on screen. */
+/* Cumulative: rung 2 does not replace rung 1, so they can see the whole ladder
+   they have climbed. Rung 3 refers back to rung 2 and needs it on screen. */
 .rung {
   border-left: 3px solid var(--gold);
   background: #FFFBF0;
@@ -686,7 +686,7 @@ input[type='range'] {
   color: var(--brand);
 }
 
-/* She reads this off one screen and types it into another, so it is the largest
+/* Students read this off one screen and type it into another, so it is the largest
    thing on the page and the letters are spaced apart. */
 .vault-code {
   font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
@@ -712,7 +712,7 @@ input[type='range'] {
 /* ---- the one modal prompt ------------------------------------------------ */
 /* There is exactly one of these in the programme: the collection table, the
    first time a crew commits data it measured by hand. Prompting at the end of
-   every session teaches a girl to click past the prompt, which is worse than
+   every session teaches a student to click past the prompt, which is worse than
    never prompting at all. docs/STORAGE_AMENDMENT.md §5. */
 
 dialog.prompt {
@@ -854,14 +854,14 @@ dialog.prompt .actions { margin-top: 1rem; }
 
 /* ---- the Data Evidence Card ---------------------------------------------- */
 /* Two appearances, one file. On screen it is a form; printed it is the Card the
-   girls already met on paper. Every field therefore exists twice: an input she
-   types into, and a mirror span that carries the value into the print view in
+   students already met on paper. Every field therefore exists twice: an input they
+   type into, and a mirror span that carries the value into the print view in
    handwriting. Only one of the pair is ever visible.
 
    These are the reference Card's own colours, taken from
    docs/reference-data-evidence-card.html. They are NOT the site palette and are
    not --card-teal either: the Card runs a deeper teal and a brighter one than
-   CLAUDE.md's table records. The printed page has to match the paper the girls
+   CLAUDE.md's table records. The printed page has to match the paper the students
    are holding, so the Card wins here. */
 
 .card {
@@ -1272,8 +1272,8 @@ dialog.prompt .actions { margin-top: 1rem; }
 
 /* ---- Lesson 6 ------------------------------------------------------------ */
 
-/* Her own Lesson 2 answer, quoted back at her four weeks later. Set apart and in
-   the Card's handwriting, so it reads as something she said rather than as more
+/* Their own Lesson 2 answer, quoted back at them four weeks later. Set apart and in
+   the Card's handwriting, so it reads as something they said rather than as more
    instructions from the site. */
 blockquote.said {
   margin: 0 0 1rem;
@@ -1683,7 +1683,7 @@ blockquote.said p {
 }
 
 /* The one line to read aloud. Set apart because it is the thing a supervisor
-   reaches for while a girl is looking up at them. */
+   reaches for while a student is looking up at them. */
 .crib-say {
   border-left: 4px solid var(--gold);
   background: #FFFBF0;
@@ -1710,7 +1710,7 @@ blockquote.said p {
 }
 
 /* ---- certificate --------------------------------------------------------- */
-/* One sheet, landscape. It prints at any stage of the programme, so a girl who
+/* One sheet, landscape. It prints at any stage of the programme, so a student who
    has two badges gets a certificate with two badges on it rather than a gap. */
 
 .cert {

@@ -235,7 +235,7 @@ function build(answers) {
     axis: {
       xMin: 0, xMax: roundUp(Math.max(...xs)),
       yMin: 0, yMax: roundUp(Math.max(...ys) * 1.05),
-      /* A gridline exactly where question 2 tells her to look. */
+      /* A gridline exactly where question 2 tells them to look. */
       xTicks: [set.readAt]
     },
     fit: set.line,
@@ -246,7 +246,7 @@ function build(answers) {
   document.querySelector('#chart5').append(five.svg);
 
   /* dataRange is what hatches and fades everything past the last measurement.
-     The axis is carried well past the value she is asked to read, so the fade is
+     The axis is carried well past the value they are asked to read, so the fade is
      still light enough there to read the line against. */
   const gradient = (set.line.y2 - set.line.y1) / (set.line.x2 - set.line.x1);
   const c = set.line.y1 - gradient * set.line.x1;
@@ -292,7 +292,7 @@ function build(answers) {
     });
   }
 
-  /* The worked sentences on the Card use her own numbers, not variant 3's. */
+  /* The worked sentences on the Card use their own numbers, not variant 3's. */
   const g = Number(gradient.toFixed(1));
   document.querySelector('#example-gradient').textContent =
     `For every extra ${tokens.evShort.replace(/s$/, '')} of ${tokens.ev}, the `

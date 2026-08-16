@@ -327,7 +327,7 @@ function paintField(input) {
 
   const mirror = document.querySelector(`[data-mirror="${key}"]`);
   /* textContent, never innerHTML: this is a student's own words going onto a
-     page she will print and hand in. */
+     page they will print and hand in. */
   if (mirror) mirror.textContent = value;
 
   const count = input.parentElement.querySelector('.count');
@@ -506,11 +506,11 @@ function fromFile(data) {
   setCard({ fields: state.fields, charts: state.charts });
   paintAll();
 
-  /* maxlength stops her typing or pasting past a limit, but a file can carry
+  /* maxlength stops them typing or pasting past a limit, but a file can carry
      anything. Never truncated - losing a crew mate's words to protect a page
      break would be the wrong trade - just said out loud. Every box on the
      printed Card is a fixed size now, so what does not fit is what does not
-     print, and she needs to be told which answer it is. */
+     print, and they need to be told which answer it is. */
   const over = inputs.filter((input) => {
     const value = state.fields[input.dataset.field]?.value ?? '';
     return value.length > Number(input.getAttribute('maxlength'));
@@ -531,7 +531,7 @@ function fromFile(data) {
   return { data, warned: over.length > 0 };
 }
 
-/* Soft, never hard. Two girls editing at once is a conversation to have, not a
+/* Soft, never hard. Two students editing at once is a conversation to have, not a
    thing to prevent, and merging silently would lose someone's work. */
 /* Returns whether it warned, so a routine "opened it" message cannot paint over
    the one thing on the page that needed reading. */
@@ -545,7 +545,7 @@ function checkSoftLock(data) {
   document.querySelector('#save-copy').hidden = false;
   say(
     `${data.savedByName || 'Someone in your crew'} saved this ${Math.max(1, Math.round(minutes))} minutes ago. `
-    + 'Check with her before you save over it, or save a copy instead.',
+    + 'Check with them before you save over it, or save a copy instead.',
     'problem'
   );
   return true;
@@ -702,7 +702,7 @@ const stored = getCard();
 state.fields = stored.fields ?? {};
 state.charts = stored.charts ?? {};
 
-/* Seed from her profile so the crew line is not blank on a fresh Card. */
+/* Seed from their profile so the crew line is not blank on a fresh Card. */
 if (!state.fields.crew?.value && profile?.crew) {
   state.fields.crew = { value: profile.crew, by: profile.studentId, byName: profile.display, at: new Date().toISOString() };
 }

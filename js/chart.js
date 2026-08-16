@@ -59,7 +59,7 @@ function niceNum(range, round) {
   return nice * Math.pow(10, exponent);
 }
 
-/* Round limits outwards to human numbers, so the girls read 0, 20, 40 rather
+/* Round limits outwards to human numbers, so the students read 0, 20, 40 rather
    than 0, 17.3, 34.6. */
 export function niceScale(min, max, { startAtZero = false, targetTicks = 6 } = {}) {
   let lo = startAtZero ? Math.min(0, min) : min;
@@ -113,7 +113,7 @@ function axisTitle(label, unit) {
 }
 
 /* Grid, ticks, axis lines and axis titles. Shared by every chart in the
-   programme so the girls meet one set of axes rather than five. Ticks arrive
+   programme so the students meet one set of axes rather than five. Ticks arrive
    already positioned, because a category axis and a number axis place them by
    quite different rules but should look identical once drawn. */
 function drawAxes(svg, {
@@ -155,7 +155,7 @@ function drawAxes(svg, {
   }));
 
   /* A dot plot and a box plot are number lines. Drawing a vertical axis they
-     have no scale for would invite her to read one off it. */
+     have no scale for would invite them to read one off it. */
   if (showY) {
     svg.append(svgEl('line', {
       x1: plotLeft, y1: plotTop, x2: plotLeft, y2: plotBottom,
@@ -356,7 +356,7 @@ export function renderChart(spec) {
   }
 
   /* Extra gridlines the caller has asked for, on top of the ones niceScale
-     chose. Lesson 5 uses this to put a line at the value a question tells her to
+     chose. Lesson 5 uses this to put a line at the value a question tells them to
      read from - "find 70 on the bottom axis" is a poor instruction when the axis
      is ruled at 0, 50, 100, 150, and finding 70 is not the skill being tested.
 
@@ -384,9 +384,9 @@ export function renderChart(spec) {
   const lines = svgEl('g', { 'clip-path': `url(#${clipId})` });
   svg.append(lines);
 
-  /* The computer's line, when she asks for it. Drawn under her own so hers
+  /* The computer's line, when they ask for it. Drawn under their own so theirs
      stays the subject. Distinguished three ways - colour, a dotted pattern and
-     a named key - because a colourblind girl has to be able to tell which is
+     a named key - because a colourblind student has to be able to tell which is
      which, and this is the one view whose entire point is the comparison. */
   if (compare && Number.isFinite(compare.m) && Number.isFinite(compare.c)) {
     const at = (xv) => compare.m * xv + compare.c;
@@ -569,8 +569,8 @@ export function renderChart(spec) {
 
 /* ---- one variable -------------------------------------------------------- */
 
-/* Categories are drawn in the order she typed them. Sorting by size would make
-   a tidier chart out of data she no longer recognises. */
+/* Categories are drawn in the order they typed them. Sorting by size would make
+   a tidier chart out of data they no longer recognise. */
 export function tally(values) {
   const counts = new Map();
   for (const value of values) {
@@ -588,7 +588,7 @@ function medianOf(sorted) {
 
 /* The method they are taught and can check by hand: split at the median, and
    with an odd count the median itself belongs to neither half. Any of the other
-   defensible quartile conventions would disagree with her exercise book. */
+   defensible quartile conventions would disagree with their exercise book. */
 export function fiveNumberSummary(values) {
   const sorted = [...values].filter(Number.isFinite).sort((a, b) => a - b);
   const n = sorted.length;
@@ -792,8 +792,8 @@ export function renderUni(spec) {
     const x = makeScale(xNice.min, xNice.max, plotLeft, plotRight);
     const y = makeScale(yNice.min, yNice.max, plotBottom, plotTop);
 
-    /* Ticks on the bin edges, not on nice round numbers, so the boundary she
-       reads off the axis is the boundary the bar actually uses. */
+    /* Ticks on the bin edges, not on nice round numbers, so the boundary they
+       read off the axis is the boundary the bar actually uses. */
     const edges = bins.map((b) => b.from).concat(bins.length ? [bins[bins.length - 1].to] : []);
     const stride = Math.ceil(edges.length / 9);
 
@@ -848,7 +848,7 @@ export function renderUni(spec) {
 
       /* Whiskers to the smallest and largest values. Year 8 box plots do not
          carry the 1.5 IQR outlier rule, and inventing one here would put marks
-         on the chart she has no way to explain. */
+         on the chart they have no way to explain. */
       svg.append(svgEl('line', {
         x1: x.to(summary.min), y1: midY, x2: x.to(summary.q1), y2: midY,
         stroke: INK, 'stroke-width': stroke
@@ -1176,7 +1176,7 @@ export function parsePairs(text) {
 }
 
 /* One column. Values stay as typed so categories survive; `numeric` says
-   whether they all read as numbers, and the tool lets her overrule it. */
+   whether they all read as numbers, and the tool lets them overrule it. */
 export function parseColumn(text) {
   const raw = [];
   const skipped = [];
@@ -1193,7 +1193,7 @@ export function parseColumn(text) {
   const looksNumeric = (v) => /\d/.test(v) && Number.isFinite(Number(v.replace(/[^0-9.eE+-]/g, '')));
 
   /* A single non-numeric line on top of numbers is a column heading, not a
-     category. Keeping it would turn her whole column categorical. */
+     category. Keeping it would turn their whole column categorical. */
   let header = null;
   if (raw.length > 1 && !looksNumeric(raw[0]) && raw.slice(1).every(looksNumeric)) {
     header = raw.shift();

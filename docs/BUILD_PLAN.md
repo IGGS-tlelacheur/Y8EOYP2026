@@ -82,28 +82,28 @@ later.
 
 Three deliberate separations:
 
-- **Crew is not part of the identity.** A girl moved between crews keeps her badges.
+- **Crew is not part of the identity.** A student moved between crews keeps their badges.
 - **Display name is not part of the identity.** It appears on certificates and nowhere
   else, so a typo there is cosmetic rather than fatal.
-- **The identity is never displayed** after login. The hub greets her by display name.
+- **The identity is never displayed** after login. The hub greets them by display name.
 
-**Ship a stretched allowlist.** `data/roll.json` holds her `studentId` and her stretched
+**Ship a stretched allowlist.** `data/roll.json` holds their `studentId` and their stretched
 password hash side by side, with the role beside them, sorted by `studentId` so the order
 carries nothing.
 
 **The two are checked separately** (settled 17/08/2026), which is what lets the door say
 something useful: *that ID is not on the list* is a different problem from *that password
-does not match*, and a girl sent hunting for the wrong one of those loses the lesson. It
-also lets staff confirm an ID for the girl who has forgotten hers.
+does not match*, and a student sent hunting for the wrong one of those loses the lesson. It
+also lets staff confirm an ID for the student who has forgotten theirs.
 
 The cost is that the ID half is a bare SHA-256 over a space of a few tens of thousands, so
 anyone with the file can work out which IDs are on the roll. School IDs are not secret,
 nothing sensitive sits behind them, and the original design published exactly the same
-thing. The password half is PBKDF2 at 600 000 iterations, salted per person with her own
+thing. The password half is PBKDF2 at 600 000 iterations, salted per person with their own
 `studentId`, so identical water words do not collide in the file.
 
-`staff.html` keeps a **re-link** tool anyway, for the girl who is on the roll under an ID
-she does not know.
+`staff.html` keeps a **re-link** tool anyway, for the student who is on the roll under an ID
+they do not know.
 
 ### Storage layer
 Namespace every key `h2o.v1.*` with a schema version so migrations are possible.
@@ -121,7 +121,7 @@ single 1200 px PNG dataURL will eat a third of it. Store PNG blobs in an
 IndexedDB object store keyed by `chartId`; keep only the id in the card record.
 
 ### Recovery
-Recovery exists for device swaps and for the handful of girls who lose site data.
+Recovery exists for device swaps and for the handful of students who lose site data.
 Verified against the SOE at stage 0. *(Amended 16/08/2026 by
 `docs/STORAGE_AMENDMENT.md` §1 and §8. The fleet is 1:1 assigned laptops with one
 Windows profile each, not shared lab machines, so a cleared cache is a rare event
@@ -134,13 +134,13 @@ rather than the expected one.)*
 
 **One prompt, not one per session.** The export prompt fires in `tools/table.html`,
 once, the first time a crew commits ten or more measured rows, and it is modal there.
-Prompting at the end of every session teaches a girl to click past the prompt, which is
+Prompting at the end of every session teaches a student to click past the prompt, which is
 worse than never prompting. The export button stays permanently visible on the hub,
 unprompted. `docs/STORAGE_AMENDMENT.md` §5.
 
-**The two things that cannot be regenerated** — the rows collected by hand, and her
+**The two things that cannot be regenerated** — the rows collected by hand, and their
 Lesson 2 Claim B answer — are mirrored into the crew's `.h2ocard` as they are made, by
-`js/cardfile.js`. Everything else is a function of her `studentId` and her own answers
+`js/cardfile.js`. Everything else is a function of their `studentId` and their own answers
 and comes back on re-login. §4 of the amendment.
 
 ### Crew ownership of the Card
@@ -314,7 +314,7 @@ recognising the lesson and having learnt it.
 ice-cream sellers are causing drought, and invite them to think about why that is wrong,
 so some crews will arrive at Lesson 2 already looking for hot weather. That costs nothing:
 the Lesson 2 item only asks for direction and strength, and *strong positive* is the
-honest answer either way — a girl who spots the hidden variable has not fallen for
+honest answer either way — a student who spots the hidden variable has not fallen for
 anything and has not answered wrongly. Lesson 6 becomes a callback rather than a trap,
 which is the better shape for a self-directed room in any case: nobody has to feel caught
 out in a room with no teacher in it to laugh with.
@@ -429,7 +429,7 @@ of the page width — page 1 the data, page 2 the claim. Reasons, in order:
    where it is instead of pulling the page up, and one long answer cannot shunt the
    block below it onto a third sheet.
 3. Character limits stop being a way to defend a page break and become what they should
-   have been: a guarantee that what she typed is what prints.
+   have been: a guarantee that what they typed is what prints.
 
 The trade is that a box which overruns is clipped rather than grown. So the limits are
 measured, not estimated: `scripts/measure-card.html` loads the real Card, forces the
@@ -442,7 +442,7 @@ Room on two sheets roughly doubled every field: the claim went 189 → 240 chara
 
 `docs/reference-data-evidence-card.html` — the three worked examples and the blank
 template — was re-laid onto the same plan, and holds the same `.b-*` table. It has to:
-it is what a crew holds her own Card against, so if the two drift apart the examples
+it is what a crew holds their own Card against, so if the two drift apart the examples
 are teaching a layout that no longer exists.
 
 **`@page` cannot be scoped** (found the same day, and the reason the one-page version
@@ -586,13 +586,13 @@ tools there is no Lesson 4, and without the Card there is no deliverable.
 
 - **Site data loss wipes personal progress.** Collected rows and the Claim B answer are
   mirrored to the crew card; everything else regenerates on re-login, because codes and
-  badges are a function of her `studentId` and her own answers. Expected incidence
-  across ~180 girls over five weeks is single figures — handled at the desk, not in the
+  badges are a function of their `studentId` and their own answers. Expected incidence
+  across ~180 students over five weeks is single figures — handled at the desk, not in the
   architecture. *(Amended 16/08/2026, `docs/STORAGE_AMENDMENT.md` §7 and §8.)*
 - **Nothing on a student's path may await an unbounded promise.** Found the hard way at
   stage 6: `indexedDB.open` can raise none of its three events, which left a Save button
   disabled with no way back. `openDb` now rejects on a timer, the crew-file mirror is on
-  a clock, and `navigator.storage.persist()` is bounded so it can never cost a girl the
+  a clock, and `navigator.storage.persist()` is bounded so it can never cost a student the
   login. Anything added later that awaits storage, a file handle or the network needs
   the same treatment.
 - **A determined student will read the source.** They will find hashes, not answers.
@@ -607,9 +607,9 @@ Login is by school ID and password, case-insensitive, checked against a stretche
 roll. Crew and display name are held separately from the identity. See section 3.
 
 ### 13.2 Absentees — resolved
-No separate catch-up build. A girl who misses a lesson works through that room faster in
-her own time; the rooms are self-directed and the hint ladder already does the work a
-re-teach would. The staff bypass stays, for the case where she is genuinely stuck rather
+No separate catch-up build. A student who misses a lesson works through that room faster in
+their own time; the rooms are self-directed and the hint ladder already does the work a
+re-teach would. The staff bypass stays, for the case where they are genuinely stuck rather
 than genuinely behind.
 
 ### 13.3 The crew that collects nothing — borrowed dataset
@@ -650,7 +650,7 @@ trend, which is worth knowing before you hand it out.
 Filming falls well after Lesson 6. The Card is finished before it is needed.
 
 ### 13.5 Pilot Lesson 2 before building Lessons 3–5
-Two Year 8 girls, twenty minutes, the L2 room only, watched but not helped. The last
+Two Year 8 students, twenty minutes, the L2 room only, watched but not helped. The last
 draft of this strand was pitched two years too high; this is the cheapest possible
 insurance against repeating that, and it happens before the bulk of the content exists.
 
@@ -669,7 +669,7 @@ is qualitative, deliberately: a real prediction interval is built from residual
 spread, and residuals are out under 6.2.
 
 The quantitative version that does not need any of that machinery is **the
-crew's own disagreement**. Six girls place six lines by eye on the same data. At
+crew's own disagreement**. Six students place six lines by eye on the same data. At
 2040 they read six different numbers. That range is a real, visible, honestly
 derived uncertainty, produced by them rather than handed down by a formula — and
 "why we might be wrong" stops being a sentence and becomes a measurement.
@@ -678,6 +678,6 @@ It costs nothing new to collect: the Card is already a crew-owned file holding
 per-field authorship, so each member's 2040 figure is already going in. What is
 needed is a line on the Card showing the spread, and wording in the L5 room.
 
-Rejected alternative: the gap between her line and the least-squares line. The
+Rejected alternative: the gap between their line and the least-squares line. The
 two are usually close, so it would understate the uncertainty badly and quietly
 teach that extrapolation is safer than it is.

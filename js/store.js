@@ -1,16 +1,16 @@
 /* Storage. Everything a student does lives here and nowhere else - no server,
    no account, no upload.
 
-   The fleet is 1:1 assigned laptops, one Windows profile per girl, so this
+   The fleet is 1:1 assigned laptops, one Windows profile per student, so this
    storage persists unless something actively removes it. Recovery exists for
    device swaps and for the handful who lose site data, not as the expected
    path. docs/STORAGE_AMENDMENT.md §1.
 
    Two things here are not reconstructible if they go: the rows a crew measured
-   by hand, and her Lesson 2 answer that Lesson 6 quotes back at her. Both are
+   by hand, and their Lesson 2 answer that Lesson 6 quotes back at them. Both are
    mirrored into the crew's card file as they are made - see js/cardfile.js.
    Everything else, progress and badges and vault codes alike, is a function of
-   her studentId and her own answers, so losing it costs time and not work.
+   their studentId and their own answers, so losing it costs time and not work.
 
    localStorage  state, small and synchronous
    IndexedDB     chart images, because a single 1920px PNG would eat the
@@ -98,7 +98,7 @@ export function getProfile() {
   return p?.studentId ? p : null;
 }
 
-/* `role` is 'student' or 'staff', read off her roll entry at login. Nothing in
+/* `role` is 'student' or 'staff', read off their roll entry at login. Nothing in
    the rooms branches on it yet; staff.html at stage 10 will. */
 export function setProfile({ studentId, display, crew, role, variant }) {
   return writeJson(KEYS.profile, {
@@ -123,14 +123,14 @@ export function isSignedIn() {
    rather than the first.
 
    Nothing may ever be gated on the result and no student may ever see it. It is
-   a diagnostic for staff.html, for the girl whose work has vanished.
+   a diagnostic for staff.html, for the student whose work has vanished.
    docs/STORAGE_AMENDMENT.md §3. */
 /* Measured at 5ms on a first call, which is the only call that does any work.
    Bounded anyway: this sits on the login path, and nothing downstream reads the
    result, so there is no version of "the browser did not answer" that should
-   cost a girl the door. A repeat call on an already-granted origin has been seen
-   to hang indefinitely under automation. If that ever happens on the fleet, she
-   waits a second and a half and signs in regardless. */
+   cost a student the door. A repeat call on an already-granted origin has been seen
+   to hang indefinitely under automation. If that ever happens on the fleet, the
+   student waits a second and a half and signs in regardless. */
 const PERSIST_TIMEOUT_MS = 1500;
 
 export async function requestPersistence() {
@@ -167,8 +167,8 @@ export function getPersistence() {
 
 /* ---- one-time prompts ---------------------------------------------------- */
 
-/* Whether a girl has already been shown something that is only worth showing
-   once. Prompting at the end of every session teaches her to click past the
+/* Whether a student has already been shown something that is only worth showing
+   once. Prompting at the end of every session teaches them to click past the
    prompt, which is worse than never prompting. docs/STORAGE_AMENDMENT.md §5. */
 export function hasSeen(flag) {
   return Boolean(readJson(KEYS.seen, {})[flag]);
@@ -192,8 +192,8 @@ export function getRoom(roomId) {
   return progress.rooms[roomId] ?? { checkpoints: {}, badge: null, bypassed: false };
 }
 
-/* `response` is her own words, kept so Lesson 6 can quote her Lesson 2 answer
-   back at her. Nothing else reads it, and it never leaves the browser. */
+/* `response` is their own words, kept so Lesson 6 can quote their Lesson 2 answer
+   back at them. Nothing else reads it, and it never leaves the browser. */
 export function recordCheckpoint(roomId, checkpointId, { done, assisted, response }) {
   const progress = getProgress();
   const room = progress.rooms[roomId] ?? { checkpoints: {}, badge: null, bypassed: false };
@@ -210,7 +210,7 @@ export function recordCheckpoint(roomId, checkpointId, { done, assisted, respons
   return writeJson(KEYS.progress, { rooms: progress.rooms });
 }
 
-/* The door, not an answer. Recorded so a girl who cleared the lock on Tuesday
+/* The door, not an answer. Recorded so a student who cleared the lock on Tuesday
    does not type the code again on Thursday. */
 export function markOpened(roomId) {
   const progress = getProgress();
@@ -230,14 +230,14 @@ export function markBypassed(roomId) {
 
 /* ---- ungated answers ----------------------------------------------------- */
 
-/* Her own words on the items that are never marked and never gated - the ice
-   creams and drinking fountains reading in L2 above all. Lesson 6 quotes her
-   Lesson 2 answer back at her, so this has to survive four lessons, and it is
+/* Their own words on the items that are never marked and never gated - the ice
+   creams and drinking fountains reading in L2 above all. Lesson 6 quotes their
+   Lesson 2 answer back at them, so this has to survive four lessons, and it is
    kept apart from `progress` because these are not checkpoints and must never
    be counted as any.
 
    If it is missing, Lesson 6 degrades to the generic wording. It never invents
-   an answer she did not give. */
+   an answer they did not give. */
 export function getResponses() {
   return readJson(KEYS.responses, { schema: SCHEMA, items: {} }).items ?? {};
 }
@@ -268,8 +268,8 @@ export function awardBadge(name) {
 
 /* ---- the Card ------------------------------------------------------------ */
 
-/* Her own working copy, autosaved on every keystroke. The crew's shared file is
-   a separate thing and lives on disk; this is what survives her closing the lid
+/* Their own working copy, autosaved on every keystroke. The crew's shared file is
+   a separate thing and lives on disk; this is what survives their closing the lid
    before anyone has saved to it. */
 export function getCard() {
   return readJson(KEYS.card, { schema: SCHEMA, fields: {}, charts: {} });
@@ -282,7 +282,7 @@ export function setCard({ fields, charts }) {
 /* ---- the crew's own collected data --------------------------------------- */
 
 /* Written by tools/table.html at stage 4 and read by both chart tools, so a
-   girl types her measurements once rather than once per chart. */
+   student types their measurements once rather than once per chart. */
 export function getTableData() {
   const data = readJson(KEYS.data, null);
   return data?.columns?.length ? data : null;
@@ -515,6 +515,6 @@ export async function clearEverything() {
   }
   await withStore('readwrite', (store) => request(store.clear()));
   /* The pointer to the crew's file goes too. Leaving it would hand the next
-     girl on this laptop a one-click route into another crew's card. */
+     student on this laptop a one-click route into another crew's card. */
   await withStore('readwrite', (store) => request(store.clear()), HANDLE_STORE);
 }

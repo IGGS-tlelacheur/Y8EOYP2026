@@ -129,7 +129,7 @@ const data = await loadDatasets();
 const set = setFor(data, profile.variant);
 const tokens = tokensFor(set);
 
-/* Her own axes, fixed rather than fitted, and reused unchanged by Lesson 5 so
+/* Their own axes, fixed rather than fitted, and reused unchanged by Lesson 5 so
    that chart reads as this one with a line added rather than as a new chart. */
 const axis = niceAxis(set);
 
@@ -210,7 +210,7 @@ for (const [key, points] of Object.entries(set.four)) {
 
 /* ---- the three checkpoints ----------------------------------------------- */
 
-/* One authored stem per checkpoint, filled from her data set. Six copies of the
+/* One authored stem per checkpoint, filled from their data set. Six copies of the
    wording would drift apart the first time one of them was corrected.
    Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
 const QUESTIONS = [
@@ -301,11 +301,11 @@ for (const question of QUESTIONS) {
 /* ---- the ungated reading ------------------------------------------------- */
 
 /* Never gated, never hinted, no token. If it were gated the ladder would
-   eventually hand her "strong positive" with a worked explanation, and the
+   eventually hand them "strong positive" with a worked explanation, and the
    Lesson 6 callback would be worth nothing.
 
    It is also one of the two things in the programme that cannot be worked out
-   again, so it is mirrored into the crew's card file as she writes it rather
+   again, so it is mirrored into the crew's card file as they write it rather
    than at export time. docs/STORAGE_AMENDMENT.md §4. */
 const fountains = document.querySelector('#fountains');
 const saved = getResponses()['l2.fountains'];
@@ -332,7 +332,7 @@ document.querySelector('#save-fountains').addEventListener('click', async (event
   recordResponse('l2.fountains', value);
   sayFountains('Saved. You will see this again in Lesson 6.');
 
-  /* Best effort, and never at the cost of the button. Her answer is already
+  /* Best effort, and never at the cost of the button. Their answer is already
      saved by the line above; the mirror is the second copy. */
   button.disabled = true;
   try {

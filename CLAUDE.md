@@ -23,7 +23,7 @@ Do not violate these. Do not propose alternatives to these.
 - **No runtime dependencies.** No npm packages shipped to the browser, no CDN scripts,
   no Google Fonts request. Everything self-hosted in this repo.
 - **No backend.** No server, no database, no API calls, no telemetry, no analytics.
-  Nothing about a student leaves her laptop.
+  Nothing about a student leaves their laptop.
 - **No plaintext answers or unlock codes anywhere in the repo.** Hashes only. See
   `docs/DATA_CONTRACTS.md`.
 - **No browser storage APIs beyond localStorage and IndexedDB.** No cookies.
@@ -67,7 +67,7 @@ See `docs/STORAGE_AMENDMENT.md` §6.
 **Never await an unbounded promise on a student's path.** `indexedDB.open` has been
 observed raising none of its three events; a file handle on a OneDrive-backed folder
 can stall. A promise that never settles leaves a disabled button disabled for the rest
-of the lesson, which is worse than an error she can see. Put storage, file-handle and
+of the lesson, which is worse than an error they can see. Put storage, file-handle and
 network awaits on a timer, and re-enable controls in a `finally`.
 
 ## Conventions
@@ -104,7 +104,7 @@ Match the existing Data Evidence Card, which the students will already have seen
 
 **The site is school blue; the Card stays teal.** `#003DA5` replaced the Card's
 `--teal` as the site primary on 15/08/2026. The printed Data Evidence Card is
-unchanged and the girls still meet it first, so `card.html` keeps the Card's own
+unchanged and the students still meet it first, so `card.html` keeps the Card's own
 teals — held as `--card-teal` / `--card-teal-mid` in `site.css` and used nowhere
 else. If the Card is ever reissued in blue, delete those two tokens.
 
@@ -119,6 +119,13 @@ else. If the Card is ever reissued in blue, delete those two tokens.
 
 Plain, short, unpatronising. These are capable 13-year-olds, not small children.
 
+- **A student is "they", never "she".** They/them/their in the third person, or name
+  the role — *the student*, *a crew*, *whoever is stuck*. This holds in code comments
+  and documentation as well as in student-facing copy, so the whole repository reads
+  the same way. The school is single-sex; that does not make *she* the right word for
+  every student in it, and no student should have to wear it to use the site. The one
+  exception is the school's own name, *Ivanhoe Girls' Grammar School*. Rewritten
+  wholesale on 16/08/2026; do not reintroduce it one comment at a time.
 - Define every term on first use, then use it consistently. Never introduce a synonym
   for a term already taught.
 - No exclamation marks in instructions. Save them for badge awards, if at all.
@@ -145,6 +152,6 @@ Plain, short, unpatronising. These are capable 13-year-olds, not small children.
 2. Prints, or is explicitly not printable and says so.
 3. Survives a cleared cache without data loss beyond what export/import covers.
 4. Contains no plaintext answers, codes or student data.
-5. Readable by a Year 8 girl working alone, unassisted, in a room with no maths teacher.
+5. Readable by a Year 8 student working alone, unassisted, in a room with no maths teacher.
 
 Criterion 5 is the one that gets forgotten. It is the one that matters.

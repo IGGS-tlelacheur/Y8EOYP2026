@@ -166,7 +166,7 @@ function ensureRows(count) {
 /* ---- CSV ----------------------------------------------------------------- */
 /* Local to this page because nothing else reads a CSV. Quoted fields are
    handled because a category like "yes, sometimes" would otherwise split into
-   two columns and quietly corrupt her data. */
+   two columns and quietly corrupt their data. */
 
 function parseCsv(text) {
   const rows = [];
@@ -343,8 +343,8 @@ function renderBody() {
       const td = document.createElement('td');
       const input = document.createElement('input');
       input.type = 'text';
-      /* Not type=number: it swallows a typo like "12o" instead of showing her
-         that she typed one, and the check below is friendlier than the browser's. */
+      /* Not type=number: it swallows a typo like "12o" instead of showing them
+         that they typed one, and the check below is friendlier than the browser's. */
       input.inputMode = column.type === 'number' ? 'decimal' : 'text';
       input.value = row[colIndex] ?? '';
       input.setAttribute('aria-label', `Row ${rowIndex + 1}, ${headingOf(column, colIndex)}`);
@@ -404,7 +404,7 @@ document.querySelector('#clear-rows').addEventListener('click', () => {
 });
 
 /* ---- checks -------------------------------------------------------------- */
-/* Every one of these is a prompt, never a block. A girl who has genuinely
+/* Every one of these is a prompt, never a block. A student who has genuinely
    measured 300 litres needs to be able to record 300 litres. */
 
 function filledRows() {
@@ -555,7 +555,7 @@ function say(message) {
 
 /* The Collector badge asks for ten rows, and ten rows is also the point at which
    a table stops being a start and becomes the thing that was measured. The
-   prompt below waits for it rather than firing on the first two rows she types.
+   prompt below waits for it rather than firing on the first two rows they type.
    docs/STORAGE_AMENDMENT.md §5. */
 const COMMITTED_ROWS = 10;
 const PROMPT_FLAG = 'export-prompt';
@@ -590,7 +590,7 @@ document.querySelector('#save').addEventListener('click', async (event) => {
   const counted = `Saved ${rows.length} row${rows.length === 1 ? '' : 's'}`;
   say(`${counted}. Your chart tools can read it now.`);
 
-  /* The prompt goes up before the mirror is attempted, never after. Her rows are
+  /* The prompt goes up before the mirror is attempted, never after. Their rows are
      already in localStorage by this line, so the prompt is earned; hanging it
      off the end of a write to a file on OneDrive would let a slow or wedged disk
      swallow the one prompt in the programme. */

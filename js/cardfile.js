@@ -1,23 +1,23 @@
-/* Writing one girl's slice into the crew's .h2ocard from outside card.html.
+/* Writing one student's slice into the crew's .h2ocard from outside card.html.
 
    Almost everything a student does here is reconstructible. Vault codes are a
-   function of her studentId and the canonical answer, so she can log in on any
+   function of their studentId and the canonical answer, so they can log in on any
    laptop, redo a checkpoint and get the identical token back. Losing progress
-   costs her time.
+   costs them time.
 
    Two things cost work instead:
 
-     the rows her crew measured by hand, which happened once, in a bathroom
-     her Lesson 2 answer about the ice creams, which Lesson 6 quotes back at
-     her four weeks later and which fails as a moment if it is missing
+     the rows their crew measured by hand, which happened once, in a bathroom
+     their Lesson 2 answer about the ice creams, which Lesson 6 quotes back at
+     them four weeks later and which fails as a moment if it is missing
 
    Both are mirrored into the crew file at the moment they are made rather than
-   at export time, because export time is a thing she has to remember to do.
+   at export time, because export time is a thing they have to remember to do.
    docs/STORAGE_AMENDMENT.md §4.
 
    Nothing in here is allowed to fail loudly. A crew that has not opened its
    Card in this browser yet has no handle, and that is an ordinary Tuesday, not
-   an error she caused. */
+   an error they caused. */
 
 import { recallCardHandle } from './store.js';
 
@@ -30,7 +30,7 @@ export const MIRROR = {
 
 /* The crew's card lives in a OneDrive folder, so every await in here is a await
    on a network-backed disk that can stall. Nothing about this mirror is worth a
-   girl watching a disabled button, so the whole of it is on a clock. */
+   student watching a disabled button, so the whole of it is on a clock. */
 const MIRROR_TIMEOUT_MS = 6000;
 
 function withTimeout(promise, ms = MIRROR_TIMEOUT_MS) {
@@ -40,16 +40,16 @@ function withTimeout(promise, ms = MIRROR_TIMEOUT_MS) {
   ]);
 }
 
-/* What to tell her, given what happened. The written case says the crew file by
-   name because that is the reassurance; every other case says the one thing she
+/* What to tell them, given what happened. The written case says the crew file by
+   name because that is the reassurance; every other case says the one thing they
    could do about it, and none of them says anything went wrong, because from
-   where she is sitting nothing has. */
+   where they are sitting nothing has. */
 export function mirrorMessage(result, { saved = 'Saved on this laptop' } = {}) {
   if (result === MIRROR.written) return `${saved}, and in your crew's Card.`;
   return `${saved}. Open your crew's Card and save it to keep a copy there too.`;
 }
 
-/* `patch` is merged into her own entry, never over anyone else's. */
+/* `patch` is merged into their own entry, never over anyone else's. */
 export async function mirrorToCard(studentId, patch, { display = null } = {}) {
   if (!studentId || !patch) return MIRROR.failed;
 
@@ -62,10 +62,10 @@ export async function mirrorToCard(studentId, patch, { display = null } = {}) {
   if (!handle) return MIRROR.noHandle;
 
   /* queryPermission, never requestPermission. A permission prompt raised by a
-     Save button in a maths room is a prompt about a file she was not thinking
-     about, and "no" to it is not an answer to the question she was actually
+     Save button in a maths room is a prompt about a file they were not thinking
+     about, and "no" to it is not an answer to the question they were actually
      asked. If the crew has not opened the Card in this browser this session,
-     the mirror quietly does not happen and she is told to open it. */
+     the mirror quietly does not happen and they are told to open it. */
   try {
     const state = await withTimeout(
       handle.queryPermission?.({ mode: 'readwrite' }) ?? Promise.resolve('denied')
@@ -107,12 +107,12 @@ export async function mirrorToCard(studentId, patch, { display = null } = {}) {
   }
 }
 
-/* Reading her slice back out, for Lesson 6.
+/* Reading their slice back out, for Lesson 6.
 
-   Her Lesson 2 answer normally comes straight from localStorage. This is the
-   path for the girl whose laptop was reimaged between Lesson 2 and Lesson 6, or
+   Their Lesson 2 answer normally comes straight from localStorage. This is the
+   path for the student whose laptop was reimaged between Lesson 2 and Lesson 6, or
    who is sitting at a different machine: the crew file has a copy because
-   l2.html put one there when she wrote it.
+   l2.html put one there when they wrote it.
 
    Returns null for every kind of "not available", including no handle and no
    permission. Lesson 6 must never show an empty quote. */
