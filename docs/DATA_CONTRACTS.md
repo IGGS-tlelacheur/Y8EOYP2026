@@ -89,10 +89,11 @@ Hashes only. Never plaintext, in any branch, at any time.
 {
   "version": 1,
   "checkpoints": {
-    "l2.cp1": {
+    "l4.cp2": {
       "type": "numeric",
-      "tolerance": 0.05,
-      "variants": ["e91f…", "77a2…"]
+      "round": 0,
+      "search": { "min": 0, "max": 500, "step": 5 },
+      "variants": [["e91f…", "77a2…", "0b4c…"], ["…"], ["…"], ["…"], ["…"], ["…"]]
     }
   },
   "rooms": {
@@ -101,11 +102,20 @@ Hashes only. Never plaintext, in any branch, at any time.
 }
 ```
 
-- `type`: `numeric` | `choice` | `text`
-- `tolerance`: relative, numeric answers only. Where a tolerance is needed, the hash is of
-  the **canonical rounded value**; the client rounds the student's input the same way
-  before hashing. State the rounding rule per checkpoint.
-- `variants[i]` is the hash for variant `i`.
+- `type`: `numeric` | `choice` | `text` — types A, B and C of the checkpoint contract.
+- `variants[i]` is the **list of accepted hashes** for variant `i`, at most five.
+  **`variants[i][0]` is canonical**: every token and every vault code derives from it and
+  nothing else, so reordering a list changes a student's code. The rest are tolerated
+  values and exist only to be matched against.
+- Every variant of a checkpoint must accept the same *number* of values, or the six data
+  sets are not the same question. `build-data.mjs` refuses to build otherwise.
+- `round`: decimal places, numeric only. The client rounds her input the same way before
+  hashing. State the rounding rule in the question stem.
+- `search`: `{ min, max, step }`, **required on every numeric checkpoint**. It is the band
+  hint 4 walks to recover the answer, because a hash does not invert. Publishing it is
+  harmless — the stem implies it already — and it is fast: 1201 candidates measured at
+  **9 ms** in Edge. `build-data.mjs` refuses a band over 20 000 candidates, and refuses one
+  that does not actually contain the canonical answer.
 - `bypass` is one fixed code per room, shared across all students, held by staff on paper.
 
 ### Canonicalisation before hashing
@@ -122,14 +132,19 @@ canonical(answer, type)
 ### Token and vault derivation
 
 ```js
-token = sha256(canonical + studentId + checkpointId)
-          .slice(0, 4)
-          → map to 2 chars from [ABCDEFGHJKLMNPQRSTUVWXYZ23456789]
+token = sha256(variants[i][0] + studentId + checkpointId)
+          → two 16-bit halves, each modulo 30
+          → 2 chars from [ABCDEFGHJKLMNPQRTUVWXYZ2346789]
 ```
 
-Ambiguous glyphs are excluded deliberately: no `I`, `O`, `0`, `1`. A student reading a
-code off her own screen and typing it into the next room should not lose ten minutes to a
-letter that looks like a digit.
+Ambiguous glyphs are excluded deliberately: no `I`, `O`, `0`, `1`, `S`, `5`. A student
+reading a code off her own screen and typing it into the next room should not lose ten
+minutes to a letter that looks like a digit. Thirty is not a power of two, so the
+characters are taken by modulo rather than by masking bits.
+
+**The seed is always `variants[i][0]`, never the value she actually typed.** A checkpoint
+that accepts five values would otherwise mint five tokens and five vault codes, four of
+which open nothing — two girls both right, one locked out.
 
 ```js
 vault = token1 + '-' + token2 + '-' + token3
@@ -150,7 +165,12 @@ stored anywhere.**
 'h2o.v1.progress' = { schema:1, rooms:{ l2:{ checkpoints:{ cp1:{ done, attempts, assisted, response } }, badge, bypassed } } }
 'h2o.v1.badges'   = { schema:1, reader:'2026-11-18T09:41:00+11:00', collector:null, plotter:null, predictor:null }
 'h2o.v1.charts'   = { schema:1, index:[ { id, kind, title, created, roomId } ] }
+'h2o.v1.responses'= { schema:1, items:{ 'l2.fountains': { value, at } } }
 ```
+
+`h2o.v1.responses` holds her answers to items that are **never gated and never marked** —
+the ice creams and drinking fountains reading in L2 above all. It is kept apart from
+`progress` so that an ungated item can never be counted as a checkpoint.
 
 `response` stores the student's own submitted answer text. **Lesson 6 reads
 `progress.rooms.l2.checkpoints.cpN.response` to quote her back at herself.** If it is

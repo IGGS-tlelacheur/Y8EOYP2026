@@ -5,9 +5,11 @@
 
 const encoder = new TextEncoder();
 
-/* No I, O, 0 or 1. A girl reading a code off her own screen and typing it into
-   the next room should not lose ten minutes to a letter that looks like a digit. */
-const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+/* No I, O, 0, 1, S or 5. A girl reading a code off her own screen and typing it
+   into the next room should not lose ten minutes to a letter that looks like a
+   digit. Fixed by docs/CHECKPOINT_CONTRACT.md §1; thirty characters, so the two
+   are taken by modulo rather than by masking five bits. */
+export const ALPHABET = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789';
 
 export async function sha256Hex(text) {
   const digest = await crypto.subtle.digest('SHA-256', encoder.encode(text));
@@ -51,7 +53,19 @@ export function isOnRoll(studentId, roll) {
    nothing validates and the failure looks like a wrong answer. */
 export function canonicalise(answer, type, round) {
   if (type === 'numeric') {
-    const n = Number(String(answer).trim().replace(/,/g, ''));
+    /* She was asked for a number and told the unit, so half of them will type
+       the unit anyway: "175 litres", "175L", "175 l". Strip everything that is
+       not part of the number. A comma is a thousands separator here, not a
+       decimal point - this is an Australian classroom. */
+    const cleaned = String(answer).trim().toLowerCase()
+      .replace(/,/g, '')
+      .replace(/[^0-9.-]/g, '');
+
+    /* Number('') is 0, so an answer of nothing but units would validate as
+       zero and could even be right. Guard before converting, not after. */
+    if (cleaned === '' || cleaned === '-' || cleaned === '.') return null;
+
+    const n = Number(cleaned);
     if (!Number.isFinite(n)) return null;
     const f = Math.pow(10, round ?? 0);
     return String(Math.round(n * f) / f);
@@ -64,11 +78,27 @@ export function canonicalise(answer, type, round) {
    DATA_CONTRACTS describes the token as a function of the canonical answer, but
    the next room has to recompute the same vault code from answers.json alone,
    and all it holds there is the hash. Seeding from the hash gives an identical
-   token in both places and still puts no plaintext anywhere. */
+   token in both places and still puts no plaintext anywhere.
+
+   The hash passed in must always be accept[0], never whichever accepted value
+   she happened to type. A checkpoint may accept five values; five hashes would
+   mint five tokens and five vault codes, four of which open nothing. Two girls
+   both right, one locked out of the next room. See acceptedHash below. */
 export async function deriveToken(answerHash, studentId, checkpointId) {
   const hex = await sha256Hex(answerHash + studentId + checkpointId);
-  const n = parseInt(hex.slice(0, 4), 16);
-  return ALPHABET[(n >> 5) & 31] + ALPHABET[n & 31];
+  /* Two independent 16-bit halves, so the second character does not vary with
+     the first. Modulo 30 is very slightly biased; over a two-character code
+     read by one student that is worth nothing. */
+  const a = parseInt(hex.slice(0, 4), 16);
+  const b = parseInt(hex.slice(4, 8), 16);
+  return ALPHABET[a % ALPHABET.length] + ALPHABET[b % ALPHABET.length];
+}
+
+/* The canonical hash for a checkpoint, whatever else it tolerates. Every token
+   and every vault code derives from this and only this. */
+export function acceptedHash(checkpoint, variant) {
+  const entry = checkpoint.variants[variant];
+  return Array.isArray(entry) ? entry[0] : entry;
 }
 
 export function formatVault(tokens) {
@@ -84,12 +114,76 @@ export async function deriveVault(answerHashes, studentId, checkpointIds) {
   return formatVault(tokens);
 }
 
+/* The same thing straight off answers.json, which is how every room actually
+   wants it. Always accept[0], so a girl who used a tolerated value gets the same
+   code as a girl who hit it exactly. */
+export function vaultFrom(answers, checkpointIds, studentId, variant) {
+  const hashes = checkpointIds.map((id) => acceptedHash(answers.checkpoints[id], variant));
+  return deriveVault(hashes, studentId, checkpointIds);
+}
+
+/* A checkpoint holds up to five accepted hashes per variant. Any of them is
+   right; only the first is canonical. `hash` therefore comes back as accept[0]
+   whichever one matched, so the caller cannot accidentally seed a token from a
+   tolerated value. */
 export async function checkAnswer(answer, checkpoint, variant) {
   const canonical = canonicalise(answer, checkpoint.type, checkpoint.round);
-  if (canonical === null) return { correct: false, token: null };
-  const expected = checkpoint.variants[variant];
+  const hash = acceptedHash(checkpoint, variant);
+  if (canonical === null) return { correct: false, hash };
+
+  const entry = checkpoint.variants[variant];
+  const accepted = Array.isArray(entry) ? entry : [entry];
   const got = await sha256Hex(canonical);
-  return { correct: got === expected, token: null, hash: expected };
+  return { correct: accepted.includes(got), hash };
+}
+
+/* ---- rung four ----------------------------------------------------------- */
+
+/* The last rung of the ladder hands over the answer. The repo holds hashes, and
+   a hash does not invert, so the answer is recovered rather than stored.
+
+   For a closed list it is exact: the room is already displaying every option, so
+   hash each one and see which matches. Nothing plaintext was ever written down.
+   Returns the matching key, or null if the data and the page disagree - which
+   means a build error, and the room must say so rather than guess. */
+export async function revealFromOptions(checkpoint, variant, keys) {
+  const entry = checkpoint.variants[variant];
+  const accepted = Array.isArray(entry) ? entry : [entry];
+  for (const key of keys) {
+    const got = await sha256Hex(canonicalise(key, checkpoint.type, checkpoint.round));
+    if (accepted.includes(got)) return key;
+  }
+  return null;
+}
+
+/* For a number there is no list, but the stem states the band and the precision,
+   so the band is the list. A few thousand digests, fired in batches because
+   awaiting them one at a time turns one second into thirty.
+
+   Publishing the band costs nothing: the question implies it already, and
+   CLAUDE.md settled that a student who reads the source finds hashes and that
+   this is sufficient. */
+export async function revealFromBand(checkpoint, variant) {
+  const { min, max, step } = checkpoint.search ?? {};
+  if (![min, max, step].every(Number.isFinite) || step <= 0) return null;
+
+  const entry = checkpoint.variants[variant];
+  const accepted = Array.isArray(entry) ? entry : [entry];
+  const count = Math.floor((max - min) / step) + 1;
+  const BATCH = 512;
+
+  for (let start = 0; start < count; start += BATCH) {
+    const values = [];
+    for (let i = start; i < Math.min(start + BATCH, count); i += 1) {
+      /* Rebuilt from the index each time rather than accumulated, so floating
+         point drift cannot walk the candidates off the grid. */
+      values.push(canonicalise(min + i * step, checkpoint.type, checkpoint.round));
+    }
+    const hashes = await Promise.all(values.map(sha256Hex));
+    const hit = hashes.findIndex((h) => accepted.includes(h));
+    if (hit !== -1) return values[hit];
+  }
+  return null;
 }
 
 /* Compared as hashes so the expected code never sits in a variable a student

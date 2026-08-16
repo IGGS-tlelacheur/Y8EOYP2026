@@ -112,10 +112,12 @@ recovered rather than stored *(settled 16/08/2026)*:
   displaying. The room hashes each visible option and reveals the one that matches.
   Exact, and nothing plaintext is stored.
 - **Type A**: there is no list, but the stem states the band and the precision. The
-  room searches that band at that precision — a few thousand hashes, about a second
-  — and reveals the value that matches. Each checkpoint therefore declares a
-  `search` range and step in `answers.json`, which is public and harmless: the
-  question already implies it.
+  room searches that band at that precision and reveals the value that matches.
+  Each checkpoint therefore declares a `search` range and step in `answers.json`,
+  which is public and harmless: the question already implies it.
+  **Measured 16/08/2026: 1201 candidates in 9 ms** in Edge, not the second I
+  guessed. The generator refuses a band over 20 000 candidates, and refuses one
+  that does not contain its own answer.
 
 This does not weaken anything. Rung 4 hands over the answer by design, and
 `CLAUDE.md` already holds that a student who reads the source finds hashes and that
@@ -127,6 +129,18 @@ answer without doing anything, rung 3 has failed and is really rung 4.
 
 Rungs are **cumulative on screen** — rung 2 does not replace rung 1. She can see the
 whole ladder she has climbed.
+
+### She may also just ask
+
+*(Proposed amendment, built 16/08/2026, reject it and I will take it out.)* Every
+checkpoint carries an **I need a hint** button beside the answer button. It fires
+the next rung and **counts as an attempt**, so four presses reach the answer
+exactly as four wrong answers would.
+
+Without it the only route to a hint is a wrong answer, which teaches a girl to
+guess at a question she knows she cannot do — a bad habit to build, and a worse
+one to build in a room with no teacher in it to notice. Asking for help should
+not require pretending to answer.
 
 `assisted:true` does not withhold the badge. It is recorded for you, not against her,
 and the room never uses the word.

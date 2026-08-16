@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 2 · Reading charts</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 2 · Reader</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Reading charts</h1>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      Today you read charts other people made. You do not make any yourself —
+      that is Lesson 4. There are three questions to answer. Each one gives you a
+      piece of a code, and the three pieces together open Lesson 3.
+    </p>
+    <p class="note">
+      Take as long as you need. If a question will not come, press
+      <b>I need a hint</b>. The hints get more helpful each time, and the last one
+      tells you the answer. You still get your piece of the code.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Two words you need</h2>
+    <p>
+      <b>Bivariate data</b> is two measurements taken from the same thing at the
+      same time. One shower gives you its length and the water it used. That is
+      one piece of bivariate data, and it becomes one point on a chart.
+    </p>
+    <p>
+      The <b>explanatory variable (EV)</b> is the one you choose or change. The
+      <b>response variable (RV)</b> is the one you measure. Your worksheets
+      sometimes call these the independent and dependent variable. They mean the
+      same thing.
+    </p>
+    <p>
+      The EV always goes on the horizontal axis, along the bottom. The RV goes on
+      the vertical axis, up the side.
+    </p>
+  </section>
+
+  <!-- TODO(content): stage 7 replaces CHARTS below with the six variant data
+       sets. The room draws them with js/chart.js, the same engine the tools use,
+       so a swap is a change of numbers and labels only. -->
+  <section class="panel">
+    <h2>Chart 1</h2>
+    <p>A crew timed their showers for a week and measured the water each one used.</p>
+    <figure class="room-chart" id="chart1"></figure>
+  </section>
+
+  <section class="panel">
+    <h2>Four more charts</h2>
+    <p>Four crews plotted the same two variables. Question 3 asks about these.</p>
+    <div class="chart-grid" id="four-charts"></div>
+  </section>
+
+  <section class="panel" id="checkpoints">
+    <h2>Your three questions</h2>
+    <div id="cp-host"></div>
+  </section>
+
+  <section class="panel">
+    <h2>One more chart to read</h2>
+    <p>
+      This one is not marked and there is no code in it. Answer it in your own
+      words. You will need it again in Lesson 6.
+    </p>
+    <figure class="room-chart" id="chart-fountains"></figure>
+    <p>
+      <label class="lbl" for="fountains">
+        Describe the relationship between ice creams sold and the water drunk
+        from the fountains. Use the words strength and direction.
+      </label>
+    </p>
+    <textarea id="fountains" rows="3" maxlength="300"></textarea>
+    <div class="actions">
+      <button class="btn secondary" type="button" id="save-fountains">Save my answer</button>
+    </div>
+    <div class="msg" id="fountains-msg" hidden></div>
+  </section>
+
+  <section class="panel" id="finish" hidden></section>
+
+  <section class="panel no-print">
+    <h2>Before you close the laptop</h2>
+    <p>
+      Your code is worked out from your own answers, so it comes back if this
+      laptop is wiped. Your written answer above does not. Export your work from
+      the hub at the end of the lesson.
+    </p>
+    <div class="actions">
+      <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { getProfile, recordResponse, getResponses } from './js/store.js';
+import { renderChart, svgEl } from './js/chart.js';
+import { mountCheckpoint } from './js/checkpoint.js';
+import { mountFinish, MINTS } from './js/room.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const ROOM = 'l2';
+const answers = await (await fetch('data/answers.json', { cache: 'no-cache' })).json();
+
+/* TODO(content): six variants of each of these at stage 7. Variant 1 only for
+   now, and every variant must keep the same shape - same number of points, same
+   kind of labels - so the questions below read identically for all six. */
+const CHARTS = {
+  main: {
+    points: [[2, 31], [3, 44], [3, 39], [4, 52], [4, 47], [5, 58], [5, 63],
+             [6, 68], [6, 61], [7, 68], [7, 75], [8, 84], [8, 79], [9, 88],
+             [9, 95], [10, 101], [11, 108], [11, 99]],
+    xLabel: 'Shower length', xUnit: 'minutes',
+    yLabel: 'Water used', yUnit: 'litres',
+    title: 'One crew’s showers'
+  },
+  fountains: {
+    points: [[12, 48], [18, 61], [23, 77], [27, 84], [31, 96], [35, 104],
+             [38, 118], [42, 127], [46, 133], [51, 149]],
+    xLabel: 'Ice creams sold at the canteen', xUnit: 'per day',
+    yLabel: 'Water drunk from the fountains', yUnit: 'litres per day',
+    title: 'Ice creams and drinking fountains'
+  }
+};
+
+/* Point P is marked for cp2.2. It must never be an extreme on either axis, or
+   the "longest shower" distractor becomes true. */
+const P = [7, 68];
+
+/* The marker is drawn here rather than in chart.js: only this room needs a
+   labelled point, and the engine stays an engine. Ring plus letter, because
+   colour alone must never carry meaning. */
+function markPoint(svg, [px, py], letter) {
+  const dot = svg.querySelector(`circle[data-x="${px}"][data-y="${py}"]`);
+  if (!dot) return false;
+  const cx = Number(dot.getAttribute('cx'));
+  const cy = Number(dot.getAttribute('cy'));
+  svg.append(svgEl('circle', {
+    cx, cy, r: 11, fill: 'none', stroke: '#1D3F8F', 'stroke-width': 2.2
+  }));
+  svg.append(svgEl('text', {
+    x: cx + 15, y: cy - 10, 'font-size': 17, 'font-weight': 700, fill: '#1D3F8F',
+    'font-family': 'system-ui, sans-serif'
+  }, letter));
+  return true;
+}
+
+function drawChart(host, spec, { mark = null, letter = 'P', width = 620, height = 400 } = {}) {
+  const { svg } = renderChart({ ...spec, width, height });
+  host.textContent = '';
+  host.append(svg);
+  if (mark && !markPoint(svg, mark, letter)) {
+    /* The marked point is not in the data. That is a content error, and the
+       question about it cannot be answered, so say so rather than show a chart
+       with nothing circled on it. */
+    const note = document.createElement('p');
+    note.className = 'note';
+    note.textContent = 'This chart is not marked correctly. Tell your teacher.';
+    host.append(note);
+  }
+  return svg;
+}
+
+drawChart(document.querySelector('#chart1'), CHARTS.main, { mark: P });
+drawChart(document.querySelector('#chart-fountains'), CHARTS.fountains);
+
+/* The four charts for question 3, on identical axes so only the points differ. */
+const FOUR = {
+  opt_a: [[1, 22], [2, 31], [3, 30], [4, 44], [5, 41], [6, 55], [7, 62], [8, 60], [9, 74], [10, 79]],
+  opt_b: [[1, 78], [2, 71], [3, 74], [4, 62], [5, 58], [6, 52], [7, 41], [8, 38], [9, 27], [10, 22]],
+  opt_c: [[1, 34], [2, 61], [3, 28], [4, 52], [5, 71], [6, 39], [7, 66], [8, 44], [9, 74], [10, 55]],
+  opt_d: [[1, 50], [2, 44], [3, 57], [4, 47], [5, 53], [6, 45], [7, 56], [8, 49], [9, 52], [10, 48]]
+};
+
+const fourHost = document.querySelector('#four-charts');
+for (const [key, points] of Object.entries(FOUR)) {
+  const figure = document.createElement('figure');
+  figure.className = 'mini-chart';
+  const caption = document.createElement('figcaption');
+  caption.textContent = `Chart ${key.slice(-1).toUpperCase()}`;
+  figure.append(caption);
+  const holder = document.createElement('div');
+  figure.append(holder);
+  drawChart(holder, {
+    points,
+    xLabel: 'Shower length', xUnit: 'minutes',
+    yLabel: 'Water used', yUnit: 'litres',
+    axis: { xMin: 0, xMax: 11, yMin: 0, yMax: 85 }
+  }, { width: 340, height: 250 });
+  fourHost.append(figure);
+}
+
+/* ---- the three checkpoints ----------------------------------------------- */
+
+/* Wording is docs/CHECKPOINT_QUESTIONS.md. Change it there first. */
+const QUESTIONS = [
+  {
+    id: 'l2.cp1',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 1 of 3',
+    stem: 'Chart 1 shows one point for each shower. Look at the horizontal axis. Which label describes it? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'Shower length, in minutes' },
+      { key: 'opt_b', label: 'Shower length, in seconds' },
+      { key: 'opt_c', label: 'Water used, in litres' },
+      { key: 'opt_d', label: 'Water used, in minutes' }
+    ],
+    hints: [
+      'The horizontal axis is the one along the bottom of the chart. Its label is printed underneath it.',
+      'A different chart shows one point for each car. The label under its horizontal axis reads “Age, in years”. So the horizontal axis is age, and the unit is years. Both halves matter: “Age, in months” would be a different label.',
+      'Put a finger on the axis along the bottom of Chart 1. Read what is printed under it. It names one thing and one unit. Two options name that thing. Only one of those two uses the unit printed on your chart.'
+    ]
+  },
+  {
+    id: 'l2.cp2',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 2 of 3',
+    stem: 'On Chart 1 one point is circled and marked P. What does P tell you? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'One shower that lasted 7 minutes and used 68 litres' },
+      { key: 'opt_b', label: 'One shower that lasted 68 minutes and used 7 litres' },
+      { key: 'opt_c', label: 'Seven showers that used 68 litres altogether' },
+      { key: 'opt_d', label: 'The longest shower the crew recorded' }
+    ],
+    hints: [
+      'Point P sits above one number on the bottom axis. It sits level with one on the side axis.',
+      'On a chart of cars, point Q sits above 4 on the bottom axis. It is level with 12 on the side axis. The bottom axis is “Age, in years”. The side axis is “Price, in thousands of dollars”. So Q is one car, 4 years old, costing 12 thousand dollars. One point is one car, not a total.',
+      'Trace straight down from P to the bottom axis and read the number there. Trace straight across from P to the side axis and read that one. Two options use both of your numbers. In one of them the numbers are the wrong way round.'
+    ]
+  },
+  {
+    id: 'l2.cp3',
+    roomId: ROOM,
+    type: 'choice',
+    title: 'Question 3 of 3',
+    stem: 'Four crews plotted the same two variables. One crew’s chart shows a strong negative relationship. Which chart is theirs? Choose one.',
+    options: [
+      { key: 'opt_a', label: 'Chart A' },
+      { key: 'opt_b', label: 'Chart B' },
+      { key: 'opt_c', label: 'Chart C' },
+      { key: 'opt_d', label: 'Chart D' }
+    ],
+    hints: [
+      'Read each chart from left to right. Ask which way the points travel, and how tidily.',
+      'On four other charts, one showed a weak positive relationship. Its points travelled upwards from left to right, so the direction was positive. They were scattered widely rather than sitting near a line, so the strength was weak. Direction and strength are two separate questions about the same chart.',
+      'Two of the four charts travel downwards from left to right. Rule out the other two now. Look only at the two that are left. In one of them the points sit close to a straight line. In the other they are scattered.'
+    ]
+  }
+];
+
+const tokens = {};
+const host = document.querySelector('#cp-host');
+const finish = document.querySelector('#finish');
+
+async function refreshFinish() {
+  await mountFinish(finish, {
+    roomId: ROOM,
+    answers,
+    studentId: profile.studentId,
+    variant: profile.variant,
+    tokens,
+    nextRoom: 'l3'
+  });
+}
+
+for (const question of QUESTIONS) {
+  mountCheckpoint(host, question, answers.checkpoints[question.id], {
+    variant: profile.variant,
+    studentId: profile.studentId,
+    onDone: ({ id, token }) => {
+      tokens[id] = token;
+      refreshFinish();
+    }
+  });
+}
+
+/* ---- the ungated reading ------------------------------------------------- */
+
+/* Never gated, never hinted, no token. If it were gated the ladder would
+   eventually hand her "strong positive" with a worked explanation, and the
+   Lesson 6 callback would be worth nothing. */
+const fountains = document.querySelector('#fountains');
+const saved = getResponses()['l2.fountains'];
+if (saved) fountains.value = saved.value;
+
+document.querySelector('#save-fountains').addEventListener('click', () => {
+  recordResponse('l2.fountains', fountains.value.trim());
+  const box = document.querySelector('#fountains-msg');
+  box.className = 'msg good';
+  box.textContent = '';
+  const mark = document.createElement('span');
+  mark.className = 'mark';
+  mark.textContent = '✓';
+  const body = document.createElement('span');
+  body.textContent = 'Saved. You will see this again in Lesson 6.';
+  box.append(mark, body);
+  box.hidden = false;
+});
+</script>
+</body>
+</html>

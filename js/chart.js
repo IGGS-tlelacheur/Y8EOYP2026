@@ -447,8 +447,12 @@ export function renderChart(spec) {
   /* ---- points ---- */
   const dotRadius = Math.max(4, fonts.label / 2.6);
   for (const [px, py] of points) {
+    /* Carrying the data values lets a caller find one point again after the
+       chart is drawn - the L2 room rings one and labels it P. Nothing in the
+       engine reads them back. */
     svg.append(svgEl('circle', {
-      cx: x.to(px), cy: y.to(py), r: dotRadius, fill: INK
+      cx: x.to(px), cy: y.to(py), r: dotRadius, fill: INK,
+      'data-x': px, 'data-y': py
     }));
   }
 

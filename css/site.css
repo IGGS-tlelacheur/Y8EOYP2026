@@ -575,6 +575,134 @@ input[type='range'] {
 .checks { margin: 0.4rem 0 0.6rem; padding-left: 1.1rem; }
 .checks li { margin-bottom: 0.3rem; font-size: 0.92rem; }
 
+/* ---- rooms, checkpoints and the hint ladder ------------------------------ */
+
+.room-chart { margin: 0; }
+.room-chart svg { max-width: 100%; height: auto; display: block; }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--gap);
+}
+
+.mini-chart { margin: 0; }
+.mini-chart svg { max-width: 100%; height: auto; display: block; }
+
+.mini-chart figcaption {
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+.cp {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--brand);
+  background: var(--paper);
+  padding: 1.25rem;
+  margin-bottom: var(--gap);
+}
+
+.cp-head h3 { margin: 0 0 0.35rem; font-size: 0.8rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--sage); }
+
+.cp-stem { font-size: 1.05rem; margin: 0 0 1rem; max-width: var(--measure); }
+
+.cp-input input[type='text'] { max-width: 12rem; }
+
+.cp-options { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+
+/* Whole row is the target, not just the radio: 44px minimum on a touchscreen,
+   and a 13-year-old should not have to hit a 13px circle with a finger. */
+.cp-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: var(--tap);
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+}
+
+.cp-option:hover { border-color: var(--brand-mid); }
+.cp-option input { margin-top: 0.15rem; width: 1.1rem; height: 1.1rem; flex: none; }
+.cp-option:has(input:checked) { border-color: var(--brand); background: var(--brand-tint); }
+.cp-option:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 2px; }
+.cp-option:has(input:disabled) { cursor: default; opacity: 0.75; }
+
+.ladder { margin-top: 0.75rem; display: grid; gap: 0.6rem; }
+
+/* Cumulative: rung 2 does not replace rung 1, so she can see the whole ladder
+   she has climbed. Rung 3 refers back to rung 2 and needs it on screen. */
+.rung {
+  border-left: 3px solid var(--gold);
+  background: #FFFBF0;
+  padding: 0.7rem 0.9rem;
+}
+
+.rung-n {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 0.2rem;
+}
+
+.rung p { margin: 0; max-width: var(--measure); }
+
+.token {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--brand-tint);
+  border: 1px solid var(--brand-mid);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.token-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand-dark);
+}
+
+.token-value {
+  font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+  font-size: 1.6rem;
+  letter-spacing: 0.18em;
+  color: var(--brand);
+}
+
+/* She reads this off one screen and types it into another, so it is the largest
+   thing on the page and the letters are spaced apart. */
+.vault-code {
+  font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  letter-spacing: 0.22em;
+  color: var(--brand);
+  background: var(--brand-tint);
+  border: 2px solid var(--brand);
+  padding: 0.8rem 1rem;
+  text-align: center;
+  margin: 0.75rem 0 1rem;
+  word-break: break-all;
+}
+
+.lock input[type='text'] {
+  font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  max-width: 14rem;
+}
+
 /* ---- the printed collection sheet ---------------------------------------- */
 /* Hidden on screen. It exists to be printed and written on, so it carries no
    colour fills and no thin hairlines. */

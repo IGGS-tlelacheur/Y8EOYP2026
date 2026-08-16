@@ -18,7 +18,8 @@ export const KEYS = {
   badges: `${NS}badges`,
   charts: `${NS}charts`,
   card: `${NS}card`,
-  data: `${NS}data`
+  data: `${NS}data`,
+  responses: `${NS}responses`
 };
 
 export const BADGES = ['reader', 'collector', 'plotter', 'predictor'];
@@ -128,12 +129,42 @@ export function recordCheckpoint(roomId, checkpointId, { done, assisted, respons
   return writeJson(KEYS.progress, { rooms: progress.rooms });
 }
 
+/* The door, not an answer. Recorded so a girl who cleared the lock on Tuesday
+   does not type the code again on Thursday. */
+export function markOpened(roomId) {
+  const progress = getProgress();
+  const room = progress.rooms[roomId] ?? { checkpoints: {}, badge: null, bypassed: false };
+  room.opened = true;
+  progress.rooms[roomId] = room;
+  return writeJson(KEYS.progress, { rooms: progress.rooms });
+}
+
 export function markBypassed(roomId) {
   const progress = getProgress();
   const room = progress.rooms[roomId] ?? { checkpoints: {}, badge: null, bypassed: false };
   room.bypassed = true;
   progress.rooms[roomId] = room;
   return writeJson(KEYS.progress, { rooms: progress.rooms });
+}
+
+/* ---- ungated answers ----------------------------------------------------- */
+
+/* Her own words on the items that are never marked and never gated - the ice
+   creams and drinking fountains reading in L2 above all. Lesson 6 quotes her
+   Lesson 2 answer back at her, so this has to survive four lessons, and it is
+   kept apart from `progress` because these are not checkpoints and must never
+   be counted as any.
+
+   If it is missing, Lesson 6 degrades to the generic wording. It never invents
+   an answer she did not give. */
+export function getResponses() {
+  return readJson(KEYS.responses, { schema: SCHEMA, items: {} }).items ?? {};
+}
+
+export function recordResponse(id, value) {
+  const items = getResponses();
+  items[id] = { value, at: new Date().toISOString() };
+  return writeJson(KEYS.responses, { items });
 }
 
 /* ---- badges -------------------------------------------------------------- */
