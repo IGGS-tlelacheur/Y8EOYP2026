@@ -19,8 +19,9 @@ to the front.
 
 ### How to run it
 
-Open **`docs/soe-probe.html`** on the deployed origin, on a school SOE laptop in Edge,
-and follow the four steps on the page. It writes to `h2o.probe` only, never to
+**<https://iggs-tlelacheur.github.io/Y8EOYP2026/docs/soe-probe.html>**
+
+Open it on a school SOE laptop in Edge and follow the four steps on the page. It writes to `h2o.probe` only, never to
 `h2o.v1.*`, so it is safe to run on a laptop with a girl's real work on it. It reports
 a verdict, and produces a block to paste into the table below.
 
@@ -64,6 +65,20 @@ to is the thing that went missing.
 no management policy is the easy case. The answer that matters can only come from a
 school SOE laptop with the school's Edge policy applied, and that has not been done.
 
+### The deployment, checked 16/08/2026
+
+GitHub Pages went live the same day. Verified against
+`https://iggs-tlelacheur.github.io/Y8EOYP2026/` by driving a real Edge:
+
+- Every page, module, asset and data file returns 200; no absolute paths, so the project
+  subpath does not break anything.
+- Secure context is true, so SubtleCrypto and the File System Access API both work.
+- Sign in as a test ID → hub, variant assigned, Lesson 2's chart drawing all 18 points,
+  three checkpoints, Reader badge, and the code it minted opening Lesson 3.
+- The vault code was identical to the one the same ID produces locally, which is the
+  design: it is a function of her `studentId`, not of where the site is served from.
+- The probe page itself ran on the live origin through two real browser restarts.
+
 ---
 
 ## Persistent storage grant
@@ -71,9 +86,18 @@ school SOE laptop with the school's Edge policy applied, and that has not been d
 `navigator.storage.persist()` is requested once at login and the last answer is kept in
 `h2o.v1.persisted`. Nothing is gated on it and no student ever sees it.
 
-Measured on the dev machine, Chromium, 16/08/2026: **granted, in 2–5 ms**, reported
-quota 10 GB. Worth re-reading on the SOE, because a managed profile may answer
-differently.
+Measured 16/08/2026, Edge 148:
+
+| Origin | `persist()` | Quota |
+|---|---|---|
+| `http://127.0.0.1` (dev) | **true**, in 2–5 ms | 10 GB |
+| `https://iggs-tlelacheur.github.io` (live, first visit) | **false** | — |
+
+**The live origin says no on a first visit, and that is normal.** Chromium decides on
+engagement heuristics, so the same laptop can answer false today and true after the girl
+has used the site a few times. It is the reason nothing may ever be gated on the result,
+and the reason the call is bounded: a student who gets `false` must still reach the hub,
+which she does. Worth re-reading on the SOE, because a managed profile may differ again.
 
 The call is bounded at 1.5 s in `store.js`. It sits on the login path and nothing
 downstream reads its result, so there is no version of "the browser did not answer"
