@@ -54,11 +54,11 @@ function normalisePassword(input) {
   return String(input ?? '').trim().toLowerCase().replace(/\s+/g, '');
 }
 
-// Must match deriveCredential() in js/vault.js. PBKDF2-SHA256 over
-// "id:password", one published salt, output hex.
-function credential(id, password, salt, iterations) {
-  const secret = `${normaliseId(id)}:${normalisePassword(password)}`;
-  return pbkdf2Sync(secret, salt, iterations, 32, 'sha256').toString('hex');
+// Must match derivePasswordHash() in js/vault.js. PBKDF2-SHA256 over the
+// password alone, salted with the published salt and her own studentId.
+function passwordHash(studentId, password, salt, iterations) {
+  return pbkdf2Sync(normalisePassword(password), `${salt}:${studentId}`, iterations, 32, 'sha256')
+    .toString('hex');
 }
 
 // Must match canonicalise() in js/vault.js character for character. If the two
@@ -109,15 +109,15 @@ function emit(path, obj) {
 
 // ---- roll -----------------------------------------------------------------
 
-// private/roll.csv: ID,Staff_Student,Password with a header row. Excel writes a
-// BOM, which would otherwise make the first column name "﻿ID".
-// Measured at 16 ms for 150,000 in Edge on the target hardware, which is far
-// cheaper than budgeted, so it buys more. 600,000 is the current OWASP figure for
+// Measured at 16 ms for 150,000 in Edge on the target hardware, far cheaper than
+// budgeted, so it buys more. 600,000 is the current OWASP figure for
 // PBKDF2-SHA256 and costs a login about 65 ms - below the threshold where anyone
-// notices a button. Raising this invalidates every credential on the roll, so it
-// changes only alongside a rebuild.
+// notices a button. Raising this invalidates every password hash on the roll, so
+// it changes only alongside a rebuild.
 const ITERATIONS = 600000;
 
+// private/roll.csv: ID,Staff_Student,Password with a header row. Excel writes a
+// BOM, which would otherwise make the first column name "﻿ID".
 function parseCsv(text) {
   const lines = text.replace(/^﻿/, '').split(/\r?\n/).filter((l) => l.trim() !== '');
   const head = lines.shift().split(',').map((h) => h.trim().toLowerCase());
@@ -149,22 +149,19 @@ const priorRoll = existsSync(resolve(ROOT, 'data/roll.json'))
   : null;
 const salt = priorRoll?.salt ?? randomBytes(16).toString('hex');
 
-const people = parseCsv(read('private/roll.csv'));
+const roster = parseCsv(read('private/roll.csv'));
 const usable = [];
 const skipped = [];
-const odd = [];
 
-for (const p of people) {
+for (const p of roster) {
   const id = normaliseId(p.id);
   const password = normalisePassword(p.password);
   if (id.length < 2 || password.length < 2) {
     skipped.push(p.line);
     continue;
   }
-  // Everyone on this roll is meant to have a five-character ID. A shorter one is
-  // usually Excel eating a leading zero, and that locks a real person out with
-  // no symptom other than "it says my ID is wrong".
-  if (id.length !== 5) odd.push(`line ${p.line} (${id.length} characters)`);
+  // Three- and four-digit IDs are real: staff who joined before the school moved
+  // to five digits. Confirmed 17/08/2026, so their length is not a warning.
   usable.push({ id, password, role: p.role.startsWith('staff') ? 'staff' : 'student' });
 }
 
@@ -183,22 +180,28 @@ for (const p of usable) {
 if (skipped.length) {
   console.warn(`note: ${skipped.length} row(s) skipped for a blank ID or password: lines ${skipped.join(', ')}`);
 }
-if (odd.length) {
-  console.warn(`note: ${odd.length} ID(s) are not five characters: ${odd.join(', ')}`);
-}
 
-// Sorted by hash, so the published order carries nothing about class lists.
-const entries = usable
-  .map((p) => ({ h: credential(p.id, p.password, salt, ITERATIONS), r: p.role }))
-  .sort((a, b) => (a.h < b.h ? -1 : 1));
+// `i` is her studentId, the same value the browser derives from her ID alone and
+// the same one every vault token is built on. Sorted by it, so the published
+// order carries nothing about class lists.
+const people = usable
+  .map((p) => {
+    const studentId = sha256(p.id);
+    return {
+      i: studentId,
+      p: passwordHash(studentId, p.password, salt, ITERATIONS),
+      r: p.role
+    };
+  })
+  .sort((a, b) => (a.i < b.i ? -1 : 1));
 
 emit('data/roll.json', {
-  version: 2,
+  version: 3,
   generated: new Date().toISOString().slice(0, 10),
   salt,
   iterations: ITERATIONS,
-  count: entries.length,
-  entries
+  count: people.length,
+  people
 });
 
 // ---- answers --------------------------------------------------------------
@@ -316,7 +319,7 @@ for (const r of Object.values(src.rooms ?? {})) {
 // Proving there is nowhere for a plaintext to hide is stronger than looking for
 // it. Every key is enumerated, every value is matched against the only shape it
 // is allowed to have, and anything unrecognised fails.
-const rollKeys = ['version', 'generated', 'salt', 'iterations', 'count', 'entries'];
+const rollKeys = ['version', 'generated', 'salt', 'iterations', 'count', 'people'];
 const rollOut = JSON.parse(read('data/roll.json'));
 
 for (const key of Object.keys(rollOut)) {
@@ -333,15 +336,17 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(rollOut.generated)) {
   console.error('LEAK: the generated date in data/roll.json is not a plain date');
   process.exit(1);
 }
-for (const entry of rollOut.entries) {
+for (const entry of rollOut.people) {
   const keys = Object.keys(entry).sort().join(',');
-  if (keys !== 'h,r') {
-    console.error(`LEAK: a roll entry has keys "${keys}", expected "h,r"`);
+  if (keys !== 'i,p,r') {
+    console.error(`LEAK: a roll entry has keys "${keys}", expected "i,p,r"`);
     process.exit(1);
   }
-  if (!/^[0-9a-f]{64}$/.test(entry.h)) {
-    console.error('LEAK: a roll entry hash is not 64 hex characters');
-    process.exit(1);
+  for (const field of ['i', 'p']) {
+    if (!/^[0-9a-f]{64}$/.test(entry[field])) {
+      console.error(`LEAK: a roll entry "${field}" is not 64 hex characters`);
+      process.exit(1);
+    }
   }
   if (entry.r !== 'student' && entry.r !== 'staff') {
     console.error(`LEAK: a roll entry role is "${entry.r}", expected student or staff`);

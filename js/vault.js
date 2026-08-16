@@ -44,27 +44,28 @@ export async function deriveStudentId(input) {
   return sha256Hex(normalised);
 }
 
-/* ID and password together, stretched.
+/* The password, stretched, salted with her own studentId.
 
-   data/roll.json is public and holds one of these per person. A plain SHA-256 of
-   a five-digit ID and a five-letter word is recoverable on a laptop in an
-   afternoon, and the roll is a list of real children. PBKDF2 costs one login
-   about a tenth of a second and costs an attacker that same tenth of a second
-   per guess, across the whole space.
+   The ID and the password are checked separately, so the roll can answer "is
+   this person here?" without being told a password. That is what makes a useful
+   message at the door possible, and what lets staff confirm an ID for the girl
+   who has forgotten hers.
 
-   This is the one place effort goes into making a gate stronger. CLAUDE.md's
-   rule that the escape-room gating stays thin is about vault codes, which are
-   worth nothing to anyone; it was never about the roll.
+   The cost of splitting them is stated plainly in docs/DATA_CONTRACTS.md: the ID
+   half is a bare SHA-256 over a space of a few tens of thousands, so anyone with
+   this file can work out which IDs are on the roll. That was true of the original
+   design too, school IDs are not secret, and there is nothing sensitive behind
+   them - settled with the client on 17/08/2026.
 
-   One published salt rather than one per person, because a per-person salt would
-   force a derivation against all two hundred entries on every login. */
-export async function deriveCredential(id, password, { salt, iterations }) {
-  const secret = `${normaliseId(id)}:${normalisePassword(password)}`;
+   Salting each password with her studentId is free and worth having anyway: two
+   girls handed the same water word get different hashes, so the file never shows
+   that a password is shared. */
+export async function derivePasswordHash(studentId, password, { salt, iterations }) {
   const material = await crypto.subtle.importKey(
-    'raw', encoder.encode(secret), 'PBKDF2', false, ['deriveBits']
+    'raw', encoder.encode(normalisePassword(password)), 'PBKDF2', false, ['deriveBits']
   );
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt: encoder.encode(salt), iterations, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: encoder.encode(`${salt}:${studentId}`), iterations, hash: 'SHA-256' },
     material,
     256
   );
@@ -81,19 +82,27 @@ export async function loadRoll(url = 'data/roll.json') {
   return {
     salt: roll.salt,
     iterations: roll.iterations,
-    entries: new Map((roll.entries ?? []).map((e) => [e.h, e.r]))
+    people: new Map((roll.people ?? []).map((p) => [p.i, { p: p.p, r: p.r }]))
   };
 }
 
-/* Returns the role on success and null on failure, so the caller cannot treat
-   "not on the roll" as a truthy anything. Nothing here says which half was
-   wrong: a page that distinguishes a bad ID from a bad password hands an
-   enumerator the roll one field at a time. */
-export async function checkCredential(id, password, roll) {
-  const normalised = normaliseId(id);
-  if (normalised.length < 2 || normalisePassword(password).length < 2) return null;
-  const hash = await deriveCredential(id, password, roll);
-  return roll.entries.get(hash) ?? null;
+/* Is this ID on the roll at all? Answerable without a password, which is the
+   whole point of splitting the two. */
+export function isOnRoll(studentId, roll) {
+  return Boolean(studentId) && roll.people.has(studentId);
+}
+
+/* Returns the role on a match, null on a wrong password, and undefined when the
+   ID is not on the roll at all - three outcomes, because the door has three
+   things to say. Constant-time comparison is pointless here and not attempted:
+   the whole file is public, so there is nothing to learn from the timing that
+   reading it would not tell you faster. */
+export async function checkPassword(studentId, password, roll) {
+  const person = roll.people.get(studentId);
+  if (!person) return undefined;
+  if (normalisePassword(password).length < 1) return null;
+  const hash = await derivePasswordHash(studentId, password, roll);
+  return hash === person.p ? person.r : null;
 }
 
 /* Applied identically here and in scripts/build-data.mjs. If the two ever drift,

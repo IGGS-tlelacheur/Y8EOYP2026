@@ -7,8 +7,9 @@ Sources live in `private/`, which is git-ignored:
 
 - `private/roll.csv` — `ID,Staff_Student,Password`, one line per person, students and
   staff alike. Export it from the school system, drop it in, never commit it. Only
-  hashes are published, and the salt in `data/roll.json` must never be regenerated once
-  the roll is live.
+  hashes are published. The salt and the iteration count in `data/roll.json` must never
+  change once the roll is live — either invalidates every password on it. ID length is
+  not validated: some staff IDs are genuinely three or four digits.
 - `private/answers.json` — the plaintext answer key. See `private/answers.example.json`
   for the shape.
 

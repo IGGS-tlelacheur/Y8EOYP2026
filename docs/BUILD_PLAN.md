@@ -68,8 +68,8 @@ every student and every staff member has a school ID and not all have an address
 they can recall.
 
 ```
-studentId  = SHA-256(normaliseId(id))
-credential = PBKDF2-SHA256(normaliseId(id) + ':' + normalisePassword(pw), salt, 150000)
+studentId    = SHA-256(normaliseId(id))
+passwordHash = PBKDF2-SHA256(normalisePassword(pw), salt + ':' + studentId, 600000)
 ```
 
 Normalisation before hashing: trim, casefold to lowercase, strip anything that is not
@@ -87,20 +87,20 @@ Three deliberate separations:
   else, so a typo there is cosmetic rather than fatal.
 - **The identity is never displayed** after login. The hub greets her by display name.
 
-**Ship a stretched allowlist.** `data/roll.json` holds one PBKDF2 hash per person, with
-the role (`student` or `staff`) beside it, sorted by hash so the order carries nothing.
-Login checks membership before creating a profile, so a mistyped ID is caught at the door
-rather than three lessons later. No personal data enters the repository.
+**Ship a stretched allowlist.** `data/roll.json` holds her `studentId` and her stretched
+password hash side by side, with the role beside them, sorted by `studentId` so the order
+carries nothing.
 
-The password is deliberately low-stakes — a word about water, shared by the teacher — but
-the roll is a list of real children on a public repo, and a plain SHA-256 of a five-digit
-ID and a five-letter word is recoverable on a laptop in an afternoon. PBKDF2 at 150 000
-iterations costs a login about a tenth of a second and costs an attacker that same tenth
-of a second per guess. This is the one gate in the programme worth strengthening; the
-escape-room codes stay thin as specified.
+**The two are checked separately** (settled 17/08/2026), which is what lets the door say
+something useful: *that ID is not on the list* is a different problem from *that password
+does not match*, and a girl sent hunting for the wrong one of those loses the lesson. It
+also lets staff confirm an ID for the girl who has forgotten hers.
 
-A failed login says one thing for both fields. Telling her which half was wrong hands an
-enumerator the roll one field at a time.
+The cost is that the ID half is a bare SHA-256 over a space of a few tens of thousands, so
+anyone with the file can work out which IDs are on the roll. School IDs are not secret,
+nothing sensitive sits behind them, and the original design published exactly the same
+thing. The password half is PBKDF2 at 600 000 iterations, salted per person with her own
+`studentId`, so identical water words do not collide in the file.
 
 `staff.html` keeps a **re-link** tool anyway, for the girl who is on the roll under an ID
 she does not know.

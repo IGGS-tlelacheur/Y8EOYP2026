@@ -117,7 +117,7 @@
 </main>
 
 <script type="module">
-import { deriveStudentId, loadRoll, checkCredential } from './js/vault.js';
+import { deriveStudentId, loadRoll, isOnRoll, checkPassword } from './js/vault.js';
 import { assignVariant } from './js/variants.js';
 import {
   getProfile, setProfile, importBundle, clearEverything, storageWorks, requestPersistence
@@ -191,16 +191,23 @@ form.addEventListener('submit', async (event) => {
 
     const roll = await loadRoll('data/roll.json');
 
-    /* Stretched, so this takes about a tenth of a second rather than none. */
-    const role = await checkCredential(identity, password, roll);
-
-    /* One message for both halves. Telling her which of the two was wrong would
-       let anyone work through the roll one field at a time. */
-    if (!role) {
+    /* The ID is checked on its own first, so a girl who has mistyped it is told
+       so instead of being sent to hunt for a password that was never the
+       problem. That costs us the fact that the roll can be enumerated, which the
+       client has accepted: school IDs are not secret and nothing sensitive sits
+       behind them. */
+    if (!isOnRoll(studentId, roll)) {
       return show(
-        'That ID and password do not go together. Check both and try again. '
+        'That ID is not on the list. Check the number on your student card. '
         + 'If it still will not go through, ask your teacher to look you up.'
       );
+    }
+
+    /* Stretched, so this takes about a fifteenth of a second rather than none. */
+    const role = await checkPassword(studentId, password, roll);
+
+    if (!role) {
+      return show('That password does not match that ID. Check it and try again.');
     }
 
     setProfile({ studentId, display, crew, role, variant: assignVariant(studentId) });

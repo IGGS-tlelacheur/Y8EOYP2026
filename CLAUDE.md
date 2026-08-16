@@ -47,7 +47,7 @@ say so once, in a sentence, and then follow it anyway.
 |---|---|
 | Lesson sequence | L1 intro (no badge), L2 Reader, L3 Collector, L4 Plotter, L5 Predictor, L6 synthesis |
 | Toolchain | Bespoke tools only. CODAP and Excel are out. Do not reintroduce them |
-| Identity | School ID plus a low-stakes password, normalised and stretched with PBKDF2, checked against a hashed roll. No email anywhere |
+| Identity | School ID and a low-stakes password, **checked separately** so the door can say which one is wrong. ID hashed, password stretched with PBKDF2 and salted per person. No email anywhere |
 | Crew and display name | Held separately from identity, never part of the hash |
 | Unlock codes | Derived from the student's own correct answers, never random, never stored in plaintext |
 | Dataset variants | Six, assigned deterministically from the student ID |
