@@ -46,6 +46,7 @@
     <div class="actions">
       <button class="btn" type="button" id="export">Export my work</button>
       <a class="btn secondary" href="card.html" id="card-link">Open our Data Evidence Card</a>
+      <a class="btn secondary" href="extension.html">Side quests</a>
     </div>
   </section>
 
@@ -69,12 +70,12 @@ document.querySelector('#variant-note').textContent = `Data set ${profile.varian
    offering a link that 404s - a dead link and a locked room look identical to a
    student working alone, and only one of them is her fault. */
 const ROOMS = [
-  { id: 'l1', n: '1', name: 'Getting started', blurb: 'What bivariate data is', badge: null, built: false },
+  { id: 'l1', n: '1', name: 'Getting started', blurb: 'What bivariate data is', badge: null, built: true },
   { id: 'l2', n: '2', name: 'Reading charts', blurb: 'Earn your Reader badge', badge: 'reader', built: true },
   { id: 'l3', n: '3', name: 'Collecting data', blurb: 'Earn your Collector badge', badge: 'collector', built: true },
   { id: 'l4', n: '4', name: 'Plotting it', blurb: 'Earn your Plotter badge', badge: 'plotter', built: true },
   { id: 'l5', n: '5', name: 'Predicting', blurb: 'Earn your Predictor badge', badge: 'predictor', built: true },
-  { id: 'l6', n: '6', name: 'The whole story', blurb: 'Finish and print your Card', badge: null, built: false }
+  { id: 'l6', n: '6', name: 'The whole story', blurb: 'Finish and print your Card', badge: null, built: true }
 ];
 
 const BADGE_NAMES = {

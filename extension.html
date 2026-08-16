@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Side quests</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the quests</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Side quests</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Side quests</h1>
+
+  <p>
+    None of these is required and none of them is marked. They are here because
+    some of them are more interesting than the room you are in, and you should be
+    able to go and do one.
+  </p>
+  <p class="note">
+    Take one whenever you like. You do not have to finish a room first, and you
+    do not have to finish a quest once you have started it.
+  </p>
+
+  <ul class="quests" id="quests"></ul>
+
+  <section class="panel no-print">
+    <div class="actions">
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+      <a class="btn secondary" href="tools/bi.html">Two-variable tool</a>
+      <a class="btn secondary" href="tools/mislead.html">Two-charts tool</a>
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import { getProfile } from './js/store.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+/* Wording is mine. Each one names what to do and what would count as having done
+   it, because "explore least squares" is not a task, it is a topic. The room a
+   quest belongs after is given so nobody starts one that needs a word she has
+   not met. */
+const QUESTS = [
+  {
+    after: 'Lesson 5',
+    title: 'What does “best” actually mean?',
+    body: 'Your line of best fit is the one that passes closest to all the points. '
+      + 'Closest measured how? Turn on the computer\'s line in the two-variable tool '
+      + 'and drag yours until they sit on top of each other. Then work out what the '
+      + 'computer is measuring that you are doing by eye.',
+    done: 'You can say in one sentence what the computer is adding up.',
+    href: 'tools/bi.html', hrefText: 'Two-variable tool'
+  },
+  {
+    after: 'Lesson 5',
+    title: 'Find the equation by hand',
+    body: 'Take two points on your line, work out the gradient, then work back to '
+      + 'where the line would cross the side axis. That gives you y = mx + c without '
+      + 'the software. Then ask the tool and compare.',
+    done: 'Your c and the tool\'s c agree, or you can say why they do not.'
+  },
+  {
+    after: 'Lesson 4',
+    title: 'Argue the two scales',
+    body: 'Take one set of readings and draw it twice, once starting at zero and '
+      + 'once not. Write 100 words arguing that the second one is dishonest. Then '
+      + 'write 50 arguing that it is not.',
+    done: 'You have written both, and the second one is harder than you expected.',
+    href: 'tools/mislead.html', hrefText: 'Two-charts tool'
+  },
+  {
+    after: 'Lesson 4',
+    title: 'Dismantle a published chart',
+    body: 'Find a real chart about water, weather or money, in a newspaper or on a '
+      + 'website. Work out whether the axis starts at zero, whether the steps are '
+      + 'even, and how much of the data is shown.',
+    done: 'You can name which of the three tricks it uses, or say clearly that it uses none.'
+  },
+  {
+    after: 'Lesson 3',
+    title: 'Measure the same thing twice',
+    body: 'Take one measurement, then take it again the same way. Then get someone '
+      + 'else to take it, following only what you wrote down. Three numbers for one '
+      + 'thing.',
+    done: 'You can say how far apart your three numbers are, and whether that is '
+      + 'small compared with the differences you are trying to find.'
+  },
+  {
+    after: 'Lesson 2',
+    title: 'Sketch it before you see it',
+    body: '“Older houses use more water.” “The further from the coast, the less it '
+      + 'rains.” “Shoe size and how much water you drink.” Sketch the scatterplot '
+      + 'you would expect for each, on paper, before checking anything.',
+    done: 'You have three sketches and can say which one you are least sure about.'
+  },
+  {
+    after: 'Lesson 5',
+    title: 'The point furthest from the line',
+    body: 'Find the point on your own scatterplot that sits furthest from your line '
+      + 'of best fit. Work out what happened when that measurement was taken.',
+    done: 'You have a reason that is about the measuring, not about the maths — or '
+      + 'you have decided there is no reason and it is just spread.'
+  }
+];
+
+const list = document.querySelector('#quests');
+
+for (const quest of QUESTS) {
+  const li = document.createElement('li');
+  li.className = 'quest';
+
+  const tag = document.createElement('span');
+  tag.className = 'quest-after';
+  tag.textContent = `After ${quest.after}`;
+
+  const h = document.createElement('h2');
+  h.textContent = quest.title;
+
+  const body = document.createElement('p');
+  body.textContent = quest.body;
+
+  const done = document.createElement('p');
+  done.className = 'quest-done';
+  done.textContent = `Done when: ${quest.done}`;
+
+  li.append(tag, h, body, done);
+
+  if (quest.href) {
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+    const a = document.createElement('a');
+    a.className = 'btn secondary';
+    a.href = quest.href;
+    a.textContent = quest.hrefText;
+    actions.append(a);
+    li.append(actions);
+  }
+
+  list.append(li);
+}
+</script>
+</body>
+</html>

@@ -107,6 +107,33 @@ export async function mirrorToCard(studentId, patch, { display = null } = {}) {
   }
 }
 
+/* Reading her slice back out, for Lesson 6.
+
+   Her Lesson 2 answer normally comes straight from localStorage. This is the
+   path for the girl whose laptop was reimaged between Lesson 2 and Lesson 6, or
+   who is sitting at a different machine: the crew file has a copy because
+   l2.html put one there when she wrote it.
+
+   Returns null for every kind of "not available", including no handle and no
+   permission. Lesson 6 must never show an empty quote. */
+export async function readMemberSlice(studentId) {
+  if (!studentId) return null;
+  try {
+    const handle = await withTimeout(recallCardHandle());
+    if (!handle) return null;
+    const state = await withTimeout(
+      handle.queryPermission?.({ mode: 'read' }) ?? Promise.resolve('denied')
+    );
+    if (state !== 'granted') return null;
+    const text = await withTimeout((await withTimeout(handle.getFile())).text());
+    if (!text.trim()) return null;
+    const data = JSON.parse(text);
+    return data?.members?.[studentId] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /* The two callers. Named rather than left as raw patches so that what the crew
    file is allowed to hold from outside card.html is a list in one place. */
 

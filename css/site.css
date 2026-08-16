@@ -1256,3 +1256,213 @@ dialog.prompt .actions { margin-top: 1rem; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---- two charts side by side --------------------------------------------- */
+/* The misleading-chart tool, where the whole point is seeing both at once. It
+   drops to one column below 44rem, and there the honest one comes first. */
+
+.twin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.twin .mini-chart svg { max-width: 100%; height: auto; }
+
+/* ---- Lesson 6 ------------------------------------------------------------ */
+
+/* Her own Lesson 2 answer, quoted back at her four weeks later. Set apart and in
+   the Card's handwriting, so it reads as something she said rather than as more
+   instructions from the site. */
+blockquote.said {
+  margin: 0 0 1rem;
+  padding: 0.9rem 1.2rem;
+  border-left: 5px solid var(--gold);
+  background: #FFFBF0;
+  max-width: var(--measure);
+}
+
+blockquote.said p {
+  margin: 0;
+  font-family: var(--font-hand);
+  color: var(--pen);
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.lede-question {
+  font-size: 1.2rem;
+  border-top: 2px solid var(--brand);
+  padding-top: 0.9rem;
+}
+
+/* Peer review. The box and its label are one 44px target, because it is ticked
+   on a touchscreen while holding another crew's Card. */
+.review { list-style: none; margin: 0 0 1rem; padding: 0; }
+
+.review li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.review li:last-child { border-bottom: none; }
+
+.review input[type='checkbox'] {
+  flex: none;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.15rem;
+  accent-color: var(--brand);
+}
+
+.review label { flex: 1; min-height: var(--tap); cursor: pointer; }
+.review li:has(input:checked) label { color: var(--sage); }
+
+@media print {
+  .review input[type='checkbox'] {
+    appearance: none;
+    border: 1.5px solid #000;
+    width: 5mm;
+    height: 5mm;
+  }
+}
+
+/* ---- Lesson 1 sorting ---------------------------------------------------- */
+/* Cards are buttons first and draggable second, so the keyboard path is the
+   element itself rather than a bolted-on alternative. */
+
+.tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  min-height: 4rem;
+  padding: 0.75rem;
+  margin-bottom: var(--gap);
+  border: 2px dashed var(--line);
+  background: var(--sage-pale);
+}
+
+.sort-card {
+  font: inherit;
+  text-align: left;
+  min-height: var(--tap);
+  padding: 0.55rem 0.85rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--brand-mid);
+  border-radius: 0;
+  cursor: grab;
+  touch-action: none;
+  max-width: 20rem;
+}
+
+.sort-card:hover { border-color: var(--brand); background: var(--brand-tint); }
+.sort-card.lifted {
+  position: fixed;
+  z-index: 20;
+  cursor: grabbing;
+  box-shadow: 0 6px 18px rgba(6, 35, 43, 0.3);
+  pointer-events: none;
+}
+
+/* Marked with an underline as well as a colour, because colour alone must never
+   carry meaning. */
+.sort-card.right { border-color: var(--brand); background: var(--brand-tint); }
+.sort-card.wrong {
+  border-color: var(--gold-dark);
+  background: #FCF3D6;
+  text-decoration: underline wavy var(--gold-dark);
+  text-underline-offset: 0.25em;
+}
+
+.bins {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.bin { border: 1.5px solid var(--line); padding: 0.9rem; }
+.bin h3 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.15rem; font-size: 1.1rem; }
+.bin .note { margin-bottom: 0.6rem; }
+
+.bin-n {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--paper);
+  background: var(--brand);
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 5rem;
+  padding: 0.5rem;
+  border: 2px dashed var(--line);
+}
+
+.drop.over { border-color: var(--gold-dark); background: #FFFBF0; }
+.drop .sort-card { max-width: none; }
+
+/* ---- a plain reference table --------------------------------------------- */
+
+.crew-sheet-table { border-collapse: collapse; width: 100%; }
+.crew-sheet-table th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--brand);
+  padding: 0.45rem 0.6rem;
+  border-bottom: 2px solid var(--brand);
+}
+.crew-sheet-table td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.crew-sheet-table tr.headline td { font-weight: 700; background: var(--brand-tint); }
+
+/* ---- side quests --------------------------------------------------------- */
+
+.quests { list-style: none; margin: 0 0 var(--gap); padding: 0; display: grid; gap: var(--gap); }
+
+.quest {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--brand-mid);
+  padding: 1.25rem 1.5rem;
+  background: var(--paper);
+}
+
+.quest h2 { font-size: 1.4rem; margin: 0.15rem 0 0.5rem; }
+
+.quest-after {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.quest-done {
+  color: var(--brand);
+  font-size: 0.95rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.quest > :last-child { margin-bottom: 0; }

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 6 · The whole story</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 6 · The whole story</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>The whole story</h1>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      No new maths today. You finish your Card, you check another crew's, and you
+      answer one question you have already answered once before.
+    </p>
+    <p class="note">
+      There is no code in this room and no badge. Nothing here is marked.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Back to the ice creams</h2>
+    <p>
+      In Lesson 2 you read this chart. Nobody told you what it meant. You were
+      only asked to describe it.
+    </p>
+    <figure class="room-chart" id="chart-fountains"></figure>
+
+    <div id="quote-block"></div>
+
+    <p>
+      That answer was <b>right</b>. The relationship really is strong and
+      positive, and nothing about it is invented in the way you were reading it.
+    </p>
+    <p class="lede-question">
+      So here is the question. <b>Should the school ban ice creams to save water?</b>
+    </p>
+    <p>
+      <label class="lbl" for="ban">Answer it in your own words. Say what you would
+        tell someone who thought the answer was yes.</label>
+    </p>
+    <textarea id="ban" rows="4" maxlength="400"></textarea>
+    <div class="actions">
+      <button class="btn secondary" type="button" id="save-ban">Save my answer</button>
+    </div>
+    <div class="msg" id="ban-msg" hidden></div>
+  </section>
+
+  <section class="panel">
+    <h2>The word for it</h2>
+    <p>
+      Two things can move together without one causing the other. When they move
+      together, that is <b>correlation</b>. When one actually makes the other
+      happen, that is <b>causation</b>. A chart can show you correlation. No chart
+      on its own can show you causation.
+    </p>
+    <p>
+      Usually there is a third thing moving both of them, and it is not on the
+      chart at all. It is called the <b>hidden variable</b>. Ice creams and
+      drinking fountains have one, and you have almost certainly named it
+      already.
+    </p>
+    <p class="note">
+      Your own prediction in Lesson 5 has the same problem waiting in it. The line
+      carried on past your data because you drew it that way, not because anything
+      you measured says it keeps going.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>The other way a chart lies</h2>
+    <p>
+      A chart can be completely true and still tell you the wrong thing, if the
+      axis has been chosen to make it. Open the tool below and see how far apart
+      you can push the two stories without changing a single number.
+    </p>
+    <div class="actions">
+      <a class="btn" href="tools/mislead.html">Open the two-charts tool</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Finish your Card</h2>
+    <p>
+      Every box on the Card should now have something in it. If a sentence will
+      not start, take one of these and finish it in your own words. They are
+      openings, not answers.
+    </p>
+    <ul class="checks" id="starters"></ul>
+    <div class="actions">
+      <a class="btn" href="card.html">Open our Data Evidence Card</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Check another crew's Card</h2>
+    <p>
+      Swap with the crew next to you. Read their Card as if you had never seen it,
+      and go down this list. Say the ones you cannot tick out loud — that is the
+      whole point of swapping.
+    </p>
+    <ul class="review" id="review"></ul>
+    <p class="note">
+      A crew that ticks everything has not read carefully enough. Find at least
+      one thing to say.
+    </p>
+    <div class="actions no-print">
+      <button class="btn secondary" type="button" id="print-review">Print this checklist</button>
+    </div>
+  </section>
+
+  <section class="panel no-print">
+    <h2>Before you finish</h2>
+    <p>
+      Print your Card, take a copy of your work, and you are done. Thank you —
+      genuinely. Six lessons ago none of you had seen a scatterplot.
+    </p>
+    <div class="actions">
+      <a class="btn" href="card.html">Open and print our Card</a>
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+      <a class="btn secondary" href="extension.html">Side quests</a>
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import { getProfile, getResponses, recordResponse } from './js/store.js';
+import { readMemberSlice } from './js/cardfile.js';
+import { renderChart } from './js/chart.js';
+import { loadDatasets } from './js/dataset.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+const data = await loadDatasets();
+
+const { svg } = renderChart({
+  points: data.claimB.points,
+  xLabel: data.claimB.xLabel, xUnit: data.claimB.xUnit,
+  yLabel: data.claimB.yLabel, yUnit: data.claimB.yUnit,
+  title: data.claimB.title,
+  width: 660, height: 400
+});
+document.querySelector('#chart-fountains').append(svg);
+
+/* ---- her own answer, quoted back ----------------------------------------- */
+
+/* localStorage first, then the crew's card file, then nothing at all. The room
+   must never print an empty quotation mark: a girl who is shown "In Lesson 2 you
+   said ''" has been accused of saying nothing, and the moment this room exists
+   for is gone. docs/STORAGE_AMENDMENT.md §4. */
+async function recallClaimB() {
+  const local = getResponses()['l2.fountains']?.value;
+  if (local && local.trim()) return local.trim();
+
+  const slice = await readMemberSlice(profile.studentId);
+  const mirrored = slice?.claimB?.value;
+  if (mirrored && mirrored.trim()) return mirrored.trim();
+
+  return null;
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  /* textContent, never innerHTML. This one is hers. */
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+const block = document.querySelector('#quote-block');
+const said = await recallClaimB();
+
+if (said) {
+  block.append(el('p', null, 'Here is what you wrote in Lesson 2:'));
+  const quote = el('blockquote', 'said');
+  quote.append(el('p', null, said));
+  block.append(quote);
+} else {
+  /* No answer stored. Say the general thing rather than pretend to remember. */
+  block.append(el('p', null,
+    'Nearly every crew described it the same way: as the ice creams go up, the '
+    + 'water drunk from the fountains goes up too. Strong, and positive.'));
+}
+
+/* ---- her answer to the ban question -------------------------------------- */
+
+const ban = document.querySelector('#ban');
+const savedBan = getResponses()['l6.ban'];
+if (savedBan) ban.value = savedBan.value;
+
+document.querySelector('#save-ban').addEventListener('click', () => {
+  const value = ban.value.trim();
+  const box = document.querySelector('#ban-msg');
+  box.className = value ? 'msg good' : 'msg problem';
+  box.textContent = '';
+  box.append(
+    el('span', 'mark', value ? '✓' : '!'),
+    el('span', null, value
+      ? 'Saved. Read it to your crew before you write it on the Card.'
+      : 'Write your answer in the box first.')
+  );
+  box.hidden = false;
+  if (value) recordResponse('l6.ban', value);
+});
+
+/* ---- sentence starters and the peer review ------------------------------- */
+
+/* TODO(content): the client has these to write. These are mine, drafted so the
+   room is usable, and every one of them is an opening rather than an opinion -
+   a starter that finishes its own sentence does the thinking for her. */
+const STARTERS = [
+  'We asked whether … and we measured it by …',
+  'Our chart shows a … relationship, which means that as … goes up, … tends to …',
+  'For every extra … our line says … changes by about …',
+  'We read our line at … and got …, which is inside the readings we took.',
+  'We also read it at …, which is beyond anything we measured, so …',
+  'The thing we are least sure about is …, because …',
+  'If we did this again with more time we would change …'
+];
+
+const REVIEW = [
+  'Both axes have a label and a unit.',
+  'The question at the top is one their two variables can actually answer.',
+  'The method is written so I could follow it without asking them anything.',
+  'The sample size is stated, and it is more than ten.',
+  'The scatterplot has one point for each pair of measurements.',
+  'The line of best fit passes close to the points, not above or below all of them.',
+  'The gradient sentence is about water, not about maths.',
+  'The extrapolation says how much it should be trusted, not just what it predicts.',
+  'Where the data came from is written down, including if it was borrowed.'
+];
+
+const starters = document.querySelector('#starters');
+for (const text of STARTERS) {
+  const li = el('li');
+  li.append(el('span', 'hand', text));
+  starters.append(li);
+}
+
+const review = document.querySelector('#review');
+REVIEW.forEach((text, i) => {
+  const li = el('li');
+  const id = `rev-${i}`;
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.id = id;
+  const label = document.createElement('label');
+  label.htmlFor = id;
+  label.textContent = text;
+  li.append(input, label);
+  review.append(li);
+});
+
+document.querySelector('#print-review').addEventListener('click', () => window.print());
+</script>
+</body>
+</html>

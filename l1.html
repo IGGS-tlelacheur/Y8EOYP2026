@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · Lesson 1 · Getting started</title>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the room</a>
+
+<header class="masthead">
+  <img class="crest" src="assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">Lesson 1 · Getting started</div>
+  </div>
+  <div class="who no-print"><a href="hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>Getting started</h1>
+
+  <section class="panel">
+    <h2>What you are doing today</h2>
+    <p>
+      Nothing in this room is marked and there is no code to find. It is a look
+      around before you start. By the end you will have picked the question your
+      crew is going to answer, and written it on your Card.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Two kinds of data</h2>
+    <p>
+      <b>Categorical data</b> is a name or a group. Which suburb you live in. What
+      colour your bottle is. You can count how many fall in each group, but you
+      cannot add them up or find their average.
+    </p>
+    <p>
+      <b>Numerical data</b> is a number that means something as a number. You can
+      add it, average it and put it on a scale.
+    </p>
+    <p>Numerical data comes in two sorts, and the difference decides your chart.</p>
+    <ul class="checks">
+      <li><b>Discrete</b> — counted, in whole steps. The number of taps in a room.
+        There is no such thing as 4.5 taps.</li>
+      <li><b>Continuous</b> — measured, and it can land anywhere in between. The
+        length of a shower. It can be 6 minutes, or 6.4, or 6.37.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Sort these</h2>
+    <p>
+      Drag each card into a box. Or put your finger on one and it will follow.
+    </p>
+    <p class="note" id="keys-hint">
+      No mouse? Tab to a card and press <b>1</b>, <b>2</b> or <b>3</b> to send it
+      to that box. Press <b>0</b> to send it back.
+    </p>
+
+    <div class="tray" id="tray" aria-label="Cards still to sort"></div>
+
+    <div class="bins" id="bins">
+      <div class="bin" data-bin="categorical">
+        <h3><span class="bin-n">1</span> Categorical</h3>
+        <p class="note">A name or a group</p>
+        <div class="drop" data-drop="categorical"></div>
+      </div>
+      <div class="bin" data-bin="discrete">
+        <h3><span class="bin-n">2</span> Numerical, discrete</h3>
+        <p class="note">Counted in whole steps</p>
+        <div class="drop" data-drop="discrete"></div>
+      </div>
+      <div class="bin" data-bin="continuous">
+        <h3><span class="bin-n">3</span> Numerical, continuous</h3>
+        <p class="note">Measured, anything in between</p>
+        <div class="drop" data-drop="continuous"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" id="check">Check my sorting</button>
+      <button class="btn secondary" type="button" id="reset-sort">Start again</button>
+    </div>
+    <div class="msg" id="sort-msg" hidden></div>
+  </section>
+
+  <section class="panel">
+    <h2>Which chart goes with which</h2>
+    <p>
+      You will meet all of these properly in Lesson 4. For now, only the last row
+      matters, because it is the one this whole programme is about.
+    </p>
+    <div class="grid-scroll">
+      <table class="crew-sheet-table" id="chart-table"></table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>The tools</h2>
+    <p>
+      Three tools, all on this site. Open them, press things, and put nothing real
+      in them yet. You cannot break them and nothing you type is sent anywhere.
+    </p>
+    <div class="actions">
+      <a class="btn secondary" href="tools/table.html">Collection table</a>
+      <a class="btn secondary" href="tools/uni.html">One variable</a>
+      <a class="btn secondary" href="tools/bi.html">Two variables</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Your question</h2>
+    <p>
+      Pick something your crew can actually measure, about water, with
+      <b>two</b> variables in it. It does not have to be right yet — you can change
+      it in Lesson 3 when you plan how to collect it.
+    </p>
+    <p class="note">
+      A question that works has this shape: <span class="hand">does A change when
+      B changes?</span> — where you can measure both A and B with what you have at
+      home.
+    </p>
+    <ul class="checks">
+      <li>Does the water a shower uses change with how long it runs?</li>
+      <li>Does a house with more people use more water per person, or less?</li>
+      <li>Does a bigger roof collect more water in the same storm?</li>
+    </ul>
+    <p>
+      <label class="lbl" for="question">Our question</label>
+    </p>
+    <textarea id="question" rows="2" maxlength="97"></textarea>
+    <p class="note">
+      97 characters, because that is what fits on the printed Card.
+      <span id="count"></span>
+    </p>
+    <div class="actions">
+      <button class="btn" type="button" id="save-question">Save it to our Card</button>
+      <a class="btn secondary" href="card.html">Open our Data Evidence Card</a>
+    </div>
+    <div class="msg" id="question-msg" hidden></div>
+  </section>
+
+  <section class="panel no-print">
+    <div class="actions">
+      <a class="btn" href="l2.html">On to Lesson 2</a>
+      <a class="btn secondary" href="hub.html">Back to your hub</a>
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import { getProfile, getCard, setCard, getResponses, recordResponse } from './js/store.js';
+
+const profile = getProfile();
+if (!profile) window.location.replace('index.html');
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+/* ---- the sorting activity ------------------------------------------------- */
+
+const ITEMS = [
+  { id: 'suburb', text: 'The suburb a student lives in', answer: 'categorical' },
+  { id: 'taps', text: 'The number of taps in a classroom', answer: 'discrete' },
+  { id: 'shower', text: 'How long a shower runs, in minutes', answer: 'continuous' },
+  { id: 'brand', text: 'The brand of a water bottle', answer: 'categorical' },
+  { id: 'people', text: 'The number of people in a house', answer: 'discrete' },
+  { id: 'tank', text: 'The water in a tank, in litres', answer: 'continuous' },
+  { id: 'dripping', text: 'Whether a tap is dripping or not', answer: 'categorical' },
+  { id: 'rain', text: 'The rainfall in a month, in millimetres', answer: 'continuous' }
+];
+
+const BIN_KEYS = { 1: 'categorical', 2: 'discrete', 3: 'continuous' };
+
+const placed = getResponses()['l1.sort']?.value ?? {};
+const tray = document.querySelector('#tray');
+
+function homeFor(bin) {
+  return bin ? document.querySelector(`[data-drop="${bin}"]`) : tray;
+}
+
+function makeCard(item) {
+  /* A button, so it is in the tab order and takes Enter and the number keys for
+     nothing extra. The drag is added on top of that rather than instead of it -
+     a card that can only be dragged cannot be sorted with a keyboard, and this
+     fleet has a touchscreen and a keyboard and no mouse worth speaking of. */
+  const card = el('button', 'sort-card', item.text);
+  card.type = 'button';
+  card.dataset.item = item.id;
+  card.setAttribute('aria-describedby', 'keys-hint');
+  return card;
+}
+
+function place(id, bin, { save = true } = {}) {
+  const card = document.querySelector(`[data-item="${id}"]`);
+  if (!card) return;
+  card.classList.remove('right', 'wrong');
+  homeFor(bin).append(card);
+  if (bin) placed[id] = bin; else delete placed[id];
+  if (save) recordResponse('l1.sort', placed);
+}
+
+for (const item of ITEMS) tray.append(makeCard(item));
+for (const item of ITEMS) place(item.id, placed[item.id] ?? null, { save: false });
+
+/* Pointer Events, never mouse events. One code path for finger, pen and mouse. */
+let dragging = null;
+
+function startDrag(event) {
+  const card = event.currentTarget;
+  const rect = card.getBoundingClientRect();
+  dragging = {
+    card,
+    dx: event.clientX - rect.left,
+    dy: event.clientY - rect.top,
+    moved: false,
+    width: rect.width
+  };
+  card.setPointerCapture(event.pointerId);
+}
+
+function moveDrag(event) {
+  if (!dragging || dragging.card !== event.currentTarget) return;
+  dragging.moved = true;
+  const card = dragging.card;
+  card.classList.add('lifted');
+  card.style.width = `${dragging.width}px`;
+  card.style.left = `${event.clientX - dragging.dx}px`;
+  card.style.top = `${event.clientY - dragging.dy}px`;
+
+  for (const drop of document.querySelectorAll('.drop')) {
+    const r = drop.getBoundingClientRect();
+    const over = event.clientX >= r.left && event.clientX <= r.right
+      && event.clientY >= r.top && event.clientY <= r.bottom;
+    drop.classList.toggle('over', over);
+  }
+}
+
+function endDrag(event) {
+  if (!dragging || dragging.card !== event.currentTarget) return;
+  const card = dragging.card;
+  const wasDrag = dragging.moved;
+  card.classList.remove('lifted');
+  card.style.width = '';
+  card.style.left = '';
+  card.style.top = '';
+  dragging = null;
+
+  let target = null;
+  for (const drop of document.querySelectorAll('.drop')) {
+    const r = drop.getBoundingClientRect();
+    if (event.clientX >= r.left && event.clientX <= r.right
+      && event.clientY >= r.top && event.clientY <= r.bottom) target = drop.dataset.drop;
+    drop.classList.remove('over');
+  }
+
+  /* A tap that never moved is a tap, not a failed drag, so it leaves the card
+     where it is and lets the keys do the work. */
+  if (wasDrag) place(card.dataset.item, target);
+  hide();
+}
+
+for (const card of document.querySelectorAll('.sort-card')) {
+  card.addEventListener('pointerdown', startDrag);
+  card.addEventListener('pointermove', moveDrag);
+  card.addEventListener('pointerup', endDrag);
+  card.addEventListener('pointercancel', endDrag);
+  card.addEventListener('keydown', (event) => {
+    if (event.key === '0') { place(card.dataset.item, null); hide(); event.preventDefault(); }
+    if (BIN_KEYS[event.key]) {
+      place(card.dataset.item, BIN_KEYS[event.key]);
+      hide();
+      card.focus();
+      event.preventDefault();
+    }
+  });
+}
+
+function hide() {
+  document.querySelector('#sort-msg').hidden = true;
+  for (const card of document.querySelectorAll('.sort-card')) {
+    card.classList.remove('right', 'wrong');
+  }
+}
+
+document.querySelector('#check').addEventListener('click', () => {
+  const done = ITEMS.filter((i) => placed[i.id]);
+  const box = document.querySelector('#sort-msg');
+  box.textContent = '';
+
+  if (done.length < ITEMS.length) {
+    box.className = 'msg problem';
+    box.append(el('span', 'mark', '!'), el('span', null,
+      `${ITEMS.length - done.length} card(s) still in the tray. Put them all in a box, then check again.`));
+    box.hidden = false;
+    return;
+  }
+
+  let right = 0;
+  for (const item of ITEMS) {
+    const card = document.querySelector(`[data-item="${item.id}"]`);
+    const ok = placed[item.id] === item.answer;
+    card.classList.toggle('right', ok);
+    card.classList.toggle('wrong', !ok);
+    if (ok) right += 1;
+  }
+
+  box.className = right === ITEMS.length ? 'msg good' : 'msg problem';
+  box.append(
+    el('span', 'mark', right === ITEMS.length ? '✓' : '!'),
+    el('span', null, right === ITEMS.length
+      ? 'All eight. The difference between counted and measured is the one that decides your chart in Lesson 4.'
+      : `${right} of ${ITEMS.length}. The ones with a line under them are in the wrong box. Ask yourself of each: is it a name, or a number? If it is a number, could it land halfway?`)
+  );
+  box.hidden = false;
+});
+
+document.querySelector('#reset-sort').addEventListener('click', () => {
+  for (const item of ITEMS) place(item.id, null, { save: false });
+  recordResponse('l1.sort', {});
+  hide();
+});
+
+/* ---- which chart goes with which ------------------------------------------ */
+
+const ROWS = [
+  ['One categorical variable', 'Column graph, or a pie chart for shares of a whole'],
+  ['One numerical variable, discrete with repeats', 'Dot plot'],
+  ['One numerical variable, continuous', 'Histogram, or a box plot for the spread'],
+  ['Two numerical variables together', 'Scatterplot — this is the one you are here for']
+];
+
+const table = document.querySelector('#chart-table');
+const thead = el('thead');
+const hr = el('tr');
+hr.append(el('th', null, 'What you have'), el('th', null, 'What to draw'));
+thead.append(hr);
+table.append(thead);
+const tbody = el('tbody');
+ROWS.forEach(([a, b], i) => {
+  const tr = el('tr');
+  if (i === ROWS.length - 1) tr.className = 'headline';
+  tr.append(el('td', null, a), el('td', null, b));
+  tbody.append(tr);
+});
+table.append(tbody);
+
+/* ---- the provisional question --------------------------------------------- */
+
+const question = document.querySelector('#question');
+const card = getCard();
+question.value = card.fields?.question?.value ?? '';
+
+function count() {
+  document.querySelector('#count').textContent =
+    `${question.value.length} used.`;
+}
+question.addEventListener('input', count);
+count();
+
+document.querySelector('#save-question').addEventListener('click', () => {
+  const value = question.value.trim();
+  const box = document.querySelector('#question-msg');
+  box.textContent = '';
+
+  if (!value) {
+    box.className = 'msg problem';
+    box.append(el('span', 'mark', '!'), el('span', null, 'Write your question in the box first.'));
+    box.hidden = false;
+    return;
+  }
+
+  /* Written straight into the Card's own field with her name on it, the same
+     shape card.html writes, so opening the Card shows it already there. */
+  const current = getCard();
+  const fields = { ...(current.fields ?? {}) };
+  fields.question = {
+    value,
+    by: profile.studentId,
+    byName: profile.display,
+    at: new Date().toISOString()
+  };
+  setCard({ fields, charts: current.charts ?? {} });
+
+  box.className = 'msg good';
+  box.append(el('span', 'mark', '✓'), el('span', null,
+    'Saved to your Card. Open the Card to see it, and save the Card to your crew folder when you get there.'));
+  box.hidden = false;
+});
+</script>
+</body>
+</html>

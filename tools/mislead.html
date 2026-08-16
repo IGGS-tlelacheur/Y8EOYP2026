@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H₂O — Towards 2040 · The same numbers, twice</title>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the tool</a>
+
+<header class="masthead">
+  <img class="crest" src="../assets/iggs-crest-white.png" alt="Ivanhoe Girls' Grammar School">
+  <div>
+    <div class="title"><span class="h2o">H<sub>2</sub>O</span> — Towards 2040</div>
+    <div class="sub">The same numbers, twice</div>
+  </div>
+  <div class="who no-print"><a href="../hub.html" style="color:var(--paper)">Back to your hub</a></div>
+</header>
+
+<main id="main">
+  <h1>The same numbers, twice</h1>
+
+  <p>
+    Both charts below show the same six readings. You cannot change the readings.
+    You can only change the axis on the right one. See how far apart you can make
+    the two stories look.
+  </p>
+
+  <div class="twin">
+    <figure class="mini-chart">
+      <figcaption>Honest</figcaption>
+      <div id="honest"></div>
+    </figure>
+    <figure class="mini-chart">
+      <figcaption>Yours</figcaption>
+      <div id="theirs"></div>
+    </figure>
+  </div>
+
+  <div class="msg" id="verdict"></div>
+
+  <section class="panel no-print">
+    <h2>Your axis</h2>
+
+    <div class="field">
+      <label for="floor">Where the axis starts</label>
+      <span class="help" id="floor-note"></span>
+      <input type="range" id="floor" min="0" max="100" step="1" value="0">
+    </div>
+
+    <div class="field">
+      <label for="ceiling">Where the axis stops</label>
+      <span class="help" id="ceiling-note"></span>
+      <input type="range" id="ceiling" min="0" max="100" step="1" value="100">
+    </div>
+
+    <div class="field">
+      <label for="span">How many months you show</label>
+      <span class="help" id="span-note"></span>
+      <input type="range" id="span" min="2" max="6" step="1" value="6">
+    </div>
+
+    <div class="actions">
+      <button class="btn secondary" type="button" id="reset">Put it back to honest</button>
+      <button class="btn secondary" type="button" id="worst">Make it as bad as you can</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>What you just did</h2>
+    <p>
+      Every chart you made was <b>true</b>. Not one number changed. That is the
+      point: a chart can be completely accurate and still tell you the wrong
+      thing, and the place to look is always the axis.
+    </p>
+    <p>Three questions to ask of any chart someone shows you:</p>
+    <ul class="checks">
+      <li>Where does the vertical axis start? If it is not zero, the differences
+        are being made to look bigger than they are.</li>
+      <li>Are the gaps between the numbers all the same size? If not, part of the
+        chart has been stretched.</li>
+      <li>How much of the data is shown? Cutting off the years that disagree with
+        you is the oldest trick there is.</li>
+    </ul>
+  </section>
+
+  <section class="panel no-print">
+    <h2>Now go and find one</h2>
+    <p>
+      Find a real chart about water, or weather, or money, in a newspaper or on a
+      website. Work out which of the three tricks it uses, if any. Plenty of real
+      charts are honest — saying so about an honest one is just as good an answer.
+    </p>
+    <div class="actions">
+      <a class="btn secondary" href="../l6.html">Back to Lesson 6</a>
+      <a class="btn secondary" href="../hub.html">Back to your hub</a>
+    </div>
+  </section>
+
+  <p class="foot">
+    Ivanhoe Girls' Grammar School · <span class="h2o">H<sub>2</sub>O</span> — Towards 2040
+  </p>
+</main>
+
+<script type="module">
+import { renderColumns } from '../js/chart.js';
+
+/* Six readings that barely move. The whole exercise depends on the honest story
+   being dull: if the real change were dramatic there would be nothing to
+   exaggerate, and she would never feel the gap between the two charts. */
+const READINGS = [
+  { label: 'Mar', value: 238 },
+  { label: 'Apr', value: 241 },
+  { label: 'May', value: 245 },
+  { label: 'Jun', value: 250 },
+  { label: 'Jul', value: 248 },
+  { label: 'Aug', value: 252 }
+];
+
+const LOW = Math.min(...READINGS.map((r) => r.value));
+const HIGH = Math.max(...READINGS.map((r) => r.value));
+
+const floor = document.querySelector('#floor');
+const ceiling = document.querySelector('#ceiling');
+const span = document.querySelector('#span');
+
+/* The sliders run over the readings themselves rather than over raw numbers, so
+   every position produces a chart that still contains the data. A slider that
+   can hide half the columns teaches nothing except that the tool is broken. */
+floor.min = 0; floor.max = LOW - 1; floor.value = 0;
+ceiling.min = HIGH + 1; ceiling.max = Math.ceil(HIGH * 1.6); ceiling.value = ceiling.max;
+
+function ticksBetween(from, to) {
+  const raw = (to - from) / 5;
+  const size = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 5, 10].map((n) => n * size).find((n) => n >= raw) ?? size * 10;
+  const out = [];
+  for (let t = Math.floor(from / step) * step; t <= to + step / 2; t += step) {
+    if (t >= from - 1e-9) out.push(Number(t.toFixed(6)));
+  }
+  if (out[0] > from) out.unshift(from);
+  return out;
+}
+
+function draw(host, ticks, rows, caption) {
+  const { svg } = renderColumns({
+    bars: rows,
+    label: 'Water in the school tank', unit: 'kilolitres',
+    categoryLabel: 'First of the month',
+    axis: { ticks },
+    width: 420, height: 320
+  });
+  host.textContent = '';
+  host.append(svg);
+  if (caption) {
+    const p = document.createElement('p');
+    p.className = 'note';
+    p.textContent = caption;
+    host.append(p);
+  }
+}
+
+/* How much taller the tallest column looks than the shortest, in pixels. This is
+   the number that makes the point: the readings differ by six per cent whatever
+   she does, and this can be made to say five hundred. */
+function apparentRatio(ticks, rows) {
+  const lo = ticks[0];
+  const hi = ticks[ticks.length - 1];
+  const height = (v) => Math.max(0, (v - lo) / (hi - lo));
+  const values = rows.map((r) => height(r.value));
+  const shortest = Math.min(...values);
+  const tallest = Math.max(...values);
+  return shortest <= 0.0001 ? Infinity : tallest / shortest;
+}
+
+const trueRatio = HIGH / LOW;
+const truePercent = ((HIGH - LOW) / LOW) * 100;
+
+function say(text, kind) {
+  const box = document.querySelector('#verdict');
+  box.className = `msg ${kind}`;
+  box.textContent = '';
+  const mark = document.createElement('span');
+  mark.className = 'mark';
+  mark.textContent = kind === 'good' ? '✓' : '!';
+  const body = document.createElement('span');
+  body.textContent = text;
+  box.append(mark, body);
+}
+
+function update() {
+  const from = Number(floor.value);
+  const to = Number(ceiling.value);
+  const shown = READINGS.slice(0, Number(span.value));
+
+  const honestTicks = ticksBetween(0, Math.ceil(HIGH * 1.2));
+  draw(document.querySelector('#honest'), honestTicks, READINGS,
+    'Axis from zero. All six months.');
+
+  const ticks = ticksBetween(from, to);
+  draw(document.querySelector('#theirs'), ticks, shown,
+    `Axis from ${from} to ${to}. ${shown.length} month${shown.length === 1 ? '' : 's'}.`);
+
+  document.querySelector('#floor-note').textContent =
+    from === 0 ? 'At zero, which is honest.' : `Cut off at ${from}. The bottom ${from} kL is not shown.`;
+  document.querySelector('#ceiling-note').textContent = `Stops at ${to}.`;
+  document.querySelector('#span-note').textContent =
+    shown.length === READINGS.length ? 'All of them.' : `${READINGS.length - shown.length} month(s) hidden.`;
+
+  const ratio = apparentRatio(ticks, shown);
+  const looksLike = Number.isFinite(ratio) ? `${ratio.toFixed(1)} times` : 'infinitely';
+
+  if (from === 0 && shown.length === READINGS.length) {
+    say(
+      `Honest. The tank rose by ${truePercent.toFixed(0)} per cent over the six months, `
+      + `and the tallest column is ${trueRatio.toFixed(2)} times the shortest — which is `
+      + 'what the numbers say.', 'good'
+    );
+  } else {
+    say(
+      `The tank still rose by ${truePercent.toFixed(0)} per cent. On your chart the tallest `
+      + `column now looks ${looksLike} the shortest. Same readings, different story.`,
+      'problem'
+    );
+  }
+}
+
+for (const control of [floor, ceiling, span]) {
+  control.addEventListener('input', update);
+}
+
+document.querySelector('#reset').addEventListener('click', () => {
+  floor.value = 0;
+  ceiling.value = ceiling.max;
+  span.value = READINGS.length;
+  update();
+});
+
+document.querySelector('#worst').addEventListener('click', () => {
+  floor.value = floor.max;
+  ceiling.value = ceiling.min;
+  span.value = 3;
+  update();
+});
+
+update();
+</script>
+</body>
+</html>
