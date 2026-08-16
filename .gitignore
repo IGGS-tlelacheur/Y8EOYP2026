@@ -13,3 +13,8 @@ node_modules/
 # Student work must never end up in the repo
 *.h2ocard
 *.h2o
+
+# Third-party teaching material. This repo is public, and these are Mathspace's
+# worksheets, not ours to republish. They are author-time reference only - the
+# site never loads them - so they live on disk and not in the history.
+docs/reference_material/
